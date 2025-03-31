@@ -1,9 +1,65 @@
+"use client";
+import React, { useState } from "react";
 import TechStackSection from "@/components/TechStackSection";
 import { bebasFont } from "@/lib/font";
 import Image from "next/image";
-import React from "react";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { GrNext, GrPrevious } from "react-icons/gr";
+
+type NextText = {
+  title: string;
+  subTitle: string;
+  imagePath: string;
+};
+
+const content: NextText[] = [
+  {
+    title: "User RSVPs",
+    subTitle:
+      "Claim your spot at the bar—because great matches deserve packed houses.",
+    imagePath: "next1.jpg",
+  },
+  {
+    title: "Merch Store",
+    subTitle:
+      "Wear your colors—scarves, tees, and pint glasses that scream ‘I run with the crew’.",
+    imagePath: "next2.jpg",
+  },
+  {
+    title: "Supporter Leaderboards",
+    subTitle:
+      "Earn stripes for hosting, cheering, and (responsibly) shotgunning.",
+    imagePath: "next3.jpg",
+  },
+  {
+    title: "Community-Submitted Watch Parties",
+    subTitle:
+      "From backyard projectors to dive bar takeovers—powered by fans like you.",
+    imagePath: "next4.jpg",
+  },
+  {
+    title: "Live Match Data",
+    subTitle:
+      "Real-time stats, heatmaps, and fan chatter—all without leaving your stool.",
+    imagePath: "next5.jpg",
+  },
+];
 
 const AboutUs = () => {
+  const LAST_INDEX = content.length - 1;
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  console.log(currentIndex);
+  const next = () => {
+    setCurrentIndex((prev) => (prev === LAST_INDEX ? 0 : prev + 1));
+  };
+  const prev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? LAST_INDEX : prev - 1));
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -60,6 +116,52 @@ const AboutUs = () => {
           <span className='self-end'>Formation</span>
         </div>
       </div>
+
+      {/* Whats next section */}
+      <ResizablePanelGroup
+        direction='horizontal'
+        className='max-w-md rounded-lg border md:min-w-2/3 flex mx-auto mt-4'
+      >
+        <ResizablePanel defaultSize={50}>
+          <div className='flex flex-col items-start h-[500px] justify-center p-6'>
+            <h1 className={`${bebasFont.className} text-5xl text-ednavy`}>
+              What&apos;s Next?
+            </h1>
+            <div className='mt-4'>
+              <h3 className='text-edorange text-3xl'>
+                {content[currentIndex].title}
+              </h3>
+              <p>{content[currentIndex].subTitle}</p>
+            </div>
+          </div>
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel defaultSize={50}>
+          <ResizablePanelGroup direction='vertical'>
+            <ResizablePanel defaultSize={75}>
+              <div className='flex h-full items-center justify-center p-6'>
+                <Image
+                  src={`/assets/next${currentIndex}.jpg`}
+                  alt='upcoming-features'
+                  height={500}
+                  width={250}
+                />
+              </div>
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel defaultSize={25}>
+              <div className='flex h-full items-center justify-center p-6'>
+                <span className='cursor-pointer' onClick={prev}>
+                  <GrPrevious />
+                </span>
+                <span className='cursor-pointer' onClick={next}>
+                  <GrNext />
+                </span>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
