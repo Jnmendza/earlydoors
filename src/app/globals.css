@@ -77,6 +77,10 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-ednavy: #032434;
+  --color-edorange: #e24e1b;
+  --color-edgreen: #177c4c;
+  --color-edcream: #fff5e0;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
