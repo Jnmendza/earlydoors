@@ -3,21 +3,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { bebasFont } from "@/lib/font";
-
-type link = {
-  name: string;
-  href: string;
-};
+import { links } from "@/data/Links";
 
 const Navbar = () => {
   const pathname = usePathname();
-
-  const links: link[] = [
-    { name: "Home", href: "/" },
-    { name: "Events", href: "/events" },
-    { name: "About Us", href: "/aboutus" },
-    { name: "Blog", href: "/blog" },
-  ];
 
   return (
     <nav className='relative w-full flex justify-center py-4'>
@@ -27,7 +16,9 @@ const Navbar = () => {
           <Link
             key={index}
             href={link.href}
-            className={`text-4xl text-ednavy hover:text-edorange px-2 py-2 ${bebasFont.className}`}
+            className={`text-4xl  hover:text-edorange ${
+              pathname === link.href ? "text-edorange" : "text-ednavy"
+            } px-2 py-2 ${bebasFont.className}`}
           >
             {link.name}
           </Link>
