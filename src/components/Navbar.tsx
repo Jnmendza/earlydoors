@@ -14,7 +14,7 @@ const Navbar = () => {
 
   const links: link[] = [
     { name: "Home", href: "/" },
-    { name: "Events", href: "/Events" },
+    { name: "Events", href: "/events" },
     { name: "About Us", href: "/aboutus" },
     { name: "Blog", href: "/blog" },
   ];
@@ -27,7 +27,7 @@ const Navbar = () => {
           <Link
             key={index}
             href={link.href}
-            className={`text-4xl text-doors-navy hover:text-edorange px-2 py-2 ${bebasFont.className}`}
+            className={`text-4xl text-ednavy hover:text-edorange px-2 py-2 ${bebasFont.className}`}
           >
             {link.name}
           </Link>
