@@ -17,10 +17,14 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${bebasFont.className} ${oldStandordFont.className} antialiased`}
+        className={`flex min-h-screen flex-col ${bebasFont.className} ${oldStandordFont.className} antialiased`}
       >
         <Navbar />
-        {children}
+
+        {/* Main content fills space */}
+        <main className='flex-grow'>{children}</main>
+
+        {/* Footer sticks to bottom */}
         <Footer />
       </body>
     </html>
