@@ -20,7 +20,7 @@ const Filters = () => {
   console.log("SELECTED", selectedOptions);
   return (
     <div className='flex flex-col gap-4 p-2 mt-4'>
-      <div className='bg-edorange w-full p-2 mb-4'>
+      <div className='bg-edorange h-[50px] w-full p-2 mb-4'>
         <h3 className='text-edcream text-3xl'>Filters</h3>
       </div>
 
