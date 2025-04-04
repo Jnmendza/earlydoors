@@ -1,12 +1,12 @@
 import React from "react";
 import { bebasFont } from "@/lib/font";
-import { links } from "@/data/Links";
+import { links } from "@/data/links";
 import Link from "next/link";
 import Image from "next/image";
 
 const Footer = () => {
   return (
-    <div className='flex justify-center bg-edorange '>
+    <footer className='flex justify-center bg-edorange '>
       <div
         className={`flex flex-col w-3/4 py-6 h-[300px] text-3xl text-edcream ${bebasFont.className}`}
       >
@@ -41,7 +41,7 @@ const Footer = () => {
           <p>Copied © Earlydoors</p>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
 

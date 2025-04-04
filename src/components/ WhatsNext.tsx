@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/resizable";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import { bebasFont } from "@/lib/font";
-import { content } from "@/data/AboutusContent";
+import { content } from "@/data/aboutuscontent";
 import Image from "next/image";
 
 const WhatsNext = () => {
