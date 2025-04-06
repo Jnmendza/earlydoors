@@ -1,32 +1,38 @@
 "use client";
-import { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import React from "react";
 import { bebasFont } from "@/lib/font";
-import {
-  APIProvider,
-  Map,
-  AdvancedMarker,
-  Pin,
-  InfoWindow,
-  useMap,
-} from "@vis.gl/react-google-maps";
-import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
-import trees from "@/data/trees";
-import { useEffect } from "react";
-import { useMemo } from "react";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import { venues as Venues } from "@prisma/client";
+import Markers from "./Markers";
+import { LOCATIONS } from "@/constants/maps";
+import { API_KEYS, MAP_CONFIG } from "@/constants/api";
+import { TABS } from "@/constants/ui";
 
-const tabs = ["Popular", "Active Doors"];
+const home = LOCATIONS.HOME;
+const apiKey = API_KEYS.GOOGLE_MAPS;
+const mapId = MAP_CONFIG.ID;
+const tabs = TABS;
 
 const MapContainer = () => {
   const [currentTab, setCurrentTab] = useState<string>("Popular");
   const [openMarkerKey, setOpenMarkerKey] = useState<string | null>(null);
+  const [venuesData, setVenuesData] = useState<Venues[]>([]);
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
-  const mapId = process.env.NEXT_PUBLIC_MAP_ID!;
+  useEffect(() => {
+    const fetchVenues = async () => {
+      try {
+        const response = await fetch("/api/venues");
+        const data = await response.json();
+        setVenuesData(data);
+      } catch (error) {
+        console.error("Error fetching venues:", error);
+      }
+    };
 
-  // const position = { lat: 32.715736, lng: -117.161087 };
-  const position = { lat: 43.64, lng: -79.41 };
+    fetchVenues();
+  }, []);
+
   return (
     <APIProvider apiKey={apiKey}>
       <div className='p-2 mt-4'>
@@ -74,13 +80,17 @@ const MapContainer = () => {
             <Map
               style={{ width: "100%", height: "100%" }}
               mapId={mapId}
-              defaultCenter={position}
+              defaultCenter={home}
               defaultZoom={10}
               gestureHandling={"greedy"}
               disableDefaultUI={true}
             >
               <Markers
-                points={trees}
+                points={venuesData.map((venue) => ({
+                  lat: venue.lat,
+                  lng: venue.lng,
+                  key: venue.id,
+                }))}
                 setOpenMarkerKey={setOpenMarkerKey}
                 openMarkerKey={openMarkerKey}
               />
@@ -89,81 +99,6 @@ const MapContainer = () => {
         </div>
       </div>
     </APIProvider>
-  );
-};
-
-type Point = google.maps.LatLngLiteral & { key: string };
-type Props = {
-  points: Point[];
-  setOpenMarkerKey: (key: string | null) => void;
-  openMarkerKey: string | null;
-};
-
-const Markers = ({ points, setOpenMarkerKey, openMarkerKey }: Props) => {
-  const map = useMap();
-  const memoizedPoints = useMemo(() => points, [points]);
-  const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
-  const clusterer = useRef<MarkerClusterer | null>(null);
-
-  useEffect(() => {
-    if (!map) return;
-    if (!clusterer.current) {
-      clusterer.current = new MarkerClusterer({ map });
-    }
-  }, [map]);
-
-  useEffect(() => {
-    clusterer.current?.clearMarkers();
-    clusterer.current?.addMarkers(Object.values(markers));
-  }, [markers]);
-
-  const setMarkerRef = (marker: Marker | null, key: string) => {
-    if (marker && markers[key]) return;
-    if (!marker && !markers[key]) return;
-
-    setMarkers((prev) => {
-      if (marker) {
-        return { ...prev, [key]: marker };
-      } else {
-        const newMarkers = { ...prev };
-        delete newMarkers[key];
-        return newMarkers;
-      }
-    });
-  };
-
-  return (
-    <>
-      {memoizedPoints.map((point, index) => (
-        <React.Fragment key={`marker-${point.key}`}>
-          <AdvancedMarker
-            key={index}
-            ref={(marker) => setMarkerRef(marker, point.key)}
-            position={point}
-            onClick={() =>
-              setOpenMarkerKey(point.key === openMarkerKey ? null : point.key)
-            }
-          >
-            <Pin
-              background={"#E24E1B"}
-              borderColor={"#032434"}
-              glyphColor={"#177C4C"}
-            />
-            {openMarkerKey === point.key && (
-              <InfoWindow
-                position={point}
-                onCloseClick={() => setOpenMarkerKey(null)}
-                key={`info-${point.key}`}
-                anchor={markers[point.key]}
-                shouldFocus={false}
-              >
-                <p>Window</p>
-              </InfoWindow>
-            )}
-          </AdvancedMarker>
-        </React.Fragment>
-      ))}
-    </>
   );
 };
 

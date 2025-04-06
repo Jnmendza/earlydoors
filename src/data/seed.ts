@@ -11,3 +11,7 @@
 //   (gen_random_uuid(), 'd3f0ea3f-111f-48f3-83d5-4138546e2fef', 'Mexico Fans SD', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrCreqUuoVl1TMtueijJhQFc1lR59Z8i8G7A&s', 'San Diego', 'Local supporters of El Tri — the Mexican National Team.', '@mexicofanssd', NULL),
 //   (gen_random_uuid(), '12f2bcc5-dfe6-4322-adee-143392f5ae32', 'Chavos Frontera Ultras', NULL, 'San Diego', 'Community-driven support for San Diego FC.', '@fronteraultras', NULL),
 //   (gen_random_uuid(), '1d9c9f7d-2aa3-4be8-a271-21f742df5c11', 'San Diego RedDevils', NULL, 'San Diego', 'Community-driven support for M.U.F.C.', '@reddevilssd', NULL)
+
+// INSERT INTO venues (id, name, address, city, state, zipcode, lat, lng, website_url, google_maps_url, logo_url, is_active, has_garden, has_big_screen, has_outdoor_screens, is_bookable)
+// VALUES
+//   (gen_random_uuid(), 'Novo Brazil Brewery', '2015 Birch Rd #1017', 'Chula Vista', 'CA', '91915', '32.6236677', '-116.9696748', 'https://novobrazil.com', 'https://maps.app.goo.gl/7u4dgauAR4BHfMyv7', 'https://www.novobrew.com/wp-content/uploads/2024/07/novobrazil-logo.svg', true, true, true, true, false)
