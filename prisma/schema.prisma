@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model supporters_groups {
+  id             String   @id(map: "supporters_group_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  team_id        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  group_logo_url String?
+  city           String
+  description    String
+  website        String?
+  ig_handle      String?
+  teams          teams    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: Restrict, map: "supporters_group_team_id_fkey")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model teams {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  name              String
+  logo_url          String              @default("")
+  league            String
+  country           String
+  supporters_groups supporters_groups[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model venues {
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  name                String
+  address             String
+  city                String
+  lat                 Float
+  lng                 Float
+  website_url         String
+  google_maps_url     String
+  logo_url            String
+  is_active           Boolean
+  has_garden          Boolean
+  has_big_screen      Boolean
+  has_outdoor_screens Boolean
+  is_bookable         Boolean
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  zipcode             String
+  state               String
+}
