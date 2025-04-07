@@ -8,7 +8,7 @@ import {
   Command,
   GalleryVerticalEnd,
   Settings2,
-  SquareTerminal,
+  FilePlus2,
 } from "lucide-react";
 
 import { NavMain } from "@/components/NavMain";
@@ -54,21 +54,21 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Create New",
       url: "#",
-      icon: SquareTerminal,
+      icon: FilePlus2,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Events",
+          url: "/dashboard/events",
+        },
+        {
+          title: "Venues",
           url: "#",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
+          title: "Teams",
           url: "#",
         },
       ],
