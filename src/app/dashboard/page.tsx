@@ -4,7 +4,7 @@ import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const supabase = createClientForBrowser();
   const router = useRouter();
