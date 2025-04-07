@@ -43,7 +43,7 @@ const signOut = async () => {
   if (error) {
     throw error;
   }
-  redirect("/");
+  redirect("/portal");
 };
 
 export { signInWithGoogle, signOut };
