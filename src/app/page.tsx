@@ -1,7 +1,19 @@
+"use client";
 import HomeSideBar from "@/components/HomeSideBar";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (searchParams.get("code")) {
+      router.replace("/");
+    }
+  }, [searchParams, router]);
   return (
     <div className='grid grid-cols-[3.7fr_1fr] w-full h-screen'>
       {/* Image Side */}

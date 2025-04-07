@@ -18,6 +18,7 @@ const Footer = () => {
                 {name}
               </Link>
             ))}
+            <Link href={"/portal"}>Portal</Link>
           </div>
           {/* Right  */}
           <div className='flex flex-col'>
