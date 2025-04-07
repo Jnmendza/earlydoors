@@ -9,7 +9,7 @@ datasource db {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model supporters_groups {
+model SupportersGroup {
   id             String   @id(map: "supporters_group_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at     DateTime @default(now()) @db.Timestamptz(6)
   team_id        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -19,22 +19,23 @@ model supporters_groups {
   description    String
   website        String?
   ig_handle      String?
-  teams          teams    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: Restrict, map: "supporters_group_team_id_fkey")
+  Team           Team     @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: Restrict, map: "supporters_group_team_id_fkey")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model teams {
-  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at        DateTime            @default(now()) @db.Timestamptz(6)
-  name              String
-  logo_url          String              @default("")
-  league            String
-  country           String
-  supporters_groups supporters_groups[]
+model Team {
+  id              String            @id(map: "teams_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  name            String
+  logo_url        String            @default("")
+  league          String
+  country         String
+  Event           Event[]
+  SupportersGroup SupportersGroup[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model venues {
+model Venue {
   created_at          DateTime @default(now()) @db.Timestamptz(6)
   name                String
   address             String
@@ -49,7 +50,26 @@ model venues {
   has_big_screen      Boolean
   has_outdoor_screens Boolean
   is_bookable         Boolean
-  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                  String   @id(map: "venues_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   zipcode             String
   state               String
+  Event               Event[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Event {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  name                String
+  description         String
+  start_time          DateTime  @db.Date
+  end_time            DateTime? @db.Date
+  venue_id            String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  team_id             String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  has_garden          Boolean   @default(false)
+  has_big_screen      Boolean   @default(false)
+  has_outdoor_screens Boolean   @default(false)
+  is_bookable         Boolean   @default(false)
+  Team                Team?     @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Venue               Venue     @relation(fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
