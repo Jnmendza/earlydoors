@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "@/styles/globals.css";
 import { bebasFont, oldStandordFont } from "@/lib/font";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
