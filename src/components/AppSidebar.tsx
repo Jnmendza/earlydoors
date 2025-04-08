@@ -69,7 +69,7 @@ const data = {
         },
         {
           title: "Teams",
-          url: "#",
+          url: "/dashboard/teams",
         },
       ],
     },

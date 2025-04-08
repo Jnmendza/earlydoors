@@ -12,7 +12,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-
 import {
   Select,
   SelectContent,
@@ -61,6 +60,7 @@ const VenuesForm = () => {
               <FormControl>
                 <Input placeholder='name' {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -74,6 +74,7 @@ const VenuesForm = () => {
                 <FormControl>
                   <Input placeholder='address' {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -86,6 +87,7 @@ const VenuesForm = () => {
                 <FormControl>
                   <Input placeholder='city' {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -101,6 +103,7 @@ const VenuesForm = () => {
                 <FormControl>
                   <Input placeholder='zipcode' {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -151,6 +154,7 @@ const VenuesForm = () => {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -169,6 +173,7 @@ const VenuesForm = () => {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -184,6 +189,7 @@ const VenuesForm = () => {
                 <FormControl>
                   <Input type='url' placeholder='website url' {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -196,6 +202,7 @@ const VenuesForm = () => {
                 <FormControl>
                   <Input type='url' placeholder='google map url' {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -208,6 +215,7 @@ const VenuesForm = () => {
                 <FormControl>
                   <Input type='url' placeholder='logo url' {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -285,7 +293,9 @@ const VenuesForm = () => {
           />
         </div>
 
-        <Button type='submit'>Submit</Button>
+        <Button type='submit' className='cursor-pointer'>
+          Submit
+        </Button>
       </form>
     </Form>
   );
