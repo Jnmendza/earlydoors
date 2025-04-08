@@ -13,14 +13,14 @@ import {
 } from "@/components/ui/form";
 import { EventFormData } from "@/lib/validation/eventsSchema";
 import { useForm } from "react-hook-form";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../ui/textarea";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { cn } from "@/lib/utils";
-import { Calendar } from "./ui/calendar";
+import { Calendar } from "../ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Select } from "@radix-ui/react-select";
@@ -29,7 +29,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 
 const EventsForm = () => {
   const form = useForm<EventFormData>({

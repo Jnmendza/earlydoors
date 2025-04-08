@@ -44,7 +44,7 @@ model Venue {
   lng                 Float
   website_url         String
   google_maps_url     String
-  logo_url            String
+  logo_url            String?
   is_active           Boolean
   has_garden          Boolean  @default(false)
   has_big_screen      Boolean  @default(false)

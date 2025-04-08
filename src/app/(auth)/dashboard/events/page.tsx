@@ -1,4 +1,4 @@
-import EventsForm from "@/components/EventsForm";
+import EventsForm from "@/components/forms/EventsForm";
 import React from "react";
 
 const EventsFormPage = () => {

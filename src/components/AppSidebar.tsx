@@ -65,7 +65,7 @@ const data = {
         },
         {
           title: "Venues",
-          url: "#",
+          url: "/dashboard/venues",
         },
         {
           title: "Teams",
