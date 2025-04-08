@@ -61,7 +61,7 @@ const EventsForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Name</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input placeholder='name' {...field} />
                 </FormControl>
                 <FormDescription>Name your upcoming event</FormDescription>
@@ -83,7 +83,7 @@ const EventsForm = () => {
                         variant={"outline"}
                         className={cn(
                           "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground rounded-none"
                         )}
                       >
                         {field.value ? (
@@ -98,10 +98,14 @@ const EventsForm = () => {
                   <PopoverContent className='w-auto p-0' align='start'>
                     <Calendar
                       mode='single'
+                      className='bg-white border-2 border-gray'
                       selected={field.value ? new Date(field.value) : undefined}
                       onSelect={field.onChange}
                       disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
+                        date >
+                          new Date(
+                            new Date().setMonth(new Date().getMonth() + 8)
+                          ) || date < new Date("1900-01-01")
                       }
                       initialFocus
                     />
@@ -124,7 +128,7 @@ const EventsForm = () => {
                 <Textarea
                   placeholder='description'
                   {...field}
-                  className='h-[100px]' // Replace with your desired class for styling
+                  className='h-[100px] rounded-none' // Replace with your desired class for styling
                 />
               </FormControl>
               <FormDescription>
@@ -146,7 +150,7 @@ const EventsForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl className='w-full'>
+                  <FormControl className='w-full rounded-none'>
                     <SelectTrigger>
                       <SelectValue placeholder='Select a football team' />
                     </SelectTrigger>
@@ -173,7 +177,7 @@ const EventsForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl className='w-full'>
+                  <FormControl className='w-full rounded-none'>
                     <SelectTrigger>
                       <SelectValue placeholder='Select a venue for your event' />
                     </SelectTrigger>
@@ -203,7 +207,7 @@ const EventsForm = () => {
                     type='checkbox'
                     checked={field.value}
                     onChange={field.onChange}
-                    className='h-4 w-4'
+                    className='h-4 w-4 rounded-none'
                   />
                 </FormControl>
                 <FormLabel className='!mb-0'>Has Garden</FormLabel>
@@ -254,7 +258,7 @@ const EventsForm = () => {
                     type='checkbox'
                     checked={field.value}
                     onChange={field.onChange}
-                    className='h-4 w-4'
+                    className='h-4 w-4 rounded-none'
                   />
                 </FormControl>
                 <FormLabel className='!mb-0'>Bookable</FormLabel>
@@ -263,7 +267,9 @@ const EventsForm = () => {
           />
         </div>
 
-        <Button type='submit'>Submit</Button>
+        <Button className='rounded-none' type='submit'>
+          Submit
+        </Button>
       </form>
     </Form>
   );

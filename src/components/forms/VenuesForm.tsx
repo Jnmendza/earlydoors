@@ -57,7 +57,7 @@ const VenuesForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
-              <FormControl>
+              <FormControl className='rounded-none'>
                 <Input placeholder='name' {...field} />
               </FormControl>
               <FormMessage />
@@ -71,7 +71,7 @@ const VenuesForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Address</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input placeholder='address' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -84,7 +84,7 @@ const VenuesForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>City</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input placeholder='city' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -100,7 +100,7 @@ const VenuesForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Zipcode</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input placeholder='zipcode' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -117,7 +117,7 @@ const VenuesForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl>
+                  <FormControl className='rounded-none'>
                     <SelectTrigger className='w-full'>
                       <SelectValue placeholder='Select a state' />
                     </SelectTrigger>
@@ -147,7 +147,7 @@ const VenuesForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Latitude</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input
                     type='number'
                     min={-90}
@@ -166,7 +166,7 @@ const VenuesForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Longitude</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input
                     type='number'
                     min={-180}
@@ -188,7 +188,7 @@ const VenuesForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Website Url</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input type='url' placeholder='website url' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -201,7 +201,7 @@ const VenuesForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Google Map Url</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input type='url' placeholder='google map url' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -214,7 +214,7 @@ const VenuesForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Logo Url</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input type='url' placeholder='logo url' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -295,7 +295,7 @@ const VenuesForm = () => {
           />
         </div>
 
-        <Button type='submit' className='cursor-pointer'>
+        <Button type='submit' className='cursor-pointer rounded-none'>
           Submit
         </Button>
       </form>

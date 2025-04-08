@@ -46,7 +46,7 @@ const TeamsForm = () => {
           render={({ field }) => (
             <FormItem className='w-full'>
               <FormLabel>Name</FormLabel>
-              <FormControl>
+              <FormControl className='rounded-none'>
                 <Input placeholder='name' {...field} />
               </FormControl>
               <FormMessage />
@@ -54,20 +54,20 @@ const TeamsForm = () => {
           )}
         />
 
+        <FormField
+          control={form.control}
+          name='logo_url'
+          render={({ field }) => (
+            <FormItem className='w-full'>
+              <FormLabel>Team Logo Url</FormLabel>
+              <FormControl className='rounded-none'>
+                <Input placeholder='logo url' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <div className='flex space-x-4'>
-          <FormField
-            control={form.control}
-            name='logo_url'
-            render={({ field }) => (
-              <FormItem className='w-full'>
-                <FormLabel>Team Logo Url</FormLabel>
-                <FormControl>
-                  <Input placeholder='logo url' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name='league'
@@ -78,7 +78,7 @@ const TeamsForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl>
+                  <FormControl className='rounded-none'>
                     <SelectTrigger className='w-full'>
                       <SelectValue placeholder='Select a league' />
                     </SelectTrigger>
@@ -109,7 +109,7 @@ const TeamsForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl>
+                  <FormControl className='rounded-none'>
                     <SelectTrigger className='w-full'>
                       <SelectValue placeholder='Select a country' />
                     </SelectTrigger>
@@ -131,7 +131,7 @@ const TeamsForm = () => {
             )}
           />
         </div>
-        <Button type='submit' className='cursor-pointer'>
+        <Button type='submit' className='cursor-pointer rounded-none'>
           Submit
         </Button>
       </form>

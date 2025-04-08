@@ -16,7 +16,7 @@ import {
 import { createClientForBrowser } from "@/utils/supabase/client";
 import { Separator } from "@radix-ui/react-separator";
 import { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function DashboardLayout({
@@ -26,6 +26,8 @@ export default function DashboardLayout({
 }) {
   const [user, setUser] = useState<User | null>(null);
   const supabase = createClientForBrowser();
+  const pathname = usePathname();
+  console.log("Pathname", pathname);
   const router = useRouter();
 
   // 1. Check auth state on load
@@ -43,6 +45,23 @@ export default function DashboardLayout({
     getUser();
   }, [router, supabase.auth]);
 
+  const breadcrumbPageText = (() => {
+    switch (pathname) {
+      case "/dashboard":
+        return "Dashboard";
+      case "/dashboard/events":
+        return "Create An Event";
+      case "/dashboard/venues":
+        return "Create A Venue";
+      case "/dashboard/supportersGroups":
+        return "Create A Supporters Group ";
+      case "/dashboard/teams":
+        return "Create A Team ";
+      default:
+        return "Unknown Page";
+    }
+  })();
+
   if (!user) return <div>Loading...</div>;
 
   return (
@@ -56,14 +75,16 @@ export default function DashboardLayout({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className='hidden md:block'>
-                  <BreadcrumbLink href='#'>
-                    Building Your Application
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href='/dashboard'>Dashboard</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className='hidden md:block' />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {pathname !== "/dashboard" && (
+                  <>
+                    <BreadcrumbSeparator className='hidden md:block' />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>{breadcrumbPageText}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </>
+                )}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

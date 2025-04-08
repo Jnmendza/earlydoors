@@ -37,9 +37,9 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "EarlyDoors",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "San Diego",
     },
     {
       name: "Acme Corp.",

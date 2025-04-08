@@ -70,7 +70,7 @@ const SupportersGroupForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Name</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input placeholder='name' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -88,7 +88,7 @@ const SupportersGroupForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl>
+                  <FormControl className='rounded-none'>
                     <SelectTrigger className='w-full'>
                       <SelectValue placeholder='select the team you support' />
                     </SelectTrigger>
@@ -116,7 +116,7 @@ const SupportersGroupForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Logo Url</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input placeholder='enter logo url' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -130,7 +130,7 @@ const SupportersGroupForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>City</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input placeholder='city' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -148,7 +148,7 @@ const SupportersGroupForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl>
+                  <FormControl className='rounded-none'>
                     <SelectTrigger className='w-full'>
                       <SelectValue placeholder='Select a state' />
                     </SelectTrigger>
@@ -177,7 +177,7 @@ const SupportersGroupForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>
-              <FormControl>
+              <FormControl className='rounded-none'>
                 <Textarea
                   placeholder='description'
                   {...field}
@@ -196,7 +196,7 @@ const SupportersGroupForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Website Url</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input type='url' placeholder='website url' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -209,7 +209,7 @@ const SupportersGroupForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>Instagram Handle</FormLabel>
-                <FormControl>
+                <FormControl className='rounded-none'>
                   <Input type='text' placeholder='website url' {...field} />
                 </FormControl>
                 <FormMessage />
@@ -218,7 +218,9 @@ const SupportersGroupForm = () => {
           />
         </div>
 
-        <Button type='submit'>Submit</Button>
+        <Button className='rounded-none' type='submit'>
+          Submit
+        </Button>
       </form>
     </Form>
   );
