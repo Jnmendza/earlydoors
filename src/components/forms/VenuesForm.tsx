@@ -50,7 +50,7 @@ const VenuesForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-10 w-2/3'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 w-2/3'>
         <FormField
           control={form.control}
           name='name'
@@ -117,9 +117,11 @@ const VenuesForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger className='w-full'>
-                    <SelectValue placeholder='Select a state' />
-                  </SelectTrigger>
+                  <FormControl>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select a state' />
+                    </SelectTrigger>
+                  </FormControl>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>States</SelectLabel>
@@ -222,7 +224,7 @@ const VenuesForm = () => {
         </div>
 
         <FormLabel>Venue Details</FormLabel>
-        <div className='grid grid-cols-2 gap-6 -mt-6'>
+        <div className='grid grid-cols-2 gap-4 -mt-3 w-2/3'>
           <FormField
             control={form.control}
             name='has_garden'

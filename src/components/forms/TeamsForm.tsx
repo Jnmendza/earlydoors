@@ -11,7 +11,6 @@ import {
 } from "../ui/form";
 import { TeamFormData } from "@/lib/validation/teamsSchema";
 import { Input } from "../ui/input";
-
 import { TOP_LEAGUES } from "@/constants/leagues";
 import { COUNTRIES } from "@/constants/countries";
 import {
@@ -40,7 +39,7 @@ const TeamsForm = () => {
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-10 w-2/3'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 w-2/3'>
         <FormField
           control={form.control}
           name='name'
@@ -79,9 +78,11 @@ const TeamsForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger className='w-full'>
-                    <SelectValue placeholder='Select a league' />
-                  </SelectTrigger>
+                  <FormControl>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select a league' />
+                    </SelectTrigger>
+                  </FormControl>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Leagues</SelectLabel>
@@ -108,9 +109,11 @@ const TeamsForm = () => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger className='w-full'>
-                    <SelectValue placeholder='Select a country' />
-                  </SelectTrigger>
+                  <FormControl>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select a country' />
+                    </SelectTrigger>
+                  </FormControl>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Country</SelectLabel>

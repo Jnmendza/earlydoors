@@ -71,6 +71,10 @@ const data = {
           title: "Teams",
           url: "/dashboard/teams",
         },
+        {
+          title: "Supporter Groups",
+          url: "/dashboard/supportersGroups",
+        },
       ],
     },
     {

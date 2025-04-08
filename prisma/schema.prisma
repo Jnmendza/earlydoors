@@ -17,8 +17,9 @@ model SupportersGroup {
   group_logo_url String?
   city           String
   description    String
-  website        String?
+  website_url    String?
   ig_handle      String?
+  state          String?
   Team           Team     @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: Restrict, map: "supporters_group_team_id_fkey")
 }
 

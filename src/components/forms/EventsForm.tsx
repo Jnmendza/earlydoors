@@ -52,7 +52,7 @@ const EventsForm = () => {
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-10 w-2/3'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 w-2/3'>
         {/* Name and Date */}
         <div className='flex justify-between space-x-4'>
           <FormField
@@ -192,7 +192,7 @@ const EventsForm = () => {
         </div>
         {/* Filters */}
         <FormLabel>Venue Details</FormLabel>
-        <div className='grid grid-cols-2 gap-6 -mt-4'>
+        <div className='grid grid-cols-2 gap-4 -mt-3 w-2/3'>
           <FormField
             control={form.control}
             name='has_garden'
