@@ -46,10 +46,10 @@ model Venue {
   google_maps_url     String
   logo_url            String
   is_active           Boolean
-  has_garden          Boolean
-  has_big_screen      Boolean
-  has_outdoor_screens Boolean
-  is_bookable         Boolean
+  has_garden          Boolean  @default(false)
+  has_big_screen      Boolean  @default(false)
+  has_outdoor_screens Boolean  @default(false)
+  is_bookable         Boolean  @default(false)
   id                  String   @id(map: "venues_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   zipcode             String
   state               String
