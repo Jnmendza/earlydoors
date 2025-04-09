@@ -1,7 +1,10 @@
 "use client";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { GroupsFormSchema } from "@/lib/validation/groupsSchema";
+import {
+  groupsFormSchema,
+  GroupsFormSchema,
+} from "@/lib/validation/groupsSchema";
 import {
   Form,
   FormControl,
@@ -23,6 +26,8 @@ import {
 } from "../ui/select";
 import { US_STATES } from "@/constants/us-states";
 import { Textarea } from "../ui/textarea";
+import RequiredLabel from "../RequiredLabel";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const TEAMS = [
   {
@@ -45,6 +50,7 @@ const TEAMS = [
 
 const SupportersGroupForm = () => {
   const form = useForm<GroupsFormSchema>({
+    resolver: zodResolver(groupsFormSchema),
     defaultValues: {
       name: "",
       team_id: "",
@@ -56,8 +62,8 @@ const SupportersGroupForm = () => {
     },
   });
 
-  const onSubmit = () => {
-    console.log("On submit clicked");
+  const onSubmit = (values: GroupsFormSchema) => {
+    console.log("On submit clicked", values);
   };
 
   return (
@@ -69,7 +75,9 @@ const SupportersGroupForm = () => {
             name='name'
             render={({ field }) => (
               <FormItem className='w-full'>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>
+                  <RequiredLabel label='Name' />
+                </FormLabel>
                 <FormControl className='rounded-none'>
                   <Input placeholder='name' {...field} />
                 </FormControl>
@@ -83,7 +91,9 @@ const SupportersGroupForm = () => {
             name='team_id'
             render={({ field }) => (
               <FormItem className='w-full'>
-                <FormLabel>Team</FormLabel>
+                <FormLabel>
+                  <RequiredLabel label='Team' />
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -93,6 +103,8 @@ const SupportersGroupForm = () => {
                       <SelectValue placeholder='select the team you support' />
                     </SelectTrigger>
                   </FormControl>
+                  <FormMessage />
+
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Team</SelectLabel>
@@ -117,7 +129,10 @@ const SupportersGroupForm = () => {
               <FormItem className='w-full'>
                 <FormLabel>Logo Url</FormLabel>
                 <FormControl className='rounded-none'>
-                  <Input placeholder='enter logo url' {...field} />
+                  <Input
+                    placeholder='https://example.com/logo.png'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -129,7 +144,9 @@ const SupportersGroupForm = () => {
             name='city'
             render={({ field }) => (
               <FormItem className='w-full'>
-                <FormLabel>City</FormLabel>
+                <FormLabel>
+                  <RequiredLabel label='City' />
+                </FormLabel>
                 <FormControl className='rounded-none'>
                   <Input placeholder='city' {...field} />
                 </FormControl>
@@ -143,7 +160,9 @@ const SupportersGroupForm = () => {
             name='state'
             render={({ field }) => (
               <FormItem className='w-full'>
-                <FormLabel>State</FormLabel>
+                <FormLabel>
+                  <RequiredLabel label='State' />
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -176,7 +195,9 @@ const SupportersGroupForm = () => {
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>
+                <RequiredLabel label='Description' />
+              </FormLabel>
               <FormControl className='rounded-none'>
                 <Textarea
                   placeholder='description'
@@ -197,7 +218,11 @@ const SupportersGroupForm = () => {
               <FormItem className='w-full'>
                 <FormLabel>Website Url</FormLabel>
                 <FormControl className='rounded-none'>
-                  <Input type='url' placeholder='website url' {...field} />
+                  <Input
+                    type='url'
+                    placeholder='https://example.com'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -210,7 +235,7 @@ const SupportersGroupForm = () => {
               <FormItem className='w-full'>
                 <FormLabel>Instagram Handle</FormLabel>
                 <FormControl className='rounded-none'>
-                  <Input type='text' placeholder='website url' {...field} />
+                  <Input type='text' placeholder='@handle' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -4,7 +4,7 @@ import React from "react";
 
 const EventsFormPage = () => {
   return (
-    <div className='flex flex-col mt-10 items-center h-screen'>
+    <div className='flex flex-col mt-10 p-4 items-center h-screen'>
       <h3 className={`mb-6 ${bebasFont.className} text-edorange text-2xl`}>
         Create a new event
       </h3>

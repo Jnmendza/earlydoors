@@ -1,5 +1,5 @@
 "use client";
-import { VenueFormData } from "@/lib/validation/venuesSchema";
+import { VenueFormData, venueFormSchema } from "@/lib/validation/venuesSchema";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { US_STATES } from "@/constants/us-states";
@@ -22,17 +22,19 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Button } from "../ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const VenuesForm = () => {
   const form = useForm<VenueFormData>({
+    resolver: zodResolver(venueFormSchema),
     defaultValues: {
       name: "",
       address: "",
       city: "",
       zipcode: "",
       state: "",
-      lat: 0.0,
-      lng: 0.0,
+      lat: undefined,
+      lng: undefined,
       website_url: "",
       google_map_url: "",
       logo_url: "",
@@ -44,8 +46,8 @@ const VenuesForm = () => {
     },
   });
 
-  const onSubmit = () => {
-    console.log("On submit clicked");
+  const onSubmit = (values: VenueFormData) => {
+    console.log("On submit clicked", values);
   };
 
   return (
@@ -149,10 +151,10 @@ const VenuesForm = () => {
                 <FormLabel>Latitude</FormLabel>
                 <FormControl className='rounded-none'>
                   <Input
-                    type='number'
+                    type='any'
                     min={-90}
                     max={90}
-                    placeholder='lat'
+                    placeholder='e.g 32.715736'
                     {...field}
                   />
                 </FormControl>
@@ -168,10 +170,10 @@ const VenuesForm = () => {
                 <FormLabel>Longitude</FormLabel>
                 <FormControl className='rounded-none'>
                   <Input
-                    type='number'
+                    type='any'
                     min={-180}
                     max={180}
-                    placeholder='lat'
+                    placeholder='e.g -117.161087'
                     {...field}
                   />
                 </FormControl>
@@ -181,15 +183,19 @@ const VenuesForm = () => {
           />
         </div>
 
-        <div className='flex space-x-4'>
+        <div className='flex gap-4'>
           <FormField
             control={form.control}
             name='website_url'
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='flex-1'>
                 <FormLabel>Website Url</FormLabel>
                 <FormControl className='rounded-none'>
-                  <Input type='url' placeholder='website url' {...field} />
+                  <Input
+                    type='url'
+                    placeholder='https://example.com'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -199,10 +205,14 @@ const VenuesForm = () => {
             control={form.control}
             name='google_map_url'
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='flex-1'>
                 <FormLabel>Google Map Url</FormLabel>
                 <FormControl className='rounded-none'>
-                  <Input type='url' placeholder='google map url' {...field} />
+                  <Input
+                    type='url'
+                    placeholder='https://www.google.com/maps..'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -212,10 +222,14 @@ const VenuesForm = () => {
             control={form.control}
             name='logo_url'
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='flex-1'>
                 <FormLabel>Logo Url</FormLabel>
                 <FormControl className='rounded-none'>
-                  <Input type='url' placeholder='logo url' {...field} />
+                  <Input
+                    type='url'
+                    placeholder='https://example.com/logo.png'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

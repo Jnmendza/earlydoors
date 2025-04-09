@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { EventFormData } from "@/lib/validation/eventsSchema";
+import { EventFormData, eventFormSchema } from "@/lib/validation/eventsSchema";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import {
@@ -30,9 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import RequiredLabel from "../RequiredLabel";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const EventsForm = () => {
   const form = useForm<EventFormData>({
+    resolver: zodResolver(eventFormSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -47,8 +50,8 @@ const EventsForm = () => {
     },
   });
 
-  const onSubmit = () => {
-    console.log("On submit clicked");
+  const onSubmit = (values: EventFormData) => {
+    console.log("On submit clicked", values);
   };
   return (
     <Form {...form}>
@@ -60,7 +63,9 @@ const EventsForm = () => {
             name='name'
             render={({ field }) => (
               <FormItem className='w-full'>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>
+                  <RequiredLabel label='Name' />
+                </FormLabel>
                 <FormControl className='rounded-none'>
                   <Input placeholder='name' {...field} />
                 </FormControl>
@@ -75,7 +80,9 @@ const EventsForm = () => {
             name='start_time'
             render={({ field }) => (
               <FormItem className='flex flex-col'>
-                <FormLabel>Start Time</FormLabel>
+                <FormLabel>
+                  <RequiredLabel label='Start Time' />
+                </FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -172,7 +179,9 @@ const EventsForm = () => {
             name='venue_id'
             render={({ field }) => (
               <FormItem className='w-1/2'>
-                <FormLabel>Venue</FormLabel>
+                <FormLabel>
+                  <RequiredLabel label='Venue' />
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}

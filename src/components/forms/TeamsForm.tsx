@@ -9,7 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { TeamFormData } from "@/lib/validation/teamsSchema";
+import { TeamFormData, teamFormSchema } from "@/lib/validation/teamsSchema";
 import { Input } from "../ui/input";
 import { TOP_LEAGUES } from "@/constants/leagues";
 import { COUNTRIES } from "@/constants/countries";
@@ -23,9 +23,11 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Button } from "../ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const TeamsForm = () => {
   const form = useForm<TeamFormData>({
+    resolver: zodResolver(teamFormSchema),
     defaultValues: {
       name: "",
       logo_url: "",
@@ -34,8 +36,8 @@ const TeamsForm = () => {
     },
   });
 
-  const onSubmit = () => {
-    console.log("On submit clicked");
+  const onSubmit = (values: TeamFormData) => {
+    console.log("On submit clicked", values);
   };
   return (
     <Form {...form}>
@@ -61,7 +63,7 @@ const TeamsForm = () => {
             <FormItem className='w-full'>
               <FormLabel>Team Logo Url</FormLabel>
               <FormControl className='rounded-none'>
-                <Input placeholder='logo url' {...field} />
+                <Input placeholder='https://example.com/logo.png' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
