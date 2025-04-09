@@ -30,7 +30,7 @@ import { User } from "@supabase/supabase-js";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
-  console.log("User", user);
+
   const {
     user_metadata: { avatar_url, name, email },
   } = user;
