@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { bebasFont } from "@/lib/font";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { venues as Venues } from "@prisma/client";
+import { Venue } from "@prisma/client";
 import Markers from "./Markers";
 import { LOCATIONS } from "@/constants/maps";
 import { API_KEYS, MAP_CONFIG } from "@/constants/api";
@@ -17,7 +17,7 @@ const tabs = TABS;
 const MapContainer = () => {
   const [currentTab, setCurrentTab] = useState<string>("Popular");
   const [openMarkerKey, setOpenMarkerKey] = useState<string | null>(null);
-  const [venuesData, setVenuesData] = useState<Venues[]>([]);
+  const [venuesData, setVenuesData] = useState<Venue[]>([]);
 
   useEffect(() => {
     const fetchVenues = async () => {

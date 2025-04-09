@@ -8,7 +8,7 @@ import {
   Command,
   GalleryVerticalEnd,
   Settings2,
-  SquareTerminal,
+  FilePlus2,
 } from "lucide-react";
 
 import { NavMain } from "@/components/NavMain";
@@ -37,9 +37,9 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "EarlyDoors",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "San Diego",
     },
     {
       name: "Acme Corp.",
@@ -54,22 +54,26 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Create New",
       url: "#",
-      icon: SquareTerminal,
+      icon: FilePlus2,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Events",
+          url: "/dashboard/events",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Venues",
+          url: "/dashboard/venues",
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "Teams",
+          url: "/dashboard/teams",
+        },
+        {
+          title: "Supporter Groups",
+          url: "/dashboard/supportersGroups",
         },
       ],
     },

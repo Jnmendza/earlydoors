@@ -13,35 +13,61 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useUserStore } from "@/store/user-store";
 import { createClientForBrowser } from "@/utils/supabase/client";
 import { Separator } from "@radix-ui/react-separator";
-import { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(null);
   const supabase = createClientForBrowser();
   const router = useRouter();
+  const pathname = usePathname();
+  const { user, setUser, lastChecked, setLastChecked } = useUserStore();
 
   // 1. Check auth state on load
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user?.role === "ADMIN") {
-        router.push("/portal"); // Kick non-admins
-      } else {
-        setUser(user);
+    const fetchUser = async () => {
+      // Only check if no user or last check was > 5 minutes ago
+      const shouldRefresh =
+        !user || !lastChecked || Date.now() - lastChecked > 5 * 60 * 1000;
+
+      if (shouldRefresh) {
+        const { data, error } = await supabase.auth.getUser();
+
+        if (error || !data.user || data.user.user_metadata?.role !== "ADMIN") {
+          router.push("/portal");
+          return;
+        }
+
+        setUser(data.user);
+        setLastChecked(Date.now());
       }
     };
-    getUser();
-  }, [router, supabase.auth]);
+
+    fetchUser();
+  }, [supabase, router, user, lastChecked, setUser, setLastChecked]);
+
+  const breadcrumbPageText = (() => {
+    switch (pathname) {
+      case "/dashboard":
+        return "Dashboard";
+      case "/dashboard/events":
+        return "Create An Event";
+      case "/dashboard/venues":
+        return "Create A Venue";
+      case "/dashboard/supportersGroups":
+        return "Create A Supporters Group ";
+      case "/dashboard/teams":
+        return "Create A Team ";
+      default:
+        return "Unknown Page";
+    }
+  })();
 
   if (!user) return <div>Loading...</div>;
 
@@ -56,14 +82,16 @@ export default function DashboardLayout({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className='hidden md:block'>
-                  <BreadcrumbLink href='#'>
-                    Building Your Application
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href='/dashboard'>Dashboard</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className='hidden md:block' />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {pathname !== "/dashboard" && (
+                  <>
+                    <BreadcrumbSeparator className='hidden md:block' />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>{breadcrumbPageText}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </>
+                )}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

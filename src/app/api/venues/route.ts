@@ -1,4 +1,4 @@
-import { getVenues } from "@/data/venues";
+import { getVenues } from "@/data/venue";
 import { NextResponse } from "next/server";
 
 export async function GET() {
