@@ -1,6 +1,7 @@
 import { getTeams } from "@/data/team";
 import { teamFormSchema } from "@/lib/validation/teamsSchema";
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
 export async function GET() {
   try {
@@ -26,6 +27,19 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    const { name, logo_url, league, country } = parseResult.data;
+
+    const newTeam = await db.team.create({
+      data: {
+        name,
+        logo_url,
+        league,
+        country,
+        status: "PENDING",
+      },
+    });
+    return NextResponse.json(newTeam, { status: 201 });
   } catch (error) {
     console.error("Error creating a new team", error);
     return NextResponse.json(
