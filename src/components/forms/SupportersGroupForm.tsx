@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   groupsFormSchema,
@@ -30,27 +30,10 @@ import RequiredLabel from "../RequiredLabel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useClubStore } from "@/store/club-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
-
-// const TEAMS = [
-//   {
-//     id: "12f2bcc5-dfe6-4322-adee-143392f5ae32",
-//     name: "San Diego FC",
-//     logo_url:
-//       "https://upload.wikimedia.org/wikipedia/en/6/6f/San_Diego_FC_logo.svg",
-//     league: "MLS",
-//     country: "USA",
-//   },
-//   {
-//     id: "1d9c9f7d-2aa3-4be8-a271-21f742df5c11",
-//     name: "Manchester United",
-//     logo_url:
-//       "https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",
-//     league: "EPL",
-//     country: "England",
-//   },
-// ];
+import { toast } from "sonner";
 
 const SupportersGroupForm = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { fetchClubs, clubs } = useClubStore();
 
   const form = useForm<GroupsFormSchema>({
@@ -70,8 +53,40 @@ const SupportersGroupForm = () => {
     fetchClubs();
   }, [fetchClubs]);
 
-  const onSubmit = (values: GroupsFormSchema) => {
-    console.log("On submit clicked", values);
+  const onSubmit = async (values: GroupsFormSchema) => {
+    setIsLoading(true);
+    const promise = async () => {
+      const res = await fetch("/api/supportersGroups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error?.message || "Failed to create supporters group");
+      }
+
+      return { name: values.name };
+    };
+
+    toast.promise(promise, {
+      loading: "Creating supporters group...",
+      success: (data) => {
+        setIsLoading(false);
+        form.reset();
+        return `${data.name} was successfully created`;
+      },
+      error: (err) => {
+        setIsLoading(false);
+        return (
+          err.message ||
+          "An unexpected error occurred while attempting to create a supporters group."
+        );
+      },
+    });
   };
 
   return (
@@ -100,7 +115,7 @@ const SupportersGroupForm = () => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>
-                  <RequiredLabel label='Team' />
+                  <RequiredLabel label='Club' />
                 </FormLabel>
                 <Select
                   onValueChange={field.onChange}
@@ -108,19 +123,19 @@ const SupportersGroupForm = () => {
                 >
                   <FormControl className='rounded-none'>
                     <SelectTrigger className='w-full'>
-                      <SelectValue placeholder='select the team you support' />
+                      <SelectValue placeholder='select the club you support' />
                     </SelectTrigger>
                   </FormControl>
                   <FormMessage />
 
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Team</SelectLabel>
+                      <SelectLabel>Club</SelectLabel>
                       {clubs.map(({ id, logo_url, name }, index) => (
                         <SelectItemWithIcon
                           key={index}
                           teamId={id}
-                          teamLogoUrl={logo_url}
+                          teamLogoUrl={logo_url ?? ""}
                           teamName={name}
                         />
                       ))}
@@ -213,7 +228,7 @@ const SupportersGroupForm = () => {
                 <Textarea
                   placeholder='description'
                   {...field}
-                  className='h-[100px]' // Replace with your desired class for styling
+                  className='h-[100px]'
                 />
               </FormControl>
               <FormMessage />
@@ -254,7 +269,11 @@ const SupportersGroupForm = () => {
           />
         </div>
 
-        <Button className='rounded-none' type='submit'>
+        <Button
+          className='rounded-none cursor-pointer'
+          type='submit'
+          disabled={isLoading}
+        >
           Submit
         </Button>
       </form>

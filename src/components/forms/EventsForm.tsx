@@ -240,7 +240,7 @@ const EventsForm = () => {
                       <SelectItemWithIcon
                         key={index}
                         teamId={id}
-                        teamLogoUrl={logo_url}
+                        teamLogoUrl={logo_url ?? ""}
                         teamName={name}
                       />
                     ))}

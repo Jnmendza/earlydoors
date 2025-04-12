@@ -1,6 +1,6 @@
 import { getVenues } from "@/data/venue";
 import { db } from "@/lib/db";
-import { status_enum, Venue } from "@prisma/client";
+import { Status, Venue } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         has_outdoor_screens: body.has_outdoor_screens,
         is_bookable: body.is_bookable,
         is_active: false,
-        status: status_enum.PENDING,
+        status: Status.PENDING,
       },
     });
 

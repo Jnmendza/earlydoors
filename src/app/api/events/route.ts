@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEvents } from "@/data/event";
 import { db } from "@/lib/db";
-import { Event, status_enum } from "@prisma/client";
+import { Event, Status } from "@prisma/client";
 
 export async function GET() {
   const events = await getEvents();
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         has_big_screen: body.has_big_screen,
         has_outdoor_screens: body.has_outdoor_screens,
         is_bookable: body.is_bookable,
-        status: status_enum.PENDING,
+        status: Status.PENDING,
       },
     });
 

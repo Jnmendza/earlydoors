@@ -2,6 +2,7 @@ import { getClubs } from "@/data/club";
 import { teamFormSchema } from "@/lib/validation/teamsSchema";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { Status } from "@prisma/client";
 
 export async function GET() {
   try {
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
         logo_url,
         league,
         country,
-        status: "PENDING",
+        status: Status.PENDING,
       },
     });
     return NextResponse.json(newTeam, { status: 201 });
