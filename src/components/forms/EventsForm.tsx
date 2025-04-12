@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,8 +32,19 @@ import {
 } from "../ui/select";
 import RequiredLabel from "../RequiredLabel";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTeamStore } from "@/store/team-store";
+import { useVenueStore } from "@/store/venue-store";
+import SelectItemWithIcon from "../SelectItemWithIcon";
 
 const EventsForm = () => {
+  const { fetchTeams, teams } = useTeamStore();
+  const { fetchVenues, venues } = useVenueStore();
+
+  useEffect(() => {
+    fetchTeams();
+    fetchVenues();
+  }, [fetchTeams, fetchVenues]);
+
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
@@ -56,7 +67,6 @@ const EventsForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 w-2/3'>
-        {/* Name and Date */}
         <div className='flex justify-between space-x-4'>
           <FormField
             control={form.control}
@@ -163,9 +173,14 @@ const EventsForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                    <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                    <SelectItem value='m@support.com'>m@support.com</SelectItem>
+                    {teams.map(({ id, logo_url, name }, index) => (
+                      <SelectItemWithIcon
+                        key={index}
+                        teamId={id}
+                        teamLogoUrl={logo_url}
+                        teamName={name}
+                      />
+                    ))}
                   </SelectContent>
                 </Select>
 
@@ -192,9 +207,11 @@ const EventsForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                    <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                    <SelectItem value='m@support.com'>m@support.com</SelectItem>
+                    {venues.map((venue, index) => (
+                      <SelectItem key={index} value={venue.id}>
+                        {venue.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
 

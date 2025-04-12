@@ -27,6 +27,7 @@ export const eventFormSchema = z.object({
   is_bookable: z.boolean({
     required_error: "Please specify if the venue is bookable",
   }),
+  // status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
 });
 
 export type EventFormData = z.infer<typeof eventFormSchema>;

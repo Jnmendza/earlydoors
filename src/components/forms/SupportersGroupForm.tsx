@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   groupsFormSchema,
@@ -28,27 +28,31 @@ import { US_STATES } from "@/constants/us-states";
 import { Textarea } from "../ui/textarea";
 import RequiredLabel from "../RequiredLabel";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTeamStore } from "@/store/team-store";
+import SelectItemWithIcon from "../SelectItemWithIcon";
 
-const TEAMS = [
-  {
-    id: "12f2bcc5-dfe6-4322-adee-143392f5ae32",
-    name: "San Diego FC",
-    logo_url:
-      "https://upload.wikimedia.org/wikipedia/en/6/6f/San_Diego_FC_logo.svg",
-    league: "MLS",
-    country: "USA",
-  },
-  {
-    id: "1d9c9f7d-2aa3-4be8-a271-21f742df5c11",
-    name: "Manchester United",
-    logo_url:
-      "https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",
-    league: "EPL",
-    country: "England",
-  },
-];
+// const TEAMS = [
+//   {
+//     id: "12f2bcc5-dfe6-4322-adee-143392f5ae32",
+//     name: "San Diego FC",
+//     logo_url:
+//       "https://upload.wikimedia.org/wikipedia/en/6/6f/San_Diego_FC_logo.svg",
+//     league: "MLS",
+//     country: "USA",
+//   },
+//   {
+//     id: "1d9c9f7d-2aa3-4be8-a271-21f742df5c11",
+//     name: "Manchester United",
+//     logo_url:
+//       "https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg",
+//     league: "EPL",
+//     country: "England",
+//   },
+// ];
 
 const SupportersGroupForm = () => {
+  const { fetchTeams, teams } = useTeamStore();
+
   const form = useForm<GroupsFormSchema>({
     resolver: zodResolver(groupsFormSchema),
     defaultValues: {
@@ -61,6 +65,10 @@ const SupportersGroupForm = () => {
       ig_handle: "",
     },
   });
+
+  useEffect(() => {
+    fetchTeams();
+  }, [fetchTeams]);
 
   const onSubmit = (values: GroupsFormSchema) => {
     console.log("On submit clicked", values);
@@ -108,10 +116,13 @@ const SupportersGroupForm = () => {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Team</SelectLabel>
-                      {TEAMS.map((team, index) => (
-                        <SelectItem key={index} value={team.id}>
-                          {team.name}
-                        </SelectItem>
+                      {teams.map(({ id, logo_url, name }, index) => (
+                        <SelectItemWithIcon
+                          key={index}
+                          teamId={id}
+                          teamLogoUrl={logo_url}
+                          teamName={name}
+                        />
                       ))}
                     </SelectGroup>
                   </SelectContent>
