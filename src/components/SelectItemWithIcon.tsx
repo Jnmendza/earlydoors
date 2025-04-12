@@ -15,8 +15,8 @@ const SelectItemWithIcon = ({ teamId, teamLogoUrl, teamName }: SelectProps) => {
         <Image
           src={teamLogoUrl}
           alt='logo'
-          width={30}
-          height={30}
+          width={25}
+          height={25}
           className='h-auto w-[30px]'
         />
         {teamName}

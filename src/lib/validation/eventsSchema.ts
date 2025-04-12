@@ -3,13 +3,12 @@ import { z } from "zod";
 export const eventFormSchema = z.object({
   name: z.string().min(1, { message: "Event name is required" }),
   description: z.string().optional(),
+  date: z.date({ required_error: "Date is required" }),
+
   start_time: z
     .string()
-    .datetime({ message: "Start time must be a valid datetime" }),
-  end_time: z
-    .string()
-    .datetime({ message: "End time must be a valid datetime string" })
-    .optional(),
+    .regex(/^([0-1]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)"),
+
   venue_id: z.string().uuid({ message: "A valid venue must be selected" }),
   team_id: z
     .string()
@@ -27,7 +26,6 @@ export const eventFormSchema = z.object({
   is_bookable: z.boolean({
     required_error: "Please specify if the venue is bookable",
   }),
-  // status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
 });
 
 export type EventFormData = z.infer<typeof eventFormSchema>;

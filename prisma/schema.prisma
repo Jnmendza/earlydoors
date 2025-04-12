@@ -66,8 +66,8 @@ model Event {
   created_at          DateTime     @default(now()) @db.Timestamptz(6)
   name                String
   description         String
-  start_time          DateTime     @db.Date
-  end_time            DateTime?    @db.Date
+  start_time          String
+  end_time            String?
   venue_id            String       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   team_id             String?      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   has_garden          Boolean      @default(false)
@@ -75,6 +75,7 @@ model Event {
   has_outdoor_screens Boolean      @default(false)
   is_bookable         Boolean      @default(false)
   status              status_enum? @default(PENDING)
+  date                DateTime     @db.Date
   Team                Team?        @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Venue               Venue        @relation(fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

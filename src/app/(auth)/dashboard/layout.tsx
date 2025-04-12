@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { AppSidebar } from "@/components/AppSidebar";
 import {
   Breadcrumb,
@@ -17,7 +18,7 @@ import { useUserStore } from "@/store/user-store";
 import { createClientForBrowser } from "@/utils/supabase/client";
 import { Separator } from "@radix-ui/react-separator";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Toaster } from "sonner";
 
 export default function DashboardLayout({
   children,
@@ -97,6 +98,7 @@ export default function DashboardLayout({
           </div>
         </header>
         {children}
+        <Toaster richColors position='bottom-right' />
       </SidebarInset>
     </SidebarProvider>
   );

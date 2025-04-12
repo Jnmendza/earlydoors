@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,8 +35,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTeamStore } from "@/store/team-store";
 import { useVenueStore } from "@/store/venue-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
+import { toast } from "sonner";
 
 const EventsForm = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { fetchTeams, teams } = useTeamStore();
   const { fetchVenues, venues } = useVenueStore();
 
@@ -51,7 +53,7 @@ const EventsForm = () => {
       name: "",
       description: "",
       start_time: "",
-      end_time: "",
+      date: undefined,
       venue_id: "",
       team_id: "",
       has_garden: false,
@@ -61,37 +63,59 @@ const EventsForm = () => {
     },
   });
 
-  const onSubmit = (values: EventFormData) => {
-    console.log("On submit clicked", values);
+  const onSubmit = async (values: EventFormData) => {
+    setIsLoading(true);
+    const cleanValues = {
+      ...values,
+      date: values.date.toISOString(), // 🔥 convert to ISO string
+    };
+
+    const promise = async () => {
+      const res = await fetch("/api/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cleanValues),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error?.message || "Failed to create event");
+      }
+
+      return { name: values.name };
+    };
+
+    toast.promise(promise, {
+      loading: "Creating event...",
+      success: (data) => {
+        setIsLoading(false);
+        return `${data.name} was successfully created!`;
+      },
+      error: (err) => {
+        setIsLoading(false);
+        return err.message || "An unexpected error occurred";
+      },
+    });
   };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 w-2/3'>
+      <form
+        onSubmit={form.handleSubmit(onSubmit, (errors) =>
+          console.log("Validation errors", errors)
+        )}
+        className='space-y-6 w-2/3'
+      >
         <div className='flex justify-between space-x-4'>
           <FormField
             control={form.control}
-            name='name'
+            name='date'
             render={({ field }) => (
-              <FormItem className='w-full'>
+              <FormItem className='flex flex-col w-full'>
                 <FormLabel>
-                  <RequiredLabel label='Name' />
-                </FormLabel>
-                <FormControl className='rounded-none'>
-                  <Input placeholder='name' {...field} />
-                </FormControl>
-                <FormDescription>Name your upcoming event</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='start_time'
-            render={({ field }) => (
-              <FormItem className='flex flex-col'>
-                <FormLabel>
-                  <RequiredLabel label='Start Time' />
+                  <RequiredLabel label='Date' />
                 </FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -99,7 +123,7 @@ const EventsForm = () => {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
+                          "w-full pl-3 text-left font-normal",
                           !field.value && "text-muted-foreground rounded-none"
                         )}
                       >
@@ -118,11 +142,13 @@ const EventsForm = () => {
                       className='bg-white border-2 border-gray'
                       selected={field.value ? new Date(field.value) : undefined}
                       onSelect={field.onChange}
-                      disabled={(date) =>
-                        date >
-                          new Date(
-                            new Date().setMonth(new Date().getMonth() + 8)
-                          ) || date < new Date("1900-01-01")
+                      disabled={
+                        (date) =>
+                          date < new Date(new Date().setHours(0, 0, 0, 0)) || // ✅ block past dates
+                          date >
+                            new Date(
+                              new Date().setMonth(new Date().getMonth() + 8)
+                            ) // ⛔️ 8 months into the future
                       }
                       initialFocus
                     />
@@ -133,7 +159,40 @@ const EventsForm = () => {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name='start_time'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel>
+                  <RequiredLabel label='Start Time (HH:mm)' />
+                </FormLabel>
+                <FormControl className='rounded-none'>
+                  <Input placeholder='eg. 15:30' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
+
+        <FormField
+          control={form.control}
+          name='name'
+          render={({ field }) => (
+            <FormItem className='w-full'>
+              <FormLabel>
+                <RequiredLabel label='Event Name' />
+              </FormLabel>
+              <FormControl className='rounded-none'>
+                <Input placeholder='name' {...field} />
+              </FormControl>
+              <FormDescription>Name your upcoming event</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {/* Description */}
         <FormField
           control={form.control}
@@ -293,8 +352,12 @@ const EventsForm = () => {
           />
         </div>
 
-        <Button className='rounded-none' type='submit'>
-          Submit
+        <Button
+          className='rounded-none cursor-pointer'
+          type='submit'
+          disabled={isLoading}
+        >
+          {isLoading ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Form>
