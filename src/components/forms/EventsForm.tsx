@@ -91,11 +91,15 @@ const EventsForm = () => {
       loading: "Creating event...",
       success: (data) => {
         setIsLoading(false);
+        form.reset();
         return `${data.name} was successfully created!`;
       },
       error: (err) => {
         setIsLoading(false);
-        return err.message || "An unexpected error occurred";
+        return (
+          err.message ||
+          "An unexpected error occurred while attempting to create an event."
+        );
       },
     });
   };

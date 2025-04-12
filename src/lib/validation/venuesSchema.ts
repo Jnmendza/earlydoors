@@ -11,12 +11,12 @@ export const venueFormSchema = z.object({
 
   state: z.string().min(1, { message: "State is required" }),
 
-  lat: z
+  lat: z.coerce
     .number({ invalid_type_error: "Latitude must be a number" })
     .min(-90, { message: "Latitude must be between -90 and 90" })
     .max(90, { message: "Latitude must be between -90 and 90" }),
 
-  lng: z
+  lng: z.coerce
     .number({ invalid_type_error: "Longitude must be a number" })
     .min(-180, { message: "Longitude must be between -180 and 180" })
     .max(180, { message: "Longitude must be between -180 and 180" }),
@@ -25,7 +25,7 @@ export const venueFormSchema = z.object({
     .string()
     .url({ message: "Must be a valid website URL (https://...)" }),
 
-  google_map_url: z
+  google_maps_url: z
     .string()
     .url({ message: "Must be a valid Google Maps URL (https://...)" }),
 

@@ -1,6 +1,6 @@
 "use client";
 import { VenueFormData, venueFormSchema } from "@/lib/validation/venuesSchema";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { US_STATES } from "@/constants/us-states";
 import {
@@ -23,8 +23,10 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 const VenuesForm = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<VenueFormData>({
     resolver: zodResolver(venueFormSchema),
     defaultValues: {
@@ -36,7 +38,7 @@ const VenuesForm = () => {
       lat: undefined,
       lng: undefined,
       website_url: "",
-      google_map_url: "",
+      google_maps_url: "",
       logo_url: "",
       is_active: false,
       has_garden: false,
@@ -47,7 +49,56 @@ const VenuesForm = () => {
   });
 
   const onSubmit = (values: VenueFormData) => {
-    console.log("On submit clicked", values);
+    setIsLoading(true);
+
+    const promise = async () => {
+      const res = await fetch("/api/venues", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error?.message || "Failed to create venue");
+      }
+
+      return { name: values.name };
+    };
+
+    toast.promise(promise, {
+      loading: "Creating venue...",
+      success: (data) => {
+        setIsLoading(false);
+        form.reset({
+          name: "",
+          address: "",
+          city: "",
+          zipcode: "",
+          state: "",
+          lat: undefined, // or null if you handle it correctly
+          lng: undefined,
+          website_url: "",
+          google_maps_url: "",
+          logo_url: "",
+          is_active: false,
+          has_garden: false,
+          has_big_screen: false,
+          has_outdoor_screens: false,
+          is_bookable: false,
+        });
+        return `${data.name} was successfully created!`;
+      },
+      error: (err) => {
+        setIsLoading(false);
+        return (
+          err.message ||
+          "An unexpected error occured while attempting to create a venue."
+        );
+      },
+    });
   };
 
   return (
@@ -203,7 +254,7 @@ const VenuesForm = () => {
           />
           <FormField
             control={form.control}
-            name='google_map_url'
+            name='google_maps_url'
             render={({ field }) => (
               <FormItem className='flex-1'>
                 <FormLabel>Google Map Url</FormLabel>
@@ -309,8 +360,12 @@ const VenuesForm = () => {
           />
         </div>
 
-        <Button type='submit' className='cursor-pointer rounded-none'>
-          Submit
+        <Button
+          type='submit'
+          className='cursor-pointer rounded-none'
+          disabled={isLoading}
+        >
+          {isLoading ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Form>
