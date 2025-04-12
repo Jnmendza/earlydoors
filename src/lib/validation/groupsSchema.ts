@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const groupsFormSchema = z.object({
   name: z.string().min(1, { message: "Group name is required" }),
-  team_id: z.string().min(1, { message: "You must select a team" }),
+  club_id: z.string().min(1, { message: "You must select a team" }),
   group_logo_url: z
     .string()
     .url({ message: "Logo URL must be a valid link (https://...)" })

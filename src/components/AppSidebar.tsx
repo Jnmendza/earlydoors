@@ -68,8 +68,8 @@ const data = {
           url: "/dashboard/venues",
         },
         {
-          title: "Teams",
-          url: "/dashboard/teams",
+          title: "Clubs",
+          url: "/dashboard/clubs",
         },
         {
           title: "Supporter Groups",

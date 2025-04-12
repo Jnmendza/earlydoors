@@ -10,7 +10,7 @@ export const eventFormSchema = z.object({
     .regex(/^([0-1]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)"),
 
   venue_id: z.string().uuid({ message: "A valid venue must be selected" }),
-  team_id: z
+  club_id: z
     .string()
     .uuid({ message: "A valid team must be selected" })
     .optional(),

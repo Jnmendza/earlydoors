@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         start_time: body.start_time,
         date: new Date(body.date),
         venue_id: body.venue_id,
-        team_id: body.team_id,
+        club_id: body.club_id,
         has_garden: body.has_garden,
         has_big_screen: body.has_big_screen,
         has_outdoor_screens: body.has_outdoor_screens,

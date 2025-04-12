@@ -63,7 +63,7 @@ export default function DashboardLayout({
         return "Create A Venue";
       case "/dashboard/supportersGroups":
         return "Create A Supporters Group ";
-      case "/dashboard/teams":
+      case "/dashboard/clubs":
         return "Create A Team ";
       default:
         return "Unknown Page";

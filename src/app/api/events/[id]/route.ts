@@ -12,10 +12,9 @@ export async function PATCH(
     data: {
       name: body.name,
       description: body.description,
-      start_time: new Date(body.start_time),
-      end_time: body.end_time ? new Date(body.end_time) : null,
+      start_time: body.start_time,
       venue_id: body.venue_id,
-      team_id: body.team_id,
+      club_id: body.club_id,
       has_garden: body.has_garden,
       has_big_screen: body.has_big_screen,
       has_outdoor_screens: body.has_outdoor_screens,

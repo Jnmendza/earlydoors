@@ -28,7 +28,7 @@ import { US_STATES } from "@/constants/us-states";
 import { Textarea } from "../ui/textarea";
 import RequiredLabel from "../RequiredLabel";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTeamStore } from "@/store/team-store";
+import { useClubStore } from "@/store/club-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
 
 // const TEAMS = [
@@ -51,13 +51,13 @@ import SelectItemWithIcon from "../SelectItemWithIcon";
 // ];
 
 const SupportersGroupForm = () => {
-  const { fetchTeams, teams } = useTeamStore();
+  const { fetchClubs, clubs } = useClubStore();
 
   const form = useForm<GroupsFormSchema>({
     resolver: zodResolver(groupsFormSchema),
     defaultValues: {
       name: "",
-      team_id: "",
+      club_id: "",
       group_logo_url: "",
       city: "",
       description: "",
@@ -67,8 +67,8 @@ const SupportersGroupForm = () => {
   });
 
   useEffect(() => {
-    fetchTeams();
-  }, [fetchTeams]);
+    fetchClubs();
+  }, [fetchClubs]);
 
   const onSubmit = (values: GroupsFormSchema) => {
     console.log("On submit clicked", values);
@@ -96,7 +96,7 @@ const SupportersGroupForm = () => {
 
           <FormField
             control={form.control}
-            name='team_id'
+            name='club_id'
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>
@@ -116,7 +116,7 @@ const SupportersGroupForm = () => {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Team</SelectLabel>
-                      {teams.map(({ id, logo_url, name }, index) => (
+                      {clubs.map(({ id, logo_url, name }, index) => (
                         <SelectItemWithIcon
                           key={index}
                           teamId={id}

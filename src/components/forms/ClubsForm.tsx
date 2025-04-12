@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -24,8 +24,10 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
-const TeamsForm = () => {
+const ClubsForm = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<TeamFormData>({
     resolver: zodResolver(teamFormSchema),
     defaultValues: {
@@ -37,7 +39,42 @@ const TeamsForm = () => {
   });
 
   const onSubmit = (values: TeamFormData) => {
-    console.log("On submit clicked", values);
+    setIsLoading(true);
+
+    const promise = async () => {
+      const res = await fetch("/api/clubs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error?.message || "Failed to create a team");
+      }
+
+      return { name: values.name };
+    };
+
+    toast.promise(promise, {
+      loading: "Creating team...",
+      success: (data) => {
+        setIsLoading(false);
+        form.reset({
+          country: "",
+        });
+        return `${data.name} was successfully created!`;
+      },
+      error: (err) => {
+        setIsLoading(false);
+        return (
+          err.message ||
+          "An unexpected error occured while attempting to create a new team."
+        );
+      },
+    });
   };
   return (
     <Form {...form}>
@@ -133,12 +170,16 @@ const TeamsForm = () => {
             )}
           />
         </div>
-        <Button type='submit' className='cursor-pointer rounded-none'>
-          Submit
+        <Button
+          type='submit'
+          className='cursor-pointer rounded-none'
+          disabled={isLoading}
+        >
+          {isLoading ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default TeamsForm;
+export default ClubsForm;

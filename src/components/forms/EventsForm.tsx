@@ -32,20 +32,20 @@ import {
 } from "../ui/select";
 import RequiredLabel from "../RequiredLabel";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTeamStore } from "@/store/team-store";
+import { useClubStore } from "@/store/club-store";
 import { useVenueStore } from "@/store/venue-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
 import { toast } from "sonner";
 
 const EventsForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { fetchTeams, teams } = useTeamStore();
+  const { fetchClubs, clubs } = useClubStore();
   const { fetchVenues, venues } = useVenueStore();
 
   useEffect(() => {
-    fetchTeams();
+    fetchClubs();
     fetchVenues();
-  }, [fetchTeams, fetchVenues]);
+  }, [fetchClubs, fetchVenues]);
 
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventFormSchema),
@@ -55,7 +55,7 @@ const EventsForm = () => {
       start_time: "",
       date: undefined,
       venue_id: "",
-      team_id: "",
+      club_id: "",
       has_garden: false,
       has_big_screen: false,
       has_outdoor_screens: false,
@@ -222,21 +222,21 @@ const EventsForm = () => {
         <div className='flex justify-start space-x-10'>
           <FormField
             control={form.control}
-            name='team_id'
+            name='club_id'
             render={({ field }) => (
               <FormItem className='w-1/2'>
-                <FormLabel>Team</FormLabel>
+                <FormLabel>Club</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl className='w-full rounded-none'>
                     <SelectTrigger>
-                      <SelectValue placeholder='Select a football team' />
+                      <SelectValue placeholder='Select a football club' />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {teams.map(({ id, logo_url, name }, index) => (
+                    {clubs.map(({ id, logo_url, name }, index) => (
                       <SelectItemWithIcon
                         key={index}
                         teamId={id}
