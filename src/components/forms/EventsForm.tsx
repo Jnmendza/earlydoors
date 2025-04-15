@@ -99,10 +99,11 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
       loading: eventId ? "Updating event..." : "Creating event...",
       success: (data) => {
         setIsLoading(false);
-        form.reset({
-          ...values,
-          date: new Date(values.date),
-        });
+        if (!eventId)
+          form.reset({
+            ...values,
+            date: new Date(values.date),
+          });
         return `${data.name} was successfully ${
           eventId ? "updated" : "created"
         }!`;

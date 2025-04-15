@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -26,11 +26,16 @@ import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-const ClubsForm = () => {
+type ClubsFormProps = {
+  initialData?: ClubFormData;
+  clubId?: string;
+};
+
+const ClubsForm = ({ initialData, clubId }: ClubsFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<ClubFormData>({
     resolver: zodResolver(clubFormSchema),
-    defaultValues: {
+    defaultValues: initialData ?? {
       name: "",
       logo_url: "",
       league: "",
@@ -38,12 +43,18 @@ const ClubsForm = () => {
     },
   });
 
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData, form]);
+
   const onSubmit = (values: ClubFormData) => {
     setIsLoading(true);
 
     const promise = async () => {
-      const res = await fetch("/api/clubs", {
-        method: "POST",
+      const res = await fetch(clubId ? `/api/clubs/${clubId}` : "/api/clubs", {
+        method: clubId ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -59,16 +70,19 @@ const ClubsForm = () => {
     };
 
     toast.promise(promise, {
-      loading: "Creating club...",
+      loading: clubId ? "Updating club..." : "Creating club...",
       success: (data) => {
         setIsLoading(false);
-        form.reset({
-          name: "",
-          logo_url: "",
-          league: "",
-          country: "",
-        });
-        return `${data.name} was successfully created!`;
+        if (!clubId)
+          form.reset({
+            name: "",
+            logo_url: "",
+            league: "",
+            country: "",
+          });
+        return `${data.name} was successfully ${
+          clubId ? "updated" : "created"
+        }!`;
       },
       error: (err) => {
         setIsLoading(false);

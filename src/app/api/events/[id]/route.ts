@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"; // your prisma instance
 import { eventFormSchema } from "@/lib/validation/eventsSchema";
 
-// GET: /api/events/:id
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -23,7 +22,6 @@ export async function GET(
   }
 }
 
-// PUT: /api/events/:id
 export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
