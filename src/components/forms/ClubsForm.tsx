@@ -9,7 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { TeamFormData, teamFormSchema } from "@/lib/validation/teamsSchema";
+import { ClubFormData, clubFormSchema } from "@/lib/validation/clubsSchema";
 import { Input } from "../ui/input";
 import { TOP_LEAGUES } from "@/constants/leagues";
 import { COUNTRIES } from "@/constants/countries";
@@ -28,8 +28,8 @@ import { toast } from "sonner";
 
 const ClubsForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const form = useForm<TeamFormData>({
-    resolver: zodResolver(teamFormSchema),
+  const form = useForm<ClubFormData>({
+    resolver: zodResolver(clubFormSchema),
     defaultValues: {
       name: "",
       logo_url: "",
@@ -38,7 +38,7 @@ const ClubsForm = () => {
     },
   });
 
-  const onSubmit = (values: TeamFormData) => {
+  const onSubmit = (values: ClubFormData) => {
     setIsLoading(true);
 
     const promise = async () => {
@@ -52,14 +52,14 @@ const ClubsForm = () => {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error?.message || "Failed to create a team");
+        throw new Error(error?.message || "Failed to create a club");
       }
 
       return { name: values.name };
     };
 
     toast.promise(promise, {
-      loading: "Creating team...",
+      loading: "Creating club...",
       success: (data) => {
         setIsLoading(false);
         form.reset({
@@ -71,7 +71,7 @@ const ClubsForm = () => {
         setIsLoading(false);
         return (
           err.message ||
-          "An unexpected error occured while attempting to create a new team."
+          "An unexpected error occured while attempting to create a new club."
         );
       },
     });
@@ -98,7 +98,7 @@ const ClubsForm = () => {
           name='logo_url'
           render={({ field }) => (
             <FormItem className='w-full'>
-              <FormLabel>Team Logo Url</FormLabel>
+              <FormLabel>Club Logo Url</FormLabel>
               <FormControl className='rounded-none'>
                 <Input placeholder='https://example.com/logo.png' {...field} />
               </FormControl>

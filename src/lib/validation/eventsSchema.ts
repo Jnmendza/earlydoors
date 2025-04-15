@@ -12,7 +12,7 @@ export const eventFormSchema = z.object({
   venue_id: z.string().uuid({ message: "A valid venue must be selected" }),
   club_id: z
     .string()
-    .uuid({ message: "A valid team must be selected" })
+    .uuid({ message: "A valid club must be selected" })
     .optional(),
   has_garden: z.boolean({
     required_error: "Please indicate if the venue has a garden",

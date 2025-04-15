@@ -218,7 +218,7 @@ const EventsForm = () => {
             </FormItem>
           )}
         />
-        {/* Team and Venue */}
+        {/* Club and Venue */}
         <div className='flex justify-start space-x-10'>
           <FormField
             control={form.control}
@@ -239,9 +239,9 @@ const EventsForm = () => {
                     {clubs.map(({ id, logo_url, name }, index) => (
                       <SelectItemWithIcon
                         key={index}
-                        teamId={id}
-                        teamLogoUrl={logo_url ?? ""}
-                        teamName={name}
+                        clubId={id}
+                        clubLogoUrl={logo_url ?? ""}
+                        clubName={name}
                       />
                     ))}
                   </SelectContent>

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const teamFormSchema = z.object({
-  name: z.string().min(1, "Team name is required"),
+export const clubFormSchema = z.object({
+  name: z.string().min(1, "Club name is required"),
   logo_url: z
     .string()
     .url("Must be a valid URL, e.g https://example.com/logo.png"),
@@ -9,4 +9,4 @@ export const teamFormSchema = z.object({
   country: z.string().min(1, "Country is required"),
 });
 
-export type TeamFormData = z.infer<typeof teamFormSchema>;
+export type ClubFormData = z.infer<typeof clubFormSchema>;

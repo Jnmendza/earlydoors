@@ -3,23 +3,23 @@ import { SelectItem } from "./ui/select";
 import Image from "next/image";
 
 interface SelectProps {
-  teamId: string;
-  teamLogoUrl: string;
-  teamName: string;
+  clubId: string;
+  clubLogoUrl: string;
+  clubName: string;
 }
 
-const SelectItemWithIcon = ({ teamId, teamLogoUrl, teamName }: SelectProps) => {
+const SelectItemWithIcon = ({ clubId, clubLogoUrl, clubName }: SelectProps) => {
   return (
-    <SelectItem value={teamId}>
+    <SelectItem value={clubId}>
       <div className='flex items-center gap-2'>
         <Image
-          src={teamLogoUrl}
+          src={clubLogoUrl}
           alt='logo'
           width={25}
           height={25}
           className='h-auto w-[30px]'
         />
-        {teamName}
+        {clubName}
       </div>
     </SelectItem>
   );

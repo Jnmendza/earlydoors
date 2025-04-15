@@ -5,7 +5,7 @@ export const getEvents = async () => {
     const events = await db.event.findMany({
       include: {
         Venue: true,
-        Team: true,
+        Club: true,
       },
     });
     return events;

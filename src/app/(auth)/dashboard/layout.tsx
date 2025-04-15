@@ -64,7 +64,7 @@ export default function DashboardLayout({
       case "/dashboard/supportersGroups":
         return "Create A Supporters Group ";
       case "/dashboard/clubs":
-        return "Create A Team ";
+        return "Create A Club ";
       default:
         return "Unknown Page";
     }

@@ -1,5 +1,5 @@
 import { getClubs } from "@/data/club";
-import { teamFormSchema } from "@/lib/validation/teamsSchema";
+import { clubFormSchema } from "@/lib/validation/clubsSchema";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { Status } from "@prisma/client";
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   try {
     const requestData = await req.json();
 
-    const parseResult = teamFormSchema.safeParse(requestData);
+    const parseResult = clubFormSchema.safeParse(requestData);
     if (!parseResult.success) {
       return NextResponse.json(
         { error: "Invalid fields", details: parseResult.error.errors },
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     const { name, logo_url, league, country } = parseResult.data;
 
-    const newTeam = await db.club.create({
+    const newClub = await db.club.create({
       data: {
         name,
         logo_url,
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         status: Status.PENDING,
       },
     });
-    return NextResponse.json(newTeam, { status: 201 });
+    return NextResponse.json(newClub, { status: 201 });
   } catch (error) {
     console.error("Error creating a new club", error);
     return NextResponse.json(
