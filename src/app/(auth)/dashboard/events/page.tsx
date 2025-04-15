@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { formatDateReadable, formatTimeTo12Hour } from "@/lib/utils";
 
-export default function EventsPage() {
+export default function EventsCreatePage() {
   const { events, fetchEvents, isLoading, error } = useEventStore();
 
   useEffect(() => {

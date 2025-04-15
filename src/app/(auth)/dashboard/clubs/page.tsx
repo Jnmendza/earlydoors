@@ -3,7 +3,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 
-export default async function ClubsPage() {
+export default async function ClubsCreatePage() {
   const clubs = await getClubs();
 
   return (

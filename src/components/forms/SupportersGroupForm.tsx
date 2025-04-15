@@ -32,13 +32,21 @@ import { useClubStore } from "@/store/club-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
 import { toast } from "sonner";
 
-const SupportersGroupForm = () => {
+type SupportersGroupFormProps = {
+  initialData?: GroupsFormSchema;
+  groupId?: string;
+};
+
+const SupportersGroupForm = ({
+  initialData,
+  groupId,
+}: SupportersGroupFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { fetchClubs, clubs } = useClubStore();
 
   const form = useForm<GroupsFormSchema>({
     resolver: zodResolver(groupsFormSchema),
-    defaultValues: {
+    defaultValues: initialData ?? {
       name: "",
       club_id: "",
       group_logo_url: "",
@@ -56,13 +64,16 @@ const SupportersGroupForm = () => {
   const onSubmit = async (values: GroupsFormSchema) => {
     setIsLoading(true);
     const promise = async () => {
-      const res = await fetch("/api/supportersGroups", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      const res = await fetch(
+        groupId ? `/api/supportersGroups/${groupId}` : "/api/supportersGroups",
+        {
+          method: groupId ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
 
       if (!res.ok) {
         const error = await res.json();
@@ -73,19 +84,24 @@ const SupportersGroupForm = () => {
     };
 
     toast.promise(promise, {
-      loading: "Creating supporters group...",
+      loading: groupId
+        ? "Updating supporters group..."
+        : "Creating supporters group...",
       success: (data) => {
         setIsLoading(false);
-        form.reset({
-          name: "",
-          club_id: "",
-          group_logo_url: "",
-          city: "",
-          description: "",
-          website_url: "",
-          ig_handle: "",
-        });
-        return `${data.name} was successfully created`;
+        if (!groupId)
+          form.reset({
+            name: "",
+            club_id: "",
+            group_logo_url: "",
+            city: "",
+            description: "",
+            website_url: "",
+            ig_handle: "",
+          });
+        return `${data.name} was successfully ${
+          groupId ? "updated" : "created"
+        }`;
       },
       error: (err) => {
         setIsLoading(false);
@@ -277,13 +293,23 @@ const SupportersGroupForm = () => {
           />
         </div>
 
-        <Button
-          className='rounded-none cursor-pointer'
-          type='submit'
-          disabled={isLoading}
-        >
-          Submit
-        </Button>
+        {groupId ? (
+          <Button
+            className='rounded-none cursor-pointer'
+            type='submit'
+            disabled={isLoading}
+          >
+            {isLoading ? "Updating..." : "Update"}
+          </Button>
+        ) : (
+          <Button
+            className='rounded-none cursor-pointer'
+            type='submit'
+            disabled={isLoading}
+          >
+            {isLoading ? "Submitting..." : "Submit"}
+          </Button>
+        )}
       </form>
     </Form>
   );
