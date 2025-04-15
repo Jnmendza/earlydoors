@@ -63,6 +63,9 @@ const ClubsForm = () => {
       success: (data) => {
         setIsLoading(false);
         form.reset({
+          name: "",
+          logo_url: "",
+          league: "",
           country: "",
         });
         return `${data.name} was successfully created!`;

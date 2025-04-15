@@ -76,7 +76,15 @@ const SupportersGroupForm = () => {
       loading: "Creating supporters group...",
       success: (data) => {
         setIsLoading(false);
-        form.reset();
+        form.reset({
+          name: "",
+          club_id: "",
+          group_logo_url: "",
+          city: "",
+          description: "",
+          website_url: "",
+          ig_handle: "",
+        });
         return `${data.name} was successfully created`;
       },
       error: (err) => {

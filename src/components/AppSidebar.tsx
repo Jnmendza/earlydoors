@@ -2,13 +2,13 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
   GalleryVerticalEnd,
-  Settings2,
-  FilePlus2,
+  // LayoutDashboard,
+  ShieldCheck,
+  CalendarDays,
+  MapPin,
+  Trophy,
+  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/NavMain";
@@ -28,119 +28,44 @@ type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   user: User | null;
 };
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+export const data = {
   teams: [
     {
       name: "EarlyDoors",
       logo: GalleryVerticalEnd,
       plan: "San Diego",
     },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
   ],
   navMain: [
+    // {
+    //   title: "Dashboard",
+    //   url: "/dashboard",
+    //   icon: LayoutDashboard,
+    // },
     {
-      title: "Create New",
-      url: "#",
-      icon: FilePlus2,
-      isActive: true,
-      items: [
-        {
-          title: "Events",
-          url: "/dashboard/events",
-        },
-        {
-          title: "Venues",
-          url: "/dashboard/venues",
-        },
-        {
-          title: "Clubs",
-          url: "/dashboard/clubs",
-        },
-        {
-          title: "Supporter Groups",
-          url: "/dashboard/supportersGroups",
-        },
-      ],
+      title: "Events",
+      url: "/dashboard/events",
+      icon: CalendarDays,
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+      title: "Venues",
+      url: "/dashboard/venues",
+      icon: MapPin,
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
+      title: "Clubs",
+      url: "/dashboard/clubs",
+      icon: Trophy,
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      title: "Supporter Groups",
+      url: "/dashboard/supportersGroups",
+      icon: Users,
+    },
+    {
+      title: "Moderation",
+      url: "/dashboard/moderation",
+      icon: ShieldCheck,
     },
   ],
 };
