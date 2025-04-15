@@ -37,7 +37,12 @@ import { useVenueStore } from "@/store/venue-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
 import { toast } from "sonner";
 
-const EventsForm = () => {
+type EventsFormProps = {
+  initialData?: EventFormData;
+  eventId?: string;
+};
+
+const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { fetchClubs, clubs } = useClubStore();
   const { fetchVenues, venues } = useVenueStore();
@@ -49,7 +54,7 @@ const EventsForm = () => {
 
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventFormSchema),
-    defaultValues: {
+    defaultValues: initialData ?? {
       name: "",
       description: "",
       start_time: "",
@@ -71,13 +76,16 @@ const EventsForm = () => {
     };
 
     const promise = async () => {
-      const res = await fetch("/api/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cleanValues),
-      });
+      const res = await fetch(
+        eventId ? `/api/events/${eventId}` : "/api/events",
+        {
+          method: eventId ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(cleanValues),
+        }
+      );
 
       if (!res.ok) {
         const error = await res.json();
@@ -88,11 +96,16 @@ const EventsForm = () => {
     };
 
     toast.promise(promise, {
-      loading: "Creating event...",
+      loading: eventId ? "Updating event..." : "Creating event...",
       success: (data) => {
         setIsLoading(false);
-        form.reset();
-        return `${data.name} was successfully created!`;
+        form.reset({
+          ...values,
+          date: new Date(values.date),
+        });
+        return `${data.name} was successfully ${
+          eventId ? "updated" : "created"
+        }!`;
       },
       error: (err) => {
         setIsLoading(false);
@@ -355,14 +368,23 @@ const EventsForm = () => {
             )}
           />
         </div>
-
-        <Button
-          className='rounded-none cursor-pointer'
-          type='submit'
-          disabled={isLoading}
-        >
-          {isLoading ? "Submitting..." : "Submit"}
-        </Button>
+        {eventId ? (
+          <Button
+            className='rounded-none cursor-pointer'
+            type='submit'
+            disabled={isLoading}
+          >
+            {isLoading ? "Updating..." : "Update"}
+          </Button>
+        ) : (
+          <Button
+            className='rounded-none cursor-pointer'
+            type='submit'
+            disabled={isLoading}
+          >
+            {isLoading ? "Submitting..." : "Submit"}
+          </Button>
+        )}
       </form>
     </Form>
   );
