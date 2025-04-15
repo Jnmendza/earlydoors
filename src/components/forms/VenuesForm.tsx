@@ -25,11 +25,16 @@ import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-const VenuesForm = () => {
+type VenuesFormProps = {
+  initialData?: VenueFormData;
+  venueId?: string;
+};
+
+const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<VenueFormData>({
     resolver: zodResolver(venueFormSchema),
-    defaultValues: {
+    defaultValues: initialData ?? {
       name: "",
       address: "",
       city: "",
@@ -52,13 +57,16 @@ const VenuesForm = () => {
     setIsLoading(true);
 
     const promise = async () => {
-      const res = await fetch("/api/venues", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      const res = await fetch(
+        venueId ? `/api/venues/${venueId}` : "/api/venues",
+        {
+          method: venueId ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
 
       if (!res.ok) {
         const error = await res.json();
@@ -69,26 +77,28 @@ const VenuesForm = () => {
     };
 
     toast.promise(promise, {
-      loading: "Creating venue...",
+      loading: venueId ? "Updating venue..." : "Creating venue...",
       success: (data) => {
         setIsLoading(false);
-        form.reset({
-          name: "",
-          address: "",
-          city: "",
-          zipcode: "",
-          state: "",
-          lat: undefined, // or null if you handle it correctly
-          lng: undefined,
-          website_url: "",
-          google_maps_url: "",
-          logo_url: "",
-          is_active: false,
-          has_garden: false,
-          has_big_screen: false,
-          has_outdoor_screens: false,
-          is_bookable: false,
-        });
+        if (!venueId) {
+          form.reset({
+            name: "",
+            address: "",
+            city: "",
+            zipcode: "",
+            state: "",
+            lat: undefined, // or null if you handle it correctly
+            lng: undefined,
+            website_url: "",
+            google_maps_url: "",
+            logo_url: "",
+            is_active: false,
+            has_garden: false,
+            has_big_screen: false,
+            has_outdoor_screens: false,
+            is_bookable: false,
+          });
+        }
         return `${data.name} was successfully created!`;
       },
       error: (err) => {
@@ -360,13 +370,23 @@ const VenuesForm = () => {
           />
         </div>
 
-        <Button
-          type='submit'
-          className='cursor-pointer rounded-none'
-          disabled={isLoading}
-        >
-          {isLoading ? "Submitting..." : "Submit"}
-        </Button>
+        {venueId ? (
+          <Button
+            className='rounded-none cursor-pointer'
+            type='submit'
+            disabled={isLoading}
+          >
+            {isLoading ? "Updating..." : "Update"}
+          </Button>
+        ) : (
+          <Button
+            type='submit'
+            className='cursor-pointer rounded-none'
+            disabled={isLoading}
+          >
+            {isLoading ? "Submitting..." : "Submit"}
+          </Button>
+        )}
       </form>
     </Form>
   );
