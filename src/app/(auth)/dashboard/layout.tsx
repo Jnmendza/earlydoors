@@ -1,4 +1,5 @@
 "use client";
+import { Fragment, useEffect } from "react";
 import { AppSidebar } from "@/components/AppSidebar";
 import {
   Breadcrumb,
@@ -13,35 +14,48 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useUserStore } from "@/store/user-store";
 import { createClientForBrowser } from "@/utils/supabase/client";
 import { Separator } from "@radix-ui/react-separator";
-import { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { Toaster } from "sonner";
+import Link from "next/link";
+import { isUUID } from "@/lib/utils";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(null);
-  const supabase = createClientForBrowser();
   const router = useRouter();
+  const paths = usePathname();
+  const supabase = createClientForBrowser();
+  const pathNames = paths.split("/").filter((path) => path);
+  const cleanPathNames = pathNames.filter((segment) => !isUUID(segment));
 
-  // 1. Check auth state on load
+  const { user, setUser, lastChecked, setLastChecked } = useUserStore();
+
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user?.role === "ADMIN") {
-        router.push("/portal"); // Kick non-admins
-      } else {
-        setUser(user);
+    const fetchUser = async () => {
+      // Only check if no user or last check was > 5 minutes ago
+      const shouldRefresh =
+        !user || !lastChecked || Date.now() - lastChecked > 5 * 60 * 1000;
+
+      if (shouldRefresh) {
+        const { data, error } = await supabase.auth.getUser();
+
+        if (error || !data.user || data.user.user_metadata?.role !== "ADMIN") {
+          router.push("/portal");
+          return;
+        }
+
+        setUser(data.user);
+        setLastChecked(Date.now());
       }
     };
-    getUser();
-  }, [router, supabase.auth]);
+
+    fetchUser();
+  }, [supabase, router, user, lastChecked, setUser, setLastChecked]);
 
   if (!user) return <div>Loading...</div>;
 
@@ -53,22 +67,37 @@ export default function DashboardLayout({
           <div className='flex items-center gap-2 px-4'>
             <SidebarTrigger className='-ml-1' />
             <Separator orientation='vertical' className='mr-2 h-4' />
+
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className='hidden md:block'>
-                  <BreadcrumbLink href='#'>
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className='hidden md:block' />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {cleanPathNames.map((link, index) => {
+                  const href = `/${cleanPathNames
+                    .slice(0, index + 1)
+                    .join("/")}`;
+                  const isLastPath = index === cleanPathNames.length - 1;
+                  const linkName = link[0].toUpperCase() + link.slice(1);
+
+                  return (
+                    <Fragment key={index}>
+                      <BreadcrumbItem>
+                        {!isLastPath ? (
+                          <BreadcrumbLink asChild>
+                            <Link href={href}>{linkName}</Link>
+                          </BreadcrumbLink>
+                        ) : (
+                          <BreadcrumbPage>{linkName}</BreadcrumbPage>
+                        )}
+                      </BreadcrumbItem>
+                      {!isLastPath && <BreadcrumbSeparator />}
+                    </Fragment>
+                  );
+                })}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
         {children}
+        <Toaster richColors position='bottom-right' />
       </SidebarInset>
     </SidebarProvider>
   );
