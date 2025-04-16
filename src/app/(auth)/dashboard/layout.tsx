@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { AppSidebar } from "@/components/AppSidebar";
 import {
   Breadcrumb,
@@ -19,18 +19,22 @@ import { createClientForBrowser } from "@/utils/supabase/client";
 import { Separator } from "@radix-ui/react-separator";
 import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "sonner";
+import Link from "next/link";
+import { isUUID } from "@/lib/utils";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClientForBrowser();
   const router = useRouter();
-  const pathname = usePathname();
+  const paths = usePathname();
+  const supabase = createClientForBrowser();
+  const pathNames = paths.split("/").filter((path) => path);
+  const cleanPathNames = pathNames.filter((segment) => !isUUID(segment));
+
   const { user, setUser, lastChecked, setLastChecked } = useUserStore();
 
-  // 1. Check auth state on load
   useEffect(() => {
     const fetchUser = async () => {
       // Only check if no user or last check was > 5 minutes ago
@@ -53,23 +57,6 @@ export default function DashboardLayout({
     fetchUser();
   }, [supabase, router, user, lastChecked, setUser, setLastChecked]);
 
-  const breadcrumbPageText = (() => {
-    switch (pathname) {
-      case "/dashboard":
-        return "Dashboard";
-      case "/dashboard/events":
-        return "Create An Event";
-      case "/dashboard/venues":
-        return "Create A Venue";
-      case "/dashboard/supportersGroups":
-        return "Create A Supporters Group ";
-      case "/dashboard/clubs":
-        return "Create A Club ";
-      default:
-        return "Unknown Page";
-    }
-  })();
-
   if (!user) return <div>Loading...</div>;
 
   return (
@@ -80,19 +67,31 @@ export default function DashboardLayout({
           <div className='flex items-center gap-2 px-4'>
             <SidebarTrigger className='-ml-1' />
             <Separator orientation='vertical' className='mr-2 h-4' />
+
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className='hidden md:block'>
-                  <BreadcrumbLink href='/dashboard'>Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-                {pathname !== "/dashboard" && (
-                  <>
-                    <BreadcrumbSeparator className='hidden md:block' />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{breadcrumbPageText}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </>
-                )}
+                {cleanPathNames.map((link, index) => {
+                  const href = `/${cleanPathNames
+                    .slice(0, index + 1)
+                    .join("/")}`;
+                  const isLastPath = index === cleanPathNames.length - 1;
+                  const linkName = link[0].toUpperCase() + link.slice(1);
+
+                  return (
+                    <Fragment key={index}>
+                      <BreadcrumbItem>
+                        {!isLastPath ? (
+                          <BreadcrumbLink asChild>
+                            <Link href={href}>{linkName}</Link>
+                          </BreadcrumbLink>
+                        ) : (
+                          <BreadcrumbPage>{linkName}</BreadcrumbPage>
+                        )}
+                      </BreadcrumbItem>
+                      {!isLastPath && <BreadcrumbSeparator />}
+                    </Fragment>
+                  );
+                })}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

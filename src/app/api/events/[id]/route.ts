@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db"; // your prisma instance
+import { db } from "@/lib/db";
 import { eventFormSchema } from "@/lib/validation/eventsSchema";
 
 export async function GET(
