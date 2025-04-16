@@ -101,8 +101,16 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
         setIsLoading(false);
         if (!eventId)
           form.reset({
-            ...values,
-            date: new Date(values.date),
+            name: "",
+            description: "",
+            start_time: "",
+            date: undefined,
+            venue_id: "",
+            club_id: "",
+            has_garden: undefined,
+            has_big_screen: undefined,
+            has_outdoor_screens: undefined,
+            is_bookable: undefined,
           });
         return `${data.name} was successfully ${
           eventId ? "updated" : "created"
