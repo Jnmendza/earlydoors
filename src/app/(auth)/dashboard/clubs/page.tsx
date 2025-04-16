@@ -1,10 +1,17 @@
-import { getClubs } from "@/data/club";
+"use client";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { DeleteDialog } from "@/components/DeleteDialog";
+import { useClubStore } from "@/store/club-store";
+import { useEffect } from "react";
 
-export default async function ClubsCreatePage() {
-  const clubs = await getClubs();
+export default function ClubsCreatePage() {
+  const { clubs, fetchClubs } = useClubStore();
+
+  useEffect(() => {
+    fetchClubs();
+  }, [fetchClubs]);
 
   return (
     <div className='p-6'>
@@ -31,6 +38,12 @@ export default async function ClubsCreatePage() {
             </div>
 
             <div className='space-x-2'>
+              <DeleteDialog
+                id={club.id}
+                name={club.name}
+                type='club'
+                onDeleteSuccess={fetchClubs}
+              />
               <Button variant='outline' asChild>
                 <Link href={`/dashboard/clubs/${club.id}/edit`}>Edit</Link>
               </Button>

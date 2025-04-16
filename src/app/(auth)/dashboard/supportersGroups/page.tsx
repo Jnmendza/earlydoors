@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useGroupStore } from "@/store/group-store";
+import { DeleteDialog } from "@/components/DeleteDialog";
 
 export default function SupportersGroupsPage() {
   const { groups, fetchGroups, isLoading, error } = useGroupStore();
@@ -10,6 +11,7 @@ export default function SupportersGroupsPage() {
   useEffect(() => {
     fetchGroups();
   }, [fetchGroups]);
+
   return (
     <div className='p-6'>
       <div className='flex justify-between items-center mb-6'>
@@ -33,12 +35,17 @@ export default function SupportersGroupsPage() {
               <h2 className='font-medium'>{group.name}</h2>
             </div>
             <div className='space-x-2'>
+              <DeleteDialog
+                id={group.id}
+                name={group.name}
+                type='supportersGroup'
+                onDeleteSuccess={fetchGroups}
+              />
               <Button variant='outline' asChild>
                 <Link href={`/dashboard/supportersGroups/${group.id}/edit`}>
                   Edit
                 </Link>
               </Button>
-              {/* Add a delete button or modal here later */}
             </div>
           </li>
         ))}

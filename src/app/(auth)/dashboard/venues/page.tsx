@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useVenueStore } from "@/store/venue-store";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { DeleteDialog } from "@/components/DeleteDialog";
 
 export default function EventsPage() {
   const { venues, fetchVenues, isLoading, error } = useVenueStore();
@@ -10,6 +11,7 @@ export default function EventsPage() {
   useEffect(() => {
     fetchVenues();
   }, [fetchVenues]);
+
   return (
     <div className='p-6'>
       <div className='flex justify-between items-center mb-6'>
@@ -33,10 +35,15 @@ export default function EventsPage() {
               <h2 className='font-medium'>{venue.name}</h2>
             </div>
             <div className='space-x-2'>
+              <DeleteDialog
+                id={venue.id}
+                name={venue.name}
+                type='venue'
+                onDeleteSuccess={fetchVenues}
+              />
               <Button variant='outline' asChild>
                 <Link href={`/dashboard/venues/${venue.id}/edit`}>Edit</Link>
               </Button>
-              {/* Add a delete button or modal here later */}
             </div>
           </li>
         ))}

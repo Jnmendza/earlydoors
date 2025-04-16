@@ -1,28 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEventStore } from "@/store/event-store"; // adjust if needed
+import { useEventStore } from "@/store/event-store";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { formatDateReadable, formatTimeTo12Hour } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
+import { DeleteDialog } from "@/components/DeleteDialog";
 
 export default function EventsCreatePage() {
-  const [input, setInput] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const {
     events,
     fetchEvents,
@@ -33,42 +18,6 @@ export default function EventsCreatePage() {
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
-
-  const onDelete = async (eventId: string, eventName: string) => {
-    setLoading(true);
-
-    const promise = async () => {
-      const res = await fetch(`/api/events/${eventId}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error?.message || "Failed to delete event");
-      }
-
-      await fetchEvents();
-      setIsOpen(false);
-
-      return { name: eventName };
-    };
-
-    toast.promise(promise, {
-      loading: "Deleting event...",
-      success: (data) => {
-        setLoading(false);
-        setInput("");
-        return `${data.name} was successfully deleted`;
-      },
-      error: (err) => {
-        setLoading(false);
-        return (
-          err.message ||
-          "An unexpected error occurred while attempting to delete an event."
-        );
-      },
-    });
-  };
 
   return (
     <div className='p-6'>
@@ -87,7 +36,6 @@ export default function EventsCreatePage() {
       ) : (
         <ul className='space-y-4'>
           {events?.map((event) => {
-            const isMatch = input.trim() === event.name;
             return (
               <li
                 key={event.id}
@@ -101,44 +49,12 @@ export default function EventsCreatePage() {
                   </p>
                 </div>
                 <div className='space-x-2'>
-                  <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant='destructive' className='cursor-pointer'>
-                        Delete
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className='sm:max-w-[425px]'>
-                      <DialogHeader>
-                        <DialogTitle>Are you sure?</DialogTitle>
-                        <DialogDescription>
-                          This action cannot be undone. Please type in the name
-                          of the event to complete the deletion.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <Label>
-                        Please enter{" "}
-                        <Badge className='font-sans'>{event.name}</Badge>
-                      </Label>
-                      <Input
-                        type='text'
-                        id='verify'
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                      />
-                      <DialogFooter>
-                        <Button
-                          type='submit'
-                          variant='destructive'
-                          disabled={!isMatch || loading}
-                          className='cursor-pointer'
-                          onClick={() => onDelete(event.id, event.name)}
-                        >
-                          Yes, I am sure i want delete
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-
+                  <DeleteDialog
+                    id={event.id}
+                    name={event.name}
+                    type='event'
+                    onDeleteSuccess={fetchEvents}
+                  />
                   <Button variant='outline' asChild>
                     <Link href={`/dashboard/events/${event.id}/edit`}>
                       Edit
