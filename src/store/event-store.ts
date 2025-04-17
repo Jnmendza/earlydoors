@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { Event } from "@prisma/client";
+import { approveEvent, rejectEvent } from "@/actions/events";
 
 type EventStore = {
   events: Array<Event>;
@@ -8,9 +9,11 @@ type EventStore = {
   setEvents: (events: Array<Event>) => void;
   addEvent: (event: Event) => void;
   fetchEvents: () => Promise<void>;
+  approveEvent: (id: string) => Promise<void>;
+  rejectEvent: (id: string) => Promise<void>;
 };
 
-export const useEventStore = create<EventStore>((set) => ({
+export const useEventStore = create<EventStore>((set, get) => ({
   events: [],
   isLoading: false,
   error: null,
@@ -28,5 +31,13 @@ export const useEventStore = create<EventStore>((set) => ({
         error instanceof Error ? error.message : "Failed to fetch events";
       set({ error: errorMessage, isLoading: false });
     }
+  },
+  approveEvent: async (id) => {
+    await approveEvent(id);
+    await get().fetchEvents();
+  },
+  rejectEvent: async (id) => {
+    await rejectEvent(id);
+    await get().fetchEvents();
   },
 }));

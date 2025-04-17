@@ -15,13 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useState } from "react";
-
-type DeletableType = "event" | "venue" | "club" | "supportersGroup";
-
+import { ModelType } from "@/types/types";
 interface DeleteDialogProps {
   id: string;
   name: string;
-  type: DeletableType;
+  type: ModelType;
   onDeleteSuccess: () => void;
 }
 

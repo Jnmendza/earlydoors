@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { eventFormSchema } from "@/lib/validation/eventsSchema";
+import { Status } from "@prisma/client";
 
 export async function GET(
   req: NextRequest,
@@ -50,6 +51,32 @@ export async function PUT(
   } catch (error) {
     console.error("Error updating event:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { status } = await req.json();
+
+    if (![Status.APPROVED, Status.PENDING, Status.REJECTED].includes(status)) {
+      return NextResponse.json({ error: "Invalid status " }, { status: 400 });
+    }
+
+    const updated = await db.event.update({
+      where: { id: params.id },
+      data: { status },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return NextResponse.json(
+      { error: "Server error updating status for events " },
+      { status: 500 }
+    );
   }
 }
 
