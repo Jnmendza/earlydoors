@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { Club } from "@prisma/client";
+import { approveStatus, rejectStatus } from "@/actions/status-change";
 
 type ClubStore = {
   clubs: Array<Club>;
@@ -8,9 +9,11 @@ type ClubStore = {
   setClubs: (clubs: Array<Club>) => void;
   addClub: (club: Club) => void;
   fetchClubs: () => Promise<void>;
+  approveClub: (id: string) => Promise<void>;
+  rejectClub: (id: string) => Promise<void>;
 };
 
-export const useClubStore = create<ClubStore>((set) => ({
+export const useClubStore = create<ClubStore>((set, get) => ({
   clubs: [],
   isLoading: false,
   error: null,
@@ -29,5 +32,13 @@ export const useClubStore = create<ClubStore>((set) => ({
         error instanceof Error ? error.message : "Failed to fetch clubs";
       set({ error: errorMessage, isLoading: false });
     }
+  },
+  approveClub: async (id) => {
+    await approveStatus(id, "club");
+    await get().fetchClubs();
+  },
+  rejectClub: async (id) => {
+    await rejectStatus(id, "club");
+    await get().fetchClubs();
   },
 }));

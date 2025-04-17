@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { SupportersGroup } from "@prisma/client";
+import { approveStatus, rejectStatus } from "@/actions/status-change";
 
 type GroupStore = {
   groups: Array<SupportersGroup>;
@@ -8,9 +9,11 @@ type GroupStore = {
   setGroups: (group: Array<SupportersGroup>) => void;
   addGroup: (group: SupportersGroup) => void;
   fetchGroups: () => Promise<void>;
+  approveGroup: (id: string) => Promise<void>;
+  rejectGroup: (id: string) => Promise<void>;
 };
 
-export const useGroupStore = create<GroupStore>((set) => ({
+export const useGroupStore = create<GroupStore>((set, get) => ({
   groups: [],
   isLoading: false,
   error: null,
@@ -31,5 +34,13 @@ export const useGroupStore = create<GroupStore>((set) => ({
           : "Failed to fetch supporters groups";
       set({ error: errorMessage, isLoading: false });
     }
+  },
+  approveGroup: async (id) => {
+    await approveStatus(id, "supportersGroup");
+    await get().fetchGroups();
+  },
+  rejectGroup: async (id) => {
+    await rejectStatus(id, "supportersGroup");
+    await get().fetchGroups();
   },
 }));

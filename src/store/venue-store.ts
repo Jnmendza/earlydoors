@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { Venue } from "@prisma/client";
+import { approveStatus, rejectStatus } from "@/actions/status-change";
 
 type VenueStore = {
   venues: Array<Venue>;
@@ -8,19 +9,11 @@ type VenueStore = {
   setVenues: (venues: Array<Venue>) => void;
   addVenue: (venue: Venue) => void;
   fetchVenues: () => Promise<void>;
+  approveVenue: (id: string) => Promise<void>;
+  rejectVenue: (id: string) => Promise<void>;
 };
 
-{
-  /**
-    import { useVenueStore } from "@/store/useVenueStore";
-
-const venues = useVenueStore((state) => state.venues);
-const setVenues = useVenueStore((state) => state.setVenues);
-
-    */
-}
-
-export const useVenueStore = create<VenueStore>((set) => ({
+export const useVenueStore = create<VenueStore>((set, get) => ({
   venues: [],
   isLoading: false,
   error: null,
@@ -38,5 +31,13 @@ export const useVenueStore = create<VenueStore>((set) => ({
         error instanceof Error ? error.message : "Failed to fetch venues";
       set({ error: errorMessage, isLoading: false });
     }
+  },
+  approveVenue: async (id) => {
+    await approveStatus(id, "venue");
+    await get().fetchVenues();
+  },
+  rejectVenue: async (id) => {
+    await rejectStatus(id, "venue");
+    await get().fetchVenues();
   },
 }));
