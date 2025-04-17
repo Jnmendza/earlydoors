@@ -1,26 +1,26 @@
 "use client";
-import { useEventStore } from "@/store/event-store";
-import { Status } from "@prisma/client";
 import { useEffect } from "react";
-import ModerationTable from "./ModerationTable";
-import { approveEvent, rejectEvent } from "@/actions/events";
+import { useClubStore } from "@/store/club-store";
+import { Status } from "@prisma/client";
+import ModerationTable from "../ModerationTable";
+import { approveStatus, rejectStatus } from "@/actions/status-change";
 
-const EventsTab = () => {
-  const { events, fetchEvents } = useEventStore();
+const ClubsTab = () => {
+  const { clubs, fetchClubs } = useClubStore();
 
   useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+    fetchClubs();
+  }, [fetchClubs]);
 
-  const eventsPending = events.filter((e) => e.status === Status.PENDING);
+  const clubsPending = clubs.filter((e) => e.status === Status.PENDING);
 
   return (
     <div className='w-full overflow-hidden relative h-auto rounded-2xl p-10 text-xl md:text-4xl font-bold text-black bg-white border-1 border-edorange border-solid space-y-2'>
-      <p>Events Tab</p>
+      <p>Clubs Tab</p>
       <ModerationTable
-        data={eventsPending}
-        onApprove={(id) => approveEvent(id)}
-        onReject={(id) => rejectEvent(id)}
+        data={clubsPending}
+        onApprove={(id) => approveStatus(id, "club")}
+        onReject={(id) => rejectStatus(id, "club")}
         columns={[
           {
             header: "Name",
@@ -42,4 +42,4 @@ const EventsTab = () => {
   );
 };
 
-export default EventsTab;
+export default ClubsTab;

@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { Event } from "@prisma/client";
-import { approveEvent, rejectEvent } from "@/actions/events";
-
+import { approveStatus, rejectStatus } from "@/actions/status-change";
 type EventStore = {
   events: Array<Event>;
   isLoading: boolean;
@@ -33,11 +32,11 @@ export const useEventStore = create<EventStore>((set, get) => ({
     }
   },
   approveEvent: async (id) => {
-    await approveEvent(id);
+    await approveStatus(id, "event");
     await get().fetchEvents();
   },
   rejectEvent: async (id) => {
-    await rejectEvent(id);
+    await rejectStatus(id, "event");
     await get().fetchEvents();
   },
 }));

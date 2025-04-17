@@ -86,7 +86,7 @@ export async function DELETE(
 ) {
   try {
     await db.event.delete({ where: { id: params.id } });
-    return NextResponse.json({ message: "Event deleted" });
+    return NextResponse.json({ message: `Event ${params.id} deleted ` });
   } catch (error) {
     console.error("Error deleting event:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

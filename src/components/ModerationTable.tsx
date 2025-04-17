@@ -21,8 +21,6 @@ type ModerationTableProps<T> = {
   }[];
 };
 
-// name, create_at, status
-
 const ModerationTable = <T extends { id: string }>({
   data,
   onApprove,
@@ -60,6 +58,7 @@ const ModerationTable = <T extends { id: string }>({
               <Button
                 onClick={() => onApprove(row.id)}
                 size='sm'
+                variant='outline'
                 className='cursor-pointer z-100'
               >
                 <CircleCheck className='text-green-700 ' strokeWidth={3} />
