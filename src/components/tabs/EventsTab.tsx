@@ -4,6 +4,8 @@ import { Status } from "@prisma/client";
 import { useEffect } from "react";
 import ModerationTable from "../ModerationTable";
 import { approveStatus, rejectStatus } from "@/actions/status-change";
+import { capitalizeFirstLetterOnly, statusBadgeColor } from "@/lib/utils";
+import { Badge } from "../ui/badge";
 
 const EventsTab = () => {
   const { events, fetchEvents } = useEventStore();
@@ -35,7 +37,14 @@ const EventsTab = () => {
                 year: "numeric",
               }),
           },
-          { header: "Status", accessor: (row) => row.status },
+          {
+            header: "Status",
+            accessor: (row) => (
+              <Badge className={statusBadgeColor(row.status || "N/A")}>
+                {capitalizeFirstLetterOnly(row.status || "N/A")}
+              </Badge>
+            ),
+          },
         ]}
       />
     </div>
