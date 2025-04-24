@@ -65,7 +65,7 @@ export const useEventStore = create<EventStore>((set, get) => ({
                 end.setHours(endHours, endMinutes);
                 return end;
               })()
-            : new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour default
+            : new Date(startDate.getTime() + 60 * 60 * 1000);
 
           return {
             id: event.id,

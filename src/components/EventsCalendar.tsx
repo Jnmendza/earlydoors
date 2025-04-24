@@ -37,7 +37,7 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null
   );
-  console.log("SELECTED", selectedEvent);
+
   useEffect(() => {
     fetchCaledarEvents();
   }, [fetchCaledarEvents]);
@@ -91,6 +91,7 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
         </DialogContent>
       </Dialog>
       <div className='min-h-[500px]' {...props}>
+        <h1 className='text-3xl mb-4'>Upcoming Events</h1>
         <Calendar
           components={components}
           date={currentDate}
