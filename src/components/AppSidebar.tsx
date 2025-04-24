@@ -3,7 +3,7 @@
 import * as React from "react";
 import {
   GalleryVerticalEnd,
-  // LayoutDashboard,
+  LayoutDashboard,
   ShieldCheck,
   CalendarDays,
   MapPin,
@@ -37,11 +37,11 @@ export const data = {
     },
   ],
   navMain: [
-    // {
-    //   title: "Dashboard",
-    //   url: "/dashboard",
-    //   icon: LayoutDashboard,
-    // },
+    {
+      title: "Overview",
+      url: "/dashboard",
+      icon: LayoutDashboard,
+    },
     {
       title: "Events",
       url: "/dashboard/events",
