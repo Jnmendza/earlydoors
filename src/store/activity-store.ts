@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { ActivityLog } from "@prisma/client";
-import { db } from "@/lib/db";
 
 type ActivityStore = {
   logs: Array<ActivityLog>;
@@ -16,11 +15,9 @@ export const useActivityStore = create<ActivityStore>((set) => ({
   fetchLogs: async () => {
     set({ isLoading: true, error: null });
     try {
-      const data = await db.activityLog.findMany({
-        orderBy: { created_at: "desc" },
-        take: 5,
-      });
-
+      const res = await fetch("/api/activityLogs");
+      if (!res.ok) throw new Error("Failed to fetch activity logs");
+      const data = await res.json();
       set({ logs: data, isLoading: false });
     } catch (error: unknown) {
       const errorMessage =
