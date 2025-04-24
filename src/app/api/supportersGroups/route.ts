@@ -1,6 +1,7 @@
 import { getSupporterGroups } from "@/data/groups";
 import { db } from "@/lib/db";
-import { Status, SupportersGroup } from "@prisma/client";
+import { ActionType } from "@/types/types";
+import { ActivityType, Status, SupportersGroup } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
@@ -19,7 +20,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body: SupportersGroup = await req.json();
-    console.log("POST", body);
+
     const supportersGroup = await db.supportersGroup.create({
       data: {
         name: body.name,
@@ -31,6 +32,15 @@ export async function POST(req: NextRequest) {
         website_url: body.website_url,
         ig_handle: body.ig_handle,
         status: Status.PENDING,
+      },
+    });
+
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.SUPPORTERS_GROUP,
+        action: "CREATE" as ActionType,
+        referenced_id: supportersGroup.id,
+        message: `Supporters group ${supportersGroup.name} was created`,
       },
     });
     return NextResponse.json(supportersGroup, { status: 201 });

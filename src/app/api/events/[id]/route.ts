@@ -85,7 +85,7 @@ export async function PATCH(
         type: ActivityType.EVENT,
         action: "UPDATE" as ActionType,
         referenced_id: updated.id,
-        message: `Event ${updated.name} was updated`,
+        message: `Event ${updated.name} status was updated to ${status}`,
       },
     });
 
