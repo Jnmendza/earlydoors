@@ -1,3 +1,4 @@
+import { Status } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -38,4 +39,22 @@ export function isUUID(str: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(
     str
   );
+}
+
+export function capitalizeFirstLetterOnly(input: string): string {
+  if (!input) return "";
+  return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+}
+
+export function statusBadgeColor(status: string) {
+  switch (status) {
+    case Status.APPROVED:
+      return "bg-green-500 text-white";
+    case Status.PENDING:
+      return "bg-yellow-300 text-black";
+    case Status.REJECTED:
+      return "bg-red-500 text-white";
+    default:
+      return "bg-black text-white";
+  }
 }
