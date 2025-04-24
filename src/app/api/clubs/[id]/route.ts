@@ -1,7 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { clubFormSchema } from "@/lib/validation/clubsSchema";
-import { Status } from "@prisma/client";
+import { ActivityType, Status } from "@prisma/client";
+import { ActionType } from "@/types/types";
 
 export async function GET(
   req: NextRequest,
@@ -46,6 +47,15 @@ export async function PUT(
       data: body,
     });
 
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.CLUB,
+        action: "UPDATE",
+        referenced_id: updatedClub.id,
+        message: `Club ${updatedClub.name} was updated`,
+      },
+    });
+
     return NextResponse.json(updatedClub);
   } catch (error) {
     console.error("Error updating club:", error);
@@ -67,6 +77,15 @@ export async function PATCH(
     const updated = await db.club.update({
       where: { id: params.id },
       data: { status },
+    });
+
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.CLUB,
+        action: "UPDATE" as ActionType,
+        referenced_id: updated.id,
+        message: `Club ${updated.name} status was updated to ${status}`,
+      },
     });
 
     return NextResponse.json(updated);

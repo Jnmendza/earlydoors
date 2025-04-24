@@ -10,7 +10,7 @@ export async function GET(
   try {
     const group = await db.supportersGroup.findUnique({
       where: { id: params.id },
-      include: { Club: true },
+      include: { club: true },
     });
 
     if (!group) {
