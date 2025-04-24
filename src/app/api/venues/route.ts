@@ -1,6 +1,7 @@
 import { getVenues } from "@/data/venue";
 import { db } from "@/lib/db";
-import { Status, Venue } from "@prisma/client";
+import { ActionType } from "@/types/types";
+import { ActivityType, Status, Venue } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
@@ -38,6 +39,15 @@ export async function POST(req: NextRequest) {
         is_bookable: body.is_bookable,
         is_active: false,
         status: Status.PENDING,
+      },
+    });
+
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.VENUE,
+        action: "CREATE" as ActionType,
+        referenced_id: venue.id,
+        message: `Venue ${venue.name} was created`,
       },
     });
 
