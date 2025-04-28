@@ -91,7 +91,7 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
         </DialogContent>
       </Dialog>
       <div className='min-h-[500px]' {...props}>
-        <h1 className='text-3xl mb-4'>Upcoming Events</h1>
+        <h1 className='text-2xl mb-4'>Upcoming Events</h1>
         <Calendar
           components={components}
           date={currentDate}
