@@ -1,6 +1,6 @@
 import { Status } from "@prisma/client";
-import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -46,14 +46,20 @@ export function capitalizeFirstLetterOnly(input: string): string {
   return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
 }
 
-export function statusBadgeColor(status: string) {
-  switch (status) {
+export function textBadgeColor(text: string) {
+  switch (text) {
     case Status.APPROVED:
-      return "bg-green-500 text-white";
+    case "EVENT":
+      return "bg-green-600 text-white";
     case Status.PENDING:
+    case "VENUE":
       return "bg-yellow-300 text-black";
     case Status.REJECTED:
       return "bg-red-500 text-white";
+    case "CLUB":
+      return "bg-blue-600 text-white";
+    case "SUPPORTERS_GROUP":
+      return "bg-purple-600 text-white";
     default:
       return "bg-black text-white";
   }

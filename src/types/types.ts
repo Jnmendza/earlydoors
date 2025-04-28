@@ -10,3 +10,5 @@ export type CalendarEvent = {
   desc?: string;
   venueName: string;
 };
+
+export type ActionType = "CREATE" | "UPDATE" | "DELETE" | "REJECT" | "APPROVE";

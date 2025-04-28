@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { eventFormSchema } from "@/lib/validation/eventsSchema";
-import { Status } from "@prisma/client";
+import { ActivityType, Status } from "@prisma/client";
+import { ActionType } from "@/types/types";
 
 export async function GET(
   req: NextRequest,
@@ -47,6 +48,15 @@ export async function PUT(
       data: parseResult.data,
     });
 
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.EVENT,
+        action: "UPDATE" as ActionType,
+        referenced_id: updated.id,
+        message: `Event ${updated.name} was updated`,
+      },
+    });
+
     return NextResponse.json(updated);
   } catch (error) {
     console.error("Error updating event:", error);
@@ -70,6 +80,15 @@ export async function PATCH(
       data: { status },
     });
 
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.EVENT,
+        action: "UPDATE" as ActionType,
+        referenced_id: updated.id,
+        message: `Event ${updated.name} status was updated to ${status}`,
+      },
+    });
+
     return NextResponse.json(updated);
   } catch (error) {
     console.error("Error updating status:", error);
@@ -86,6 +105,15 @@ export async function DELETE(
 ) {
   try {
     await db.event.delete({ where: { id: params.id } });
+
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.EVENT,
+        action: "DELETE" as ActionType,
+        referenced_id: params.id,
+        message: `Event ${params.id} was deleted`,
+      },
+    });
     return NextResponse.json({ message: `Event ${params.id} deleted ` });
   } catch (error) {
     console.error("Error deleting event:", error);

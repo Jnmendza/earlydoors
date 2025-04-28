@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { venueFormSchema } from "@/lib/validation/venuesSchema";
-import { Status } from "@prisma/client";
+import { ActionType } from "@/types/types";
+import { ActivityType, Status } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -47,6 +48,15 @@ export async function PUT(
       },
     });
 
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.VENUE,
+        action: "UPDATE",
+        referenced_id: updatedVenue.id,
+        message: `Venue ${updatedVenue.name} was updated`,
+      },
+    });
+
     return NextResponse.json(updatedVenue);
   } catch (error) {
     console.error("Error updating venue:", error);
@@ -70,6 +80,15 @@ export async function PATCH(
       data: { status },
     });
 
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.VENUE,
+        action: "UPDATE" as ActionType,
+        referenced_id: updated.id,
+        message: `Venue ${updated.name} status was updated to ${status}`,
+      },
+    });
+
     return NextResponse.json(updated);
   } catch (error) {
     console.error("Error updating status:", error);
@@ -86,6 +105,15 @@ export async function DELETE(
 ) {
   try {
     await db.venue.delete({ where: { id: params.id } });
+
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.VENUE,
+        action: "DELETE" as ActionType,
+        referenced_id: params.id,
+        message: `Venue ${params.id} was deleted`,
+      },
+    });
     return NextResponse.json({ message: `Venue ${params.id} deleted ` });
   } catch (error) {
     console.error("Error deleting venue:", error);

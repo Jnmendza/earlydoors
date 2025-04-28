@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEvents } from "@/data/event";
 import { db } from "@/lib/db";
-import { Event, Status } from "@prisma/client";
+import { ActivityType, Event, Status } from "@prisma/client";
+import { ActionType } from "@/types/types";
 
 export async function GET() {
   try {
@@ -33,6 +34,15 @@ export async function POST(req: NextRequest) {
         has_outdoor_screens: body.has_outdoor_screens,
         is_bookable: body.is_bookable,
         status: Status.PENDING,
+      },
+    });
+
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.EVENT,
+        action: "CREATE" as ActionType,
+        referenced_id: event.id,
+        message: `Event ${event.name} was created`,
       },
     });
 

@@ -8,7 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model SupportersGroup {
   id             String       @id(map: "supporters_group_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at     DateTime     @default(now()) @db.Timestamptz(6)
@@ -21,10 +20,9 @@ model SupportersGroup {
   ig_handle      String?      @default("")
   state          String
   status         Status?      @default(PENDING)
-  Club           Club         @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: Restrict, map: "supporters_group_club_id_fkey")
+  club           Club         @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: Restrict, map: "supporters_group_club_id_fkey")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Venue {
   id                  String       @id(map: "venues_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at          DateTime     @default(now()) @db.Timestamptz(6)
@@ -44,10 +42,9 @@ model Venue {
   zipcode             String
   state               String
   status              Status?      @default(PENDING)
-  Event               Event[]
+  event               Event[]
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Event {
   id                  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at          DateTime     @default(now()) @db.Timestamptz(6)
@@ -63,11 +60,10 @@ model Event {
   is_bookable         Boolean      @default(false)
   status              Status?      @default(PENDING)
   date                DateTime     @db.Date
-  Club                Club?        @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Event_club_id_fkey")
-  Venue               Venue        @relation(fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  club                Club?        @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Event_club_id_fkey")
+  venue               Venue        @relation(fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Club {
   id              String            @id(map: "clubs_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at      DateTime          @default(now()) @db.Timestamptz(6)
@@ -76,8 +72,24 @@ model Club {
   league          String
   country         String
   status          Status?           @default(PENDING)
-  Event           Event[]
-  SupportersGroup SupportersGroup[]
+  event           Event[]
+  supportersGroup SupportersGroup[]
+}
+
+model ActivityLog {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  type            ActivityType
+  action          String
+  referenced_id   String
+  message         String
+}
+
+enum ActivityType {
+  SUPPORTERS_GROUP
+  CLUB
+  VENUE
+  EVENT
 }
 
 enum Status {

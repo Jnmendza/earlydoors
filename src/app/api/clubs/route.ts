@@ -2,7 +2,8 @@ import { getClubs } from "@/data/club";
 import { clubFormSchema } from "@/lib/validation/clubsSchema";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { Status } from "@prisma/client";
+import { ActivityType, Status } from "@prisma/client";
+import { ActionType } from "@/types/types";
 
 export async function GET() {
   try {
@@ -38,6 +39,15 @@ export async function POST(req: NextRequest) {
         league,
         country,
         status: Status.PENDING,
+      },
+    });
+
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.CLUB,
+        action: "CREATE" as ActionType,
+        referenced_id: newClub.id,
+        message: `Club ${newClub.name} was created`,
       },
     });
     return NextResponse.json(newClub, { status: 201 });

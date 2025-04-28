@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { groupsFormSchema } from "@/lib/validation/groupsSchema";
-import { Status } from "@prisma/client";
+import { ActivityType, Status } from "@prisma/client";
+import { ActionType } from "@/types/types";
 
 export async function GET(
   _: NextRequest,
@@ -10,7 +11,7 @@ export async function GET(
   try {
     const group = await db.supportersGroup.findUnique({
       where: { id: params.id },
-      include: { Club: true },
+      include: { club: true },
     });
 
     if (!group) {
@@ -47,6 +48,15 @@ export async function PUT(
       data: parseResult.data,
     });
 
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.SUPPORTERS_GROUP,
+        action: "UPDATE" as ActionType,
+        referenced_id: updated.id,
+        message: `Supporters group ${updated.name} was updated`,
+      },
+    });
+
     return NextResponse.json(updated);
   } catch (error) {
     console.error("Error updating group:", error);
@@ -70,6 +80,15 @@ export async function PATCH(
       data: { status },
     });
 
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.SUPPORTERS_GROUP,
+        action: "UPDATE" as ActionType,
+        referenced_id: updated.id,
+        message: `Supporters group ${updated.name} status was updated to ${status}`,
+      },
+    });
+
     return NextResponse.json(updated);
   } catch (error) {
     console.error("Error updating status:", error);
@@ -86,6 +105,15 @@ export async function DELETE(
 ) {
   try {
     await db.supportersGroup.delete({ where: { id: params.id } });
+
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.SUPPORTERS_GROUP,
+        action: "DELETE" as ActionType,
+        referenced_id: params.id,
+        message: `Supporters group ${params.id} was deleted`,
+      },
+    });
     return NextResponse.json({ message: `Group ${params.id} deleted ` });
   } catch (error) {
     console.error("Error deleting group:", error);

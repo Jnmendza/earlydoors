@@ -4,12 +4,12 @@ export const getEvents = async () => {
   try {
     const events = await db.event.findMany({
       include: {
-        Venue: {
+        venue: {
           select: {
             name: true,
           },
         },
-        Club: true,
+        club: true,
       },
     });
     return events;
