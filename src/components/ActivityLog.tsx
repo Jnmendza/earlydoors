@@ -17,12 +17,12 @@ interface ActivityLogProps {
   type: ActivityType;
 }
 
-const actionIcons: Record<string, ReactNode> = {
-  UPDATE: <Pencil size={16} className='text-blue-600' />,
-  DELETE: <Trash size={16} className='text-red-600' />,
-  CREATE: <CirclePlus size={16} className='text-green-600' />,
-  REJECT: <OctagonMinus size={16} className='text-red-600' />,
-  APPROVE: <ThumbsUp size={16} className='text-green-600' />,
+const actionIcons: Record<string, { icon: ReactNode; color: string }> = {
+  UPDATE: { icon: <Pencil size={16} />, color: "text-blue-600" },
+  DELETE: { icon: <Trash size={16} />, color: "text-red-600" },
+  CREATE: { icon: <CirclePlus size={16} />, color: "text-green-600" },
+  REJECT: { icon: <OctagonMinus size={16} />, color: "text-red-600" },
+  APPROVE: { icon: <ThumbsUp size={16} />, color: "text-green-600" },
 };
 
 const ActivityLog = ({
@@ -32,10 +32,13 @@ const ActivityLog = ({
   type,
 }: ActivityLogProps) => {
   const normalized = action.toUpperCase();
-  const icon = actionIcons[normalized] ?? null;
+  const style = actionIcons[normalized] ?? null;
+
   return (
     <div className='flex items-start space-x-3 p-2 border-b-2 mt-4'>
-      {icon}
+      {style && (
+        <div className={`rounded-full p-1 ${style.color}`}>{style.icon}</div>
+      )}
       <div>
         <p className='font-semibold text-sm'>{message}</p>
         <div className='flex items-center justify-between mt-2'>
