@@ -17,7 +17,6 @@ const filterOptions: FilterOption[] = [
 
 const Filters = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  console.log("SELECTED", selectedOptions);
   return (
     <div className='flex flex-col gap-4 p-2 mt-4'>
       <div className='bg-edorange h-[50px] w-full p-2 mb-4'>

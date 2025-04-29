@@ -37,7 +37,6 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null
   );
-  console.log("EVENTS", calendarEvents);
 
   useEffect(() => {
     fetchCaledarEvents();

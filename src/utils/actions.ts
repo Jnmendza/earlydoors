@@ -21,7 +21,6 @@ const signInWith = async (provider: Provider) => {
   if (error) {
     throw error;
   }
-  console.log("DATA:::::", data);
   redirect(data?.url);
 };
 

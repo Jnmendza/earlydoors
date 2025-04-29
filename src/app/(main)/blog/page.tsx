@@ -20,7 +20,6 @@ const cardText: BlogCardProps = {
 
 const BlogPage = () => {
   const [currentTab, setCurrentTab] = useState<string>("All");
-  console.log("TAB", currentTab);
 
   return (
     <div>

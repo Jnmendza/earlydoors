@@ -34,7 +34,6 @@ export const useEventStore = create<EventStore>((set, get) => ({
       const res = await fetch("/api/events");
       if (!res.ok) throw new Error("Error fetching events");
       const data = await res.json();
-      console.log("DATA", data);
       set({ events: data, isLoading: false });
     } catch (error: unknown) {
       const errorMessage =
@@ -79,7 +78,6 @@ export const useEventStore = create<EventStore>((set, get) => ({
             desc: event.description,
           };
         });
-      console.log("CALENDAR EVENTS", calendarEvents);
       set({ calendarEvents, isLoading: false });
     } catch (error: unknown) {
       const errorMessage =

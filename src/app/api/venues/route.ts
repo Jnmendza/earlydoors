@@ -20,7 +20,6 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body: Venue = await req.json();
-    console.log("POST", body);
     const venue = await db.venue.create({
       data: {
         name: body.name,

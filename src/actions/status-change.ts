@@ -12,8 +12,6 @@ export const approveStatus = async (id: string, type: ModelType) => {
       const error = await res.json();
       throw new Error(error.message || `Failed to approve ${type}`);
     }
-
-    console.log(`✅ ${type} ${id} approved`);
   } catch (err) {
     console.error(`Error approving ${type}:`, err);
   }
@@ -31,8 +29,6 @@ export const rejectStatus = async (id: string, type: ModelType) => {
       const error = await res.json();
       throw new Error(error.message || `Failed to reject ${type}`);
     }
-
-    console.log(`❌ ${type} ${id} rejected`);
   } catch (err) {
     console.error(`Error rejecting ${type}:`, err);
   }
