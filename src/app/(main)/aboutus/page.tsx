@@ -29,8 +29,8 @@ const AboutUs = () => {
       <div className='flex gap-x-16 items-center justify-center ml-48'>
         <div>
           <p className='text-xl w-[400px]'>
-            Hey, I&apos;m Jon — a front-end engineer from San Diego with a love
-            for fútbol, design, and building experiences that bring people
+            Hey, I&apos;m Jonathan — a front-end engineer from San Diego with a
+            love for fútbol, design, and building experiences that bring people
             together. I created EarlyDoors as both a personal project and a love
             letter to my city’s vibrant matchday culture.
           </p>
@@ -49,15 +49,18 @@ const AboutUs = () => {
       <div className='flex h-full justify-between'>
         <TechStackSection />
         <div
-          className={`flex flex-col justify-center w-1/4 mr-8 ${bebasFont.className} text-4xl`}
+          className={`relative flex flex-col justify-center w-1/4 mr-8 ${bebasFont.className} text-4xl`}
         >
           <span className='self-start'>The</span>
-          <Image
-            src='/assets/ED_Text.png'
-            alt='text-logo'
-            width={340}
-            height={80}
-          />
+          <div className='relative w-full h-20 md:h-24 lg:h-32'>
+            <Image
+              src='/assets/ED_Text.png'
+              alt='text-logo'
+              fill
+              className='object-contain'
+            />
+          </div>
+
           <span className='self-end'>Formation</span>
         </div>
       </div>

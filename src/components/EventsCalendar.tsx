@@ -12,6 +12,7 @@ import {
   DialogDescription,
 } from "./ui/dialog";
 import { CalendarEvent } from "@/types/types";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const mLocalizer = momentLocalizer(moment);
 
@@ -66,7 +67,7 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
   };
 
   return (
-    <>
+    <Card>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -90,8 +91,10 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-      <div className='min-h-[500px]' {...props}>
-        <h1 className='text-2xl mb-4'>Upcoming Events</h1>
+      <CardContent className='min-h-[500px] overflow-scroll' {...props}>
+        <CardHeader>
+          <CardTitle className='-ml-5 mb-4'>Upcoming Events</CardTitle>
+        </CardHeader>
         <Calendar
           components={components}
           date={currentDate}
@@ -110,7 +113,7 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
             ) as View[]
           }
         />
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 }
