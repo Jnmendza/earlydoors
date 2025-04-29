@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { ActivityType, Event, Status } from "@prisma/client";
 import { ActionType } from "@/types/types";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const events = await getEvents();

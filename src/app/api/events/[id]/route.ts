@@ -4,6 +4,8 @@ import { eventFormSchema } from "@/lib/validation/eventsSchema";
 import { ActivityType, Status } from "@prisma/client";
 import { ActionType } from "@/types/types";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }

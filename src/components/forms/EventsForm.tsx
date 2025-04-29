@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,6 +37,7 @@ import { useClubStore } from "@/store/club-store";
 import { useVenueStore } from "@/store/venue-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
 import { toast } from "sonner";
+import { useEventStore } from "@/store/event-store";
 
 type EventsFormProps = {
   initialData?: EventFormData;
@@ -46,6 +48,8 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { fetchClubs, clubs } = useClubStore();
   const { fetchVenues, venues } = useVenueStore();
+  const { updateEvent, addEvent } = useEventStore();
+  const router = useRouter();
 
   useEffect(() => {
     fetchClubs();
@@ -72,7 +76,7 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
     setIsLoading(true);
     const cleanValues = {
       ...values,
-      date: values.date.toISOString(), // 🔥 convert to ISO string
+      date: values.date.toISOString(),
     };
 
     const promise = async () => {
@@ -92,14 +96,22 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
         throw new Error(error?.message || "Failed to create event");
       }
 
-      return { name: values.name };
+      const updatedEvent = await res.json();
+
+      if (eventId) {
+        updateEvent(updatedEvent);
+      } else {
+        addEvent(updatedEvent);
+      }
+
+      return { name: updateEvent.name };
     };
 
     toast.promise(promise, {
       loading: eventId ? "Updating event..." : "Creating event...",
       success: (data) => {
         setIsLoading(false);
-        if (!eventId)
+        if (!eventId) {
           form.reset({
             name: "",
             description: "",
@@ -112,6 +124,9 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
             has_outdoor_screens: undefined,
             is_bookable: undefined,
           });
+        } else {
+          router.push("/dashboard/events");
+        }
         return `${data.name} was successfully ${
           eventId ? "updated" : "created"
         }!`;

@@ -40,7 +40,7 @@ const ActivityLog = ({
         <div className={`rounded-full p-1 ${style.color}`}>{style.icon}</div>
       )}
       <div>
-        <p className='font-semibold text-sm'>{message}</p>
+        <p className='font-semibold text-sm text-ellipsis'>{message}</p>
         <div className='flex items-center justify-between mt-2'>
           <p className='text-xs text-muted-foreground'>
             {formatDistanceToNow(new Date(created_at))} ago
