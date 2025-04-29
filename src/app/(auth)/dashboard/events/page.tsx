@@ -14,7 +14,7 @@ export default function EventsCreatePage() {
     isLoading: eventsLoading,
     error,
   } = useEventStore();
-
+  console.log("EVENTS PAGE", events);
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);

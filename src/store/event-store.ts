@@ -16,6 +16,7 @@ type EventStore = {
   addEvent: (event: EventWithVenue) => void;
   fetchEvents: () => Promise<void>;
   fetchCaledarEvents: () => Promise<void>;
+  updateEvent: (updatedEvent: Event) => void;
   approveEvent: (id: string) => Promise<void>;
   rejectEvent: (id: string) => Promise<void>;
 };
@@ -33,6 +34,7 @@ export const useEventStore = create<EventStore>((set, get) => ({
       const res = await fetch("/api/events");
       if (!res.ok) throw new Error("Error fetching events");
       const data = await res.json();
+      console.log("DATA", data);
       set({ events: data, isLoading: false });
     } catch (error: unknown) {
       const errorMessage =
@@ -46,7 +48,6 @@ export const useEventStore = create<EventStore>((set, get) => ({
     try {
       const res = await fetch("/api/events");
       if (!res.ok) throw new Error(res.statusText);
-
       const calendarEvents = (await res.json())
         .filter((event: EventWithVenue) => event.status === Status.APPROVED)
         .map((event: EventWithVenue) => {
@@ -78,7 +79,7 @@ export const useEventStore = create<EventStore>((set, get) => ({
             desc: event.description,
           };
         });
-
+      console.log("CALENDAR EVENTS", calendarEvents);
       set({ calendarEvents, isLoading: false });
     } catch (error: unknown) {
       const errorMessage =
@@ -86,6 +87,13 @@ export const useEventStore = create<EventStore>((set, get) => ({
       set({ error: errorMessage, isLoading: false });
     }
   },
+  updateEvent: (updatedEvent: Event) =>
+    set((state) => ({
+      events: state.events.map((event) =>
+        event.id === updatedEvent.id ? updatedEvent : event
+      ),
+    })),
+
   approveEvent: async (id) => {
     await approveStatus(id, "event");
     await get().fetchEvents();
