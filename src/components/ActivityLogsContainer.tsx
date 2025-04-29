@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import ActivityLog from "./ActivityLog";
 import { useActivityStore } from "@/store/activity-store";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const ActivityLogsContainer = () => {
   const { logs, fetchLogs } = useActivityStore();
@@ -11,19 +12,23 @@ const ActivityLogsContainer = () => {
   }, [fetchLogs]);
 
   return (
-    <div className='flex-1 overflow-auto rounded-xl bg-muted/50'>
-      <div className='p-2'>
+    <Card>
+      <CardHeader>
+        <CardTitle>Recent Activity</CardTitle>
+      </CardHeader>
+      <CardContent className='overflow-y-scroll'>
         {logs.map(({ action, created_at, message, type }, index) => (
           <ActivityLog
             key={index}
+            index={index}
             action={action}
             created_at={created_at}
             message={message}
             type={type}
           />
         ))}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
