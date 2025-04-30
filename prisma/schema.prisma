@@ -96,4 +96,6 @@ enum Status {
   PENDING
   APPROVED
   REJECTED
+  COMPLETED
+  CANCELLED
 }
