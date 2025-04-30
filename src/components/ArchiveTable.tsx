@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -42,48 +42,21 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { EventWithVenue, useEventStore } from "@/store/event-store";
+import { formatDate } from "@/lib/dateUtils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "./ui/dialog";
+import { Badge } from "./ui/badge";
+import { textBadgeColor } from "@/lib/utils";
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    date: 316,
-    status: "success",
-    name: "ken99@example.com",
-  },
-  {
-    id: "3u1reuv4",
-    date: 242,
-    status: "success",
-    name: "Abe45@example.com",
-  },
-  {
-    id: "derv1ws0",
-    date: 837,
-    status: "processing",
-    name: "Monserrat44@example.com",
-  },
-  {
-    id: "5kma53ae",
-    date: 874,
-    status: "success",
-    name: "Silas22@example.com",
-  },
-  {
-    id: "bhqecj4p",
-    date: 721,
-    status: "failed",
-    name: "carmella@example.com",
-  },
-];
-
-export type Payment = {
-  id: string;
-  date: number;
-  status: "pending" | "processing" | "success" | "failed";
-  name: string;
-};
-
-export const columns: ColumnDef<Payment>[] = [
+const getColumns = (
+  setOpen: (open: boolean) => void,
+  setSelectedEvent: (event: EventWithVenue) => void
+): ColumnDef<EventWithVenue>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -132,15 +105,8 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "date",
     header: () => <div className='text-right'>Date</div>,
     cell: ({ row }) => {
-      const date = parseFloat(row.getValue("date"));
-
-      // Format the  date
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(date);
-
-      return <div className='text-right font-medium'>{formatted}</div>;
+      const date = row.getValue("date") as string | Date;
+      return <div className='text-right font-medium'>{formatDate(date)}</div>;
     },
   },
   {
@@ -165,7 +131,14 @@ export const columns: ColumnDef<Payment>[] = [
               Copy event ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View event details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setSelectedEvent(event);
+                setOpen(true);
+              }}
+            >
+              View event details
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -174,13 +147,24 @@ export const columns: ColumnDef<Payment>[] = [
 ];
 
 export const ArchiveTable = () => {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  const { events: data, fetchEvents } = useEventStore();
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedEvent, setSelectedEvent] = useState<EventWithVenue | null>(
+    null
+  );
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
+  const columns = React.useMemo(
+    () => getColumns(setOpen, setSelectedEvent),
     []
   );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -203,16 +187,44 @@ export const ArchiveTable = () => {
 
   return (
     <Card className='w-full'>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          {selectedEvent && (
+            <div className='space-y-4'>
+              <DialogTitle className='text-xl font-bold'>
+                {selectedEvent.name}
+              </DialogTitle>
+              <DialogDescription>
+                <strong>Date:</strong> {formatDate(selectedEvent.date)}
+              </DialogDescription>
+              <DialogDescription>
+                <strong>Status:</strong>{" "}
+                <Badge
+                  variant='secondary'
+                  className={`${textBadgeColor(selectedEvent.status || "")}`}
+                >
+                  {selectedEvent.status}
+                </Badge>
+              </DialogDescription>
+              {selectedEvent.description && (
+                <DialogDescription>
+                  <strong>Description:</strong> {selectedEvent.description}
+                </DialogDescription>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
       <CardHeader>
         <CardTitle>Archives</CardTitle>
       </CardHeader>
       <CardContent>
         <div className='flex items-center py-4'>
           <Input
-            placeholder='Filter emails...'
-            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+            placeholder='Filter events...'
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("email")?.setFilterValue(event.target.value)
+              table.getColumn("name")?.setFilterValue(event.target.value)
             }
             className='max-w-sm'
           />
