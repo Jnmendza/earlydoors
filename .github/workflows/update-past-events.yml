@@ -1,8 +1,7 @@
 name: Update Past Events
 on:
   schedule:
-    # Runs at 3 AM UTC daily
-    - cron: "0 3 * * *"
+    - cron: "0 3 * * *" # 3 AM UTC daily
   workflow_dispatch: # Allow manual triggers
 
 jobs:
@@ -16,14 +15,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm" # Cache dependencies for faster runs
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci # Use `ci` for clean installs
 
       - name: Run event update script
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }} # Required for Prisma
-          CRON_SECRET: ${{ secrets.CRON_SECRET }} # Optional security
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
+          npx prisma generate       # Ensure client is up-to-date
           npx prisma migrate deploy
           npm run update-past-events
