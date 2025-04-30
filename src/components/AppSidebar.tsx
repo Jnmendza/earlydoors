@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {
-  GalleryVerticalEnd,
+  Volleyball,
   LayoutDashboard,
   ShieldCheck,
   CalendarDays,
@@ -32,7 +32,7 @@ export const data = {
   teams: [
     {
       name: "EarlyDoors",
-      logo: GalleryVerticalEnd,
+      logo: Volleyball,
       plan: "San Diego",
     },
   ],

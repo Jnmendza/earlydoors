@@ -4,7 +4,7 @@ import { approveStatus, rejectStatus } from "@/actions/status-change";
 import { CalendarEvent } from "@/types/types";
 
 export type EventWithVenue = Event & {
-  Venue?: { name: string };
+  venue?: { name: string };
 };
 
 type EventStore = {
@@ -66,14 +66,13 @@ export const useEventStore = create<EventStore>((set, get) => ({
                 return end;
               })()
             : new Date(startDate.getTime() + 60 * 60 * 1000);
-
           return {
             id: event.id,
             title: event.name,
             start: startDate,
             end: endDate,
             venueId: event.venue_id,
-            venueName: event.Venue?.name ?? "Unknown Venue",
+            venueName: event.venue?.name ?? "Unknown Venue",
             allDay: false,
             desc: event.description,
           };

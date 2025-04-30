@@ -15,6 +15,7 @@ interface ActivityLogProps {
   created_at: Date;
   message: string;
   type: ActivityType;
+  index: number;
 }
 
 const actionIcons: Record<string, { icon: ReactNode; color: string }> = {
@@ -30,16 +31,21 @@ const ActivityLog = ({
   created_at,
   message,
   type,
+  index,
 }: ActivityLogProps) => {
   const normalized = action.toUpperCase();
   const style = actionIcons[normalized] ?? null;
 
   return (
-    <div className='flex items-start space-x-3 p-2 border-b-2 mt-4'>
+    <div
+      className={`${
+        index !== 4 && "border-b-2"
+      } flex items-start space-x-3 p-2 mt-4`}
+    >
       {style && (
         <div className={`rounded-full p-1 ${style.color}`}>{style.icon}</div>
       )}
-      <div>
+      <div className='w-full'>
         <p className='font-semibold text-sm text-ellipsis'>{message}</p>
         <div className='flex items-center justify-between mt-2'>
           <p className='text-xs text-muted-foreground'>

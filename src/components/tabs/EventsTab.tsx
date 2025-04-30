@@ -17,7 +17,7 @@ const EventsTab = () => {
   const eventsPending = events.filter((e) => e.status === Status.PENDING);
 
   return (
-    <div className='w-full overflow-hidden relative h-auto rounded-2xl p-10 text-xl md:text-4xl font-bold text-black bg-white border-1 border-edorange border-solid space-y-2'>
+    <div className='w-full overflow-hidden relative min-h-52 h-auto rounded-2xl p-10 text-xl md:text-4xl font-bold text-black bg-white border-1 border-edorange border-solid space-y-2'>
       <p>Events Tab</p>
       <ModerationTable
         data={eventsPending}
