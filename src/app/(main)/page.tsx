@@ -1,5 +1,5 @@
 "use client";
-import HomeSideBar from "@/components/HomeSideBar";
+import HomeSideBar from "@/components/landing/HomeSideBar";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";

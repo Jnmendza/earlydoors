@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Combobox } from "./ui/combobox";
+import { Combobox } from "../ui/combobox";
 import { CheckboxFilterGroup } from "./CheckboxFilterGroup";
 
 export interface FilterOption {

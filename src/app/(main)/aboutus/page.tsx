@@ -1,8 +1,8 @@
 import React from "react";
-import TechStackSection from "@/components/TechStackSection";
+import TechStackSection from "@/components/landing/TechStackSection";
 import { bebasFont } from "@/lib/font";
 import Image from "next/image";
-import WhatsNext from "@/components/ WhatsNext";
+import WhatsNext from "@/components/landing/ WhatsNext";
 
 const AboutUs = () => {
   return (

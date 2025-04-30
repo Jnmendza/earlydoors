@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import BlogHero from "@/components/BlogHero";
+import BlogHero from "@/components/landing/BlogHero";
 import { bebasFont } from "@/lib/font";
-import BlogCard, { BlogCardProps } from "@/components/BlogCard";
+import BlogCard, { BlogCardProps } from "@/components/landing/BlogCard";
 
 const filtersTabs = ["All", "Topic1", "Topic2", "Topic3", "Topic4"];
 const cardText: BlogCardProps = {

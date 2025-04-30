@@ -1,5 +1,5 @@
-import Filters from "@/components/Filters";
-import MapContainer from "@/components/MapContainer";
+import Filters from "@/components/landing/Filters";
+import MapContainer from "@/components/landing/MapContainer";
 import React from "react";
 
 const EventsPage = () => {
