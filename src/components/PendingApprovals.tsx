@@ -5,12 +5,20 @@ import { useClubStore } from "@/store/club-store";
 import { useGroupStore } from "@/store/group-store";
 import { Status } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { useEffect } from "react";
 
 const PendingApprovals = () => {
-  const { events } = useEventStore();
-  const { venues } = useVenueStore();
-  const { clubs } = useClubStore();
-  const { groups } = useGroupStore();
+  const { events, fetchEvents } = useEventStore();
+  const { venues, fetchVenues } = useVenueStore();
+  const { clubs, fetchClubs } = useClubStore();
+  const { groups, fetchGroups } = useGroupStore();
+
+  useEffect(() => {
+    fetchEvents();
+    fetchVenues();
+    fetchClubs();
+    fetchGroups();
+  }, [fetchEvents, fetchVenues, fetchClubs, fetchGroups]);
 
   const pendingEvents = events.filter(
     (e) => e.status === Status.PENDING
