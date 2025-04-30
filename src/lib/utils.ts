@@ -1,6 +1,8 @@
 import { Status } from "@prisma/client";
 import { twMerge } from "tailwind-merge";
 import { clsx, type ClassValue } from "clsx";
+import { EventWithVenue } from "@/store/event-store";
+import { CalendarEvent } from "@/types/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -63,4 +65,56 @@ export function textBadgeColor(text: string) {
     default:
       return "bg-black text-white";
   }
+}
+
+export function transformToCalendarEvents(
+  events: EventWithVenue[]
+): CalendarEvent[] {
+  return events
+    .filter((event) => event.status === Status.APPROVED)
+    .map((event) => {
+      // Create date in UTC mode
+      const startDate = new Date(event.date);
+      const [startHours = 0, startMinutes = 0] =
+        event.start_time?.split(":").map(Number) || [];
+
+      // Use UTC methods to avoid timezone conversion
+      const utcStartDate = new Date(
+        Date.UTC(
+          startDate.getUTCFullYear(),
+          startDate.getUTCMonth(),
+          startDate.getUTCDate(),
+          startHours,
+          startMinutes
+        )
+      );
+
+      const utcEndDate = event.end_time
+        ? (() => {
+            const [endHours = 0, endMinutes = 0] = event.end_time
+              .split(":")
+              .map(Number);
+            return new Date(
+              Date.UTC(
+                startDate.getUTCFullYear(),
+                startDate.getUTCMonth(),
+                startDate.getUTCDate(),
+                endHours,
+                endMinutes
+              )
+            );
+          })()
+        : new Date(utcStartDate.getTime() + 60 * 60 * 1000);
+
+      return {
+        id: event.id,
+        title: event.name,
+        start: utcStartDate,
+        end: utcEndDate,
+        venueId: event.venue_id,
+        venueName: event.venue?.name ?? "Unknown Venue",
+        allDay: false,
+        desc: event.description,
+      };
+    });
 }

@@ -7,9 +7,9 @@ import { useEventStore } from "@/store/event-store";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "./ui/dialog";
 import { CalendarEvent } from "@/types/types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -33,14 +33,24 @@ const ColoredDateCellWrapper: React.ComponentType<{
 export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
   const [currentView, setCurrentView] = useState<View>(Views.MONTH);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const { calendarEvents, fetchCaledarEvents } = useEventStore();
+  const { calendarEvents, fetchCalendarEvents } = useEventStore();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null
   );
   useEffect(() => {
-    fetchCaledarEvents();
-  }, [fetchCaledarEvents]);
+    fetchCalendarEvents();
+  }, [fetchCalendarEvents]);
+
+  console.log(
+    "Current calendar event:",
+    calendarEvents.map((e) => ({
+      id: e.id,
+      title: e.title,
+      start: e.start.toString(),
+      end: e.end?.toString(),
+    }))
+  );
 
   const { components } = useMemo(
     () => ({
@@ -71,22 +81,20 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{selectedEvent?.title}</DialogTitle>
-            <DialogDescription>
-              <div className='space-y-2'>
-                <p>
-                  <strong>When:</strong>{" "}
-                  {moment(selectedEvent?.start).format("MMMM Do YYYY, h:mm a")}
-                </p>
-                <p>
-                  <strong>Where:</strong> {selectedEvent?.venueName}
-                </p>
-                {selectedEvent?.desc && (
-                  <p>
-                    <strong>Description:</strong> {selectedEvent?.desc}
-                  </p>
-                )}
-              </div>
-            </DialogDescription>
+            <div className='space-y-2'>
+              <DialogDescription>
+                <strong>When:</strong>{" "}
+                {moment(selectedEvent?.start).format("MMMM Do YYYY, h:mm a")}
+              </DialogDescription>
+              <DialogDescription>
+                <strong>Where:</strong> {selectedEvent?.venueName}
+              </DialogDescription>
+              {selectedEvent?.desc && (
+                <DialogDescription>
+                  <strong>Description:</strong> {selectedEvent?.desc}
+                </DialogDescription>
+              )}
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>
