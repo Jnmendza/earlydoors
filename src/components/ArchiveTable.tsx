@@ -156,7 +156,6 @@ export const ArchiveTable = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);

@@ -37,7 +37,7 @@ export const useEventStore = create<EventStore>((set, get) => ({
       const data = await res.json();
       set({
         events: data,
-        calendarEvents: transformToCalendarEvents(data), // Add this
+        calendarEvents: transformToCalendarEvents(data),
         isLoading: false,
       });
     } catch (error) {
