@@ -8,11 +8,31 @@ import { capitalizeFirstLetterOnly, textBadgeColor } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 
 const EventsTab = () => {
-  const { events, fetchEvents } = useEventStore();
+  const { events, fetchEvents, approveEvent, rejectEvent } = useEventStore();
 
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
+
+  const handleApprove = async (id: string) => {
+    try {
+      await approveStatus(id, "venue");
+      approveEvent(id);
+    } catch (error) {
+      console.error("Approval failed:", error);
+      fetchEvents();
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await rejectStatus(id, "venue");
+      rejectEvent(id);
+    } catch (error) {
+      console.error("Rejected failed:", error);
+      fetchEvents();
+    }
+  };
 
   const eventsPending = events.filter((e) => e.status === Status.PENDING);
 
@@ -21,8 +41,8 @@ const EventsTab = () => {
       <p>Events Tab</p>
       <ModerationTable
         data={eventsPending}
-        onApprove={(id) => approveStatus(id, "event")}
-        onReject={(id) => rejectStatus(id, "event")}
+        onApprove={handleApprove}
+        onReject={handleReject}
         columns={[
           {
             header: "Name",

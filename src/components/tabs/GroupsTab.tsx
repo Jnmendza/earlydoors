@@ -8,11 +8,31 @@ import { capitalizeFirstLetterOnly, textBadgeColor } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 
 const GroupsTab = () => {
-  const { groups, fetchGroups } = useGroupStore();
+  const { groups, fetchGroups, rejectGroup, approveGroup } = useGroupStore();
 
   useEffect(() => {
     fetchGroups();
   }, [fetchGroups]);
+
+  const handleApprove = async (id: string) => {
+    try {
+      await approveStatus(id, "venue");
+      approveGroup(id);
+    } catch (error) {
+      console.error("Approval failed:", error);
+      fetchGroups();
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await rejectStatus(id, "venue");
+      rejectGroup(id);
+    } catch (error) {
+      console.error("Rejected failed:", error);
+      fetchGroups();
+    }
+  };
 
   const groupsPending = groups.filter((e) => e.status === Status.PENDING);
 
@@ -21,8 +41,8 @@ const GroupsTab = () => {
       <p>Supporter Groups Tab</p>
       <ModerationTable
         data={groupsPending}
-        onApprove={(id) => approveStatus(id, "supportersGroup")}
-        onReject={(id) => rejectStatus(id, "supportersGroup")}
+        onApprove={handleApprove}
+        onReject={handleReject}
         columns={[
           {
             header: "Name",

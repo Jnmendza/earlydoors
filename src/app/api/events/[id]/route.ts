@@ -32,10 +32,24 @@ export async function PUT(
 ) {
   try {
     const body = await req.json();
+
+    // Convert incoming date to UTC
+    const utcDate = new Date(body.date);
+    const utcDateString = new Date(
+      Date.UTC(
+        utcDate.getUTCFullYear(),
+        utcDate.getUTCMonth(),
+        utcDate.getUTCDate(),
+        utcDate.getUTCHours(),
+        utcDate.getUTCMinutes()
+      )
+    ).toISOString();
+
     const parsedBody = {
       ...body,
-      date: new Date(body.date),
+      date: utcDateString, // Use UTC-converted date
     };
+
     const parseResult = eventFormSchema.safeParse(parsedBody);
 
     if (!parseResult.success) {

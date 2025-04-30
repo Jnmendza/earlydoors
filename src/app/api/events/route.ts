@@ -23,12 +23,24 @@ export async function POST(req: NextRequest) {
   try {
     const body: Event = await req.json();
 
+    // Convert incoming date to UTC right at the entry point
+    const utcDate = new Date(body.date);
+    const utcDateString = new Date(
+      Date.UTC(
+        utcDate.getUTCFullYear(),
+        utcDate.getUTCMonth(),
+        utcDate.getUTCDate(),
+        utcDate.getUTCHours(),
+        utcDate.getUTCMinutes()
+      )
+    ).toISOString();
+
     const event = await db.event.create({
       data: {
         name: body.name,
         description: body.description,
         start_time: body.start_time,
-        date: new Date(body.date),
+        date: utcDateString,
         venue_id: body.venue_id,
         club_id: body.club_id,
         has_garden: body.has_garden,

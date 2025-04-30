@@ -8,11 +8,31 @@ import { capitalizeFirstLetterOnly, textBadgeColor } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 
 const VenuesTab = () => {
-  const { venues, fetchVenues } = useVenueStore();
+  const { venues, fetchVenues, approveVenue, rejectVenue } = useVenueStore();
 
   useEffect(() => {
     fetchVenues();
   }, [fetchVenues]);
+
+  const handleApprove = async (id: string) => {
+    try {
+      await approveStatus(id, "venue");
+      approveVenue(id);
+    } catch (error) {
+      console.error("Approval failed:", error);
+      fetchVenues();
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await rejectStatus(id, "venue");
+      rejectVenue(id);
+    } catch (error) {
+      console.error("Rejected failed:", error);
+      fetchVenues();
+    }
+  };
 
   const clubsPending = venues.filter((e) => e.status === Status.PENDING);
 
@@ -21,8 +41,8 @@ const VenuesTab = () => {
       <p>Venues Tab</p>
       <ModerationTable
         data={clubsPending}
-        onApprove={(id) => approveStatus(id, "venue")}
-        onReject={(id) => rejectStatus(id, "venue")}
+        onApprove={handleApprove}
+        onReject={handleReject}
         columns={[
           {
             header: "Name",

@@ -8,11 +8,31 @@ import { capitalizeFirstLetterOnly, textBadgeColor } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 
 const ClubsTab = () => {
-  const { clubs, fetchClubs } = useClubStore();
+  const { clubs, fetchClubs, approveClub, rejectClub } = useClubStore();
 
   useEffect(() => {
     fetchClubs();
   }, [fetchClubs]);
+
+  const handleApprove = async (id: string) => {
+    try {
+      await approveStatus(id, "venue");
+      approveClub(id);
+    } catch (error) {
+      console.error("Approval failed:", error);
+      fetchClubs();
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await rejectStatus(id, "venue");
+      rejectClub(id);
+    } catch (error) {
+      console.error("Rejected failed:", error);
+      fetchClubs();
+    }
+  };
 
   const clubsPending = clubs.filter((e) => e.status === Status.PENDING);
 
@@ -21,8 +41,8 @@ const ClubsTab = () => {
       <p>Clubs Tab</p>
       <ModerationTable
         data={clubsPending}
-        onApprove={(id) => approveStatus(id, "club")}
-        onReject={(id) => rejectStatus(id, "club")}
+        onApprove={handleApprove}
+        onReject={handleReject}
         columns={[
           {
             header: "Name",
