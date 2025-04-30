@@ -9,6 +9,7 @@ import {
   MapPin,
   Trophy,
   Users,
+  Archive,
 } from "lucide-react";
 
 import { NavMain } from "@/components/NavMain";
@@ -66,6 +67,11 @@ export const data = {
       title: "Moderation",
       url: "/dashboard/moderation",
       icon: ShieldCheck,
+    },
+    {
+      title: "Events Archive",
+      url: "/dashboard/archive",
+      icon: Archive,
     },
   ],
 };

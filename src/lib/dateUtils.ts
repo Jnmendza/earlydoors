@@ -219,3 +219,13 @@ export function yesterday() {
 export function tomorrow() {
   return dates.add(dates.startOf(new Date(), "day"), 1, "day");
 }
+
+export function formatDate(isoDate: string | Date): string {
+  const date = typeof isoDate === "string" ? new Date(isoDate) : isoDate;
+
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}

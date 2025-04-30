@@ -42,16 +42,6 @@ export default function EventsCalendar({ localizer = mLocalizer, ...props }) {
     fetchCalendarEvents();
   }, [fetchCalendarEvents]);
 
-  console.log(
-    "Current calendar event:",
-    calendarEvents.map((e) => ({
-      id: e.id,
-      title: e.title,
-      start: e.start.toString(),
-      end: e.end?.toString(),
-    }))
-  );
-
   const { components } = useMemo(
     () => ({
       components: {
