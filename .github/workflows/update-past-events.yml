@@ -1,0 +1,29 @@
+name: Update Past Events
+on:
+  schedule:
+    # Runs at 3 AM UTC daily
+    - cron: "0 3 * * *"
+  workflow_dispatch: # Allow manual triggers
+
+jobs:
+  update-events:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run event update script
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }} # Required for Prisma
+          CRON_SECRET: ${{ secrets.CRON_SECRET }} # Optional security
+        run: |
+          npx prisma migrate deploy
+          npm run update-past-events
