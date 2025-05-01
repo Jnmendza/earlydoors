@@ -38,20 +38,20 @@ const HowItWorks = () => {
   ];
   return (
     <section>
-      <div className='flex items-end justify-between mx-auto max-w-2/3 py-6'>
+      <div className='flex items-end justify-between mx-auto max-w-2/3 py-10'>
         <div>
-          <p className={`${bebasFont.className} text-sm tracking-widest`}>
+          <p className={`${bebasFont.className} text-lg tracking-widest`}>
             How it works
           </p>
-          <div className='-space-y-1.5 mt-4'>
+          <div className=' mt-4 text-2xl'>
             <p>Your Gateway To Local </p>
             <p className='text-edorange'>Matchday Experience</p>
           </div>
         </div>
 
-        <div className='flex w-2/3 justify-end items-end gap-4 h-13'>
-          <Separator orientation='vertical' className='bg-edorange h-8' />
-          <p className='text-xs max-w-[80%]'>
+        <div className='flex w-2/3 justify-end items-end gap-4 h-20'>
+          <Separator orientation='vertical' className='bg-edorange h-10' />
+          <p className='text-lg max-w-[80%]'>
             Find where your favorite clubs and supporters gather. Search by club
             or venue. Whether you&apos;re a diehard or new fan, join the
             matchday community.

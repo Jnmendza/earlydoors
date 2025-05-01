@@ -41,10 +41,10 @@ const StatsCard = () => {
             >
               <NumberTicker
                 value={item.value}
-                className='whitespace-pre-wrap text-lg font-medium tracking-tighter text-edorange dark:text-white'
+                className='whitespace-pre-wrap text-2xl font-medium tracking-tighter text-edorange dark:text-white'
               />
               <CardDescription
-                className={`${bebasFont.className} text-edcream`}
+                className={`${bebasFont.className} text-edcream text-2xl`}
               >
                 {item.label}
               </CardDescription>

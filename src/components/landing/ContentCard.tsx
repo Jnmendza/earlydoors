@@ -5,7 +5,7 @@ import { Step } from "./HowItWorks";
 const ContentCard = ({ image, Icon, title, desc }: Step) => {
   return (
     <div className='max-w-xs w-full group/card'>
-      <div className='relative h-60 w-full overflow-hidden rounded-md shadow-xl'>
+      <div className='relative h-96 w-full overflow-hidden  shadow-xl'>
         <Image
           src={image}
           alt={title}
@@ -25,7 +25,7 @@ const ContentCard = ({ image, Icon, title, desc }: Step) => {
 
           <div className='mt-auto'>
             <h1 className='text-2xl font-bold text-gray-50'>{title}</h1>
-            <p className='mt-2 text-sm text-gray-50/90'>{desc}</p>
+            <p className='mt-2 text-lg text-gray-50/90'>{desc}</p>
           </div>
         </div>
       </div>

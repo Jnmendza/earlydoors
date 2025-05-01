@@ -9,8 +9,14 @@ const Navbar = () => {
   const pathname = usePathname();
 
   return (
-    <nav className='relative w-full flex justify-center py-4'>
-      {/* Nav Links — centered */}
+    <nav className='relative w-2/3 mx-auto flex justify-between items-center p-6'>
+      <Image
+        src='/assets/logo-main.png'
+        alt='EarlyDoors-Logo'
+        width={100}
+        height={100}
+        className='object-contain'
+      />
       <div className='flex gap-6'>
         {links.map((link, index) => (
           <Link
@@ -24,19 +30,6 @@ const Navbar = () => {
           </Link>
         ))}
       </div>
-
-      {/* Logo — hidden on home */}
-      {pathname !== "/" && (
-        <div className='absolute top-0 right-8 p-4 z-10'>
-          <Image
-            src='/assets/logo-main.png'
-            alt='EarlyDoors-Logo'
-            width={100}
-            height={100}
-            className='object-contain'
-          />
-        </div>
-      )}
     </nav>
   );
 };
