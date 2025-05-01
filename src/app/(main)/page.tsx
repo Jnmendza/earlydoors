@@ -1,9 +1,10 @@
 "use client";
-import HomeSideBar from "@/components/landing/HomeSideBar";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import HeroSection from "@/components/landing/Hero";
+import "@/styles/globals.css";
+import HowItWorks from "@/components/landing/HowItWorks";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -14,22 +15,22 @@ export default function Home() {
       router.replace("/");
     }
   }, [searchParams, router]);
-  return (
-    <div className='grid grid-cols-[3.7fr_1fr] w-full h-screen'>
-      {/* Image Side */}
-      <div className='relative w-full h-full'>
-        <Image
-          src='/assets/BeachDay.png'
-          alt='BeachDay'
-          fill
-          className='object-cover'
-        />
-      </div>
 
-      {/* Sidebar Side */}
-      <div className='relative overflow-visible flex justify-end'>
-        <HomeSideBar />
+  return (
+    <div>
+      <HeroSection />
+      <div className='bg-edorange flex justify-evenly text-edcream py-4'>
+        <h3>
+          Your Club <span className='text-edcream'>.</span>
+        </h3>
+        <h3>
+          Your City <span className='text-ednavy'>.</span>
+        </h3>
+        <h3>
+          Your Spot <span className='text-edgreen'>.</span>
+        </h3>
       </div>
+      <HowItWorks />
     </div>
   );
 }
