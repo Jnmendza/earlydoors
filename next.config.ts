@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       "lh3.googleusercontent.com",
       "images.unsplash.com",
       "upload.wikimedia.org",
+      "assets.aceternity.com",
     ],
   },
 };

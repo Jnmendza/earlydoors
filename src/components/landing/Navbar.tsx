@@ -1,36 +1,33 @@
 "use client";
-import Link from "next/link";
+import React, { useState } from "react";
+import { Menu, MenuItem } from "../ui/navbar-menu";
+import { cn } from "@/lib/utils";
+import { MenuItem as MenuItemProps, menuItems } from "@/data/links";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
-import { bebasFont } from "@/lib/font";
-import { links } from "@/data/links";
 
-const Navbar = () => {
+const Navbar = ({ className }: { className?: string }) => {
   const pathname = usePathname();
+  const [active, setActive] = useState<string | null>(null);
 
   return (
-    <nav className='relative w-2/3 mx-auto flex justify-between items-center p-6'>
-      <Image
-        src='/assets/logo-main.png'
-        alt='EarlyDoors-Logo'
-        width={100}
-        height={100}
-        className='object-contain'
-      />
-      <div className='flex gap-6'>
-        {links.map((link, index) => (
-          <Link
-            key={index}
-            href={link.href}
-            className={`text-4xl  hover:text-edorange ${
-              pathname === link.href ? "text-edorange" : "text-ednavy"
-            } px-2 py-2 ${bebasFont.className}`}
+    <div
+      className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}
+    >
+      <Menu setActive={setActive}>
+        {menuItems.map((item: MenuItemProps) => (
+          <MenuItem
+            key={item.title}
+            setActive={setActive}
+            active={active}
+            selected={item.href === pathname}
+            href={item.href}
+            item={item.title}
           >
-            {link.name}
-          </Link>
+            {item.content}
+          </MenuItem>
         ))}
-      </div>
-    </nav>
+      </Menu>
+    </div>
   );
 };
 

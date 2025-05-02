@@ -1,6 +1,6 @@
 import React from "react";
 import { bebasFont } from "@/lib/font";
-import { links } from "@/data/links";
+import { menuItems } from "@/data/links";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -13,9 +13,9 @@ const Footer = () => {
         <div className='flex justify-between'>
           {/* Left */}
           <div className='flex flex-col gap-2'>
-            {links.map(({ name, href }, index) => (
+            {menuItems.map(({ title, href }, index) => (
               <Link key={index} href={href}>
-                {name}
+                {title}
               </Link>
             ))}
             <Link href={"/portal"}>Portal</Link>

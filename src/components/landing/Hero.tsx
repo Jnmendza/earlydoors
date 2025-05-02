@@ -1,43 +1,51 @@
-import Image from "next/image";
 import React from "react";
-import { AspectRatio } from "../ui/aspect-ratio";
-
-import { Button } from "../ui/button";
-import { bebasFont } from "@/lib/font";
-import { FlipText } from "../magicui/flip-text";
+import Image from "next/image";
 import StatsCard from "./StatsCard";
+import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 
 const HeroSection = () => {
   return (
-    <section className='text-center'>
-      <div className='relative mx-auto max-w-4xl'>
-        <AspectRatio ratio={16 / 9}>
+    <div className='relative h-screen w-full overflow-hidden'>
+      {/* Split Screen Container */}
+      <div className='flex h-full flex-col md:flex-row'>
+        {/* Left Side - Image */}
+        <div className='flex flex-col h-1/2 w-full items-center space-y-4 justify-center bg-edcream md:h-full md:w-1/2'>
+          <div className='max-w-md px-8 py-12 md:px-12'>
+            <h2 className='mb-4 text-3xl font-bold md:text-4xl'>
+              Find Your Local
+              <br />
+              <span className='text-edorange'>Watch Party!</span> <br />
+            </h2>
+            <p className='mb-8 text-ednavy text-lg'>
+              Discover where to watch your club with supporters near you.
+            </p>
+
+            <InteractiveHoverButton className='rounded-none text-edcream bg-edorange hover:bg-red-500'>
+              Explore the Map
+            </InteractiveHoverButton>
+            <div className='mt-10'>
+              <StatsCard />
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Content */}
+
+        <div className='relative h-1/2 w-full md:h-full md:w-1/2'>
+          {/* Image */}
           <Image
             src='/assets/BeachDay.png'
-            alt='BeachDay'
+            alt='Modern home'
             fill
             className='object-cover'
+            priority
           />
-          <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_30%,_rgba(0,0,0,0.7)_70%)]'></div>
-          <div className='absolute inset-0 flex flex-col items-center justify-center text-white space-y-8'>
-            <div className='[&>*]:drop-shadow-lg'>
-              <FlipText className={`${bebasFont.className} text-4xl`}>
-                Find Your Local Watch Party
-              </FlipText>
-              <h3 className='text-xl'>
-                Discover where to watch your club with supporters near you
-              </h3>
-            </div>
-            <Button className='bg-edorange text-edcream'>
-              Explore the map
-            </Button>
-          </div>
-        </AspectRatio>
+
+          {/* Vignette Overlay */}
+          <div className='absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/0' />
+        </div>
       </div>
-      <div className='mx-auto max-w-4xl'>
-        <StatsCard />
-      </div>
-    </section>
+    </div>
   );
 };
 

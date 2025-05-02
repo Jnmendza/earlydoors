@@ -20,10 +20,9 @@ const bounceVariants = {
 
 const StatsCard = () => {
   const stats = [
-    { value: 5, label: "Supporters Groups" },
     { value: 5, label: "Venues" },
-    { value: 5, label: "Monthly Events" },
-    { value: 5, label: "Football Clubs" },
+    { value: 5, label: "Events" },
+    { value: 5, label: "Clubs" },
   ];
 
   return (
