@@ -1,33 +1,46 @@
 "use client";
-import React, { useState } from "react";
-import { Menu, MenuItem } from "../ui/navbar-menu";
-import { cn } from "@/lib/utils";
-import { MenuItem as MenuItemProps, menuItems } from "@/data/links";
+import React from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { bebasFont } from "@/lib/font";
 
-const Navbar = ({ className }: { className?: string }) => {
+const Navbar = () => {
   const pathname = usePathname();
-  const [active, setActive] = useState<string | null>(null);
+
+  const links = [
+    { label: "Home", href: "/" },
+    { label: "Events", href: "/events" },
+    { label: "About Us", href: "/aboutus" },
+    { label: "Blog", href: "/blog" },
+  ];
 
   return (
-    <div
-      className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}
+    <nav
+      className={`${bebasFont.className} flex justify-between items-center text-2xl text-ednavy px-16`}
     >
-      <Menu setActive={setActive}>
-        {menuItems.map((item: MenuItemProps) => (
-          <MenuItem
-            key={item.title}
-            setActive={setActive}
-            active={active}
-            selected={item.href === pathname}
-            href={item.href}
-            item={item.title}
+      <div>
+        <Image src='/assets/logo-main.png' alt='logo' height={80} width={80} />
+      </div>
+      <div className='space-x-4'>
+        {links.map((link, index) => (
+          <Link
+            key={index}
+            href={link.href}
+            className={`${
+              pathname === link.href
+                ? "text-edorange hover:text-edorange"
+                : "text-ednavy"
+            } hover:text-edgreen`}
           >
-            {item.content}
-          </MenuItem>
+            {link.label}
+          </Link>
         ))}
-      </Menu>
-    </div>
+      </div>
+      <div>
+        <Link href='/portal'>Login</Link>
+      </div>
+    </nav>
   );
 };
 
