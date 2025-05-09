@@ -1,25 +1,24 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BlogHero from "@/components/landing/BlogHero";
 import { bebasFont } from "@/lib/font";
-import BlogCard, { BlogCardProps } from "@/components/landing/BlogCard";
+import BlogCard from "@/components/landing/BlogCard";
+import { getBlogCardPost } from "@/data/posts";
+import { BlogCardPost } from "@/types/types";
 
 const filtersTabs = ["All", "Topic1", "Topic2", "Topic3", "Topic4"];
-const cardText: BlogCardProps = {
-  tab: "Matchday Guides",
-  date: "30 Jan 2025",
-  readTime: "10",
-  title: "Top 5 Formations in Football",
-  subTitle:
-    "Explore the latest in football management when it comes to point of attack.",
-  author: {
-    name: "Footy McFoot",
-    avatar: "",
-  },
-};
 
 const BlogPage = () => {
   const [currentTab, setCurrentTab] = useState<string>("All");
+  const [postData, setPostData] = useState<BlogCardPost[] | null>(null);
+  console.log("DATA", postData);
+  useEffect(() => {
+    const getPost = async () => {
+      const data = await getBlogCardPost();
+      setPostData(data);
+    };
+    getPost();
+  }, []);
 
   return (
     <div>
@@ -57,15 +56,19 @@ const BlogPage = () => {
         </div>
 
         {/* Blog cards */}
-        <div className='mt-8'>
-          <BlogCard
-            tab={cardText.tab}
-            date={cardText.date}
-            readTime={cardText.readTime}
-            title={cardText.title}
-            subTitle={cardText.subTitle}
-            author={cardText.author}
-          />
+        <div className='my-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+          {postData?.map((post: BlogCardPost) => (
+            <BlogCard
+              key={post._id}
+              badge={post.categories[0].title}
+              date={post._createdAt}
+              readTime={post.readTime}
+              title={post.title}
+              subTitle={post.description}
+              author={post.author}
+              mainImage={post.mainImage}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { bebasFont } from "@/lib/font";
-import { links } from "@/data/links";
+import { links } from "@/data/Links";
 import Link from "next/link";
 import Image from "next/image";
 

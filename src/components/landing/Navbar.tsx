@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { bebasFont } from "@/lib/font";
-import { links } from "@/data/links";
+import { links } from "@/data/Links";
 
 const Navbar = () => {
   const pathname = usePathname();
