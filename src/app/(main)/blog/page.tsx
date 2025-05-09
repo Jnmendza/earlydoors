@@ -5,13 +5,20 @@ import { bebasFont } from "@/lib/font";
 import BlogCard from "@/components/landing/BlogCard";
 import { getBlogCardPost } from "@/data/posts";
 import { BlogCardPost } from "@/types/types";
-
-const filtersTabs = ["All", "Topic1", "Topic2", "Topic3", "Topic4"];
+import { FILTERTABS } from "@/constants/ui";
 
 const BlogPage = () => {
   const [currentTab, setCurrentTab] = useState<string>("All");
   const [postData, setPostData] = useState<BlogCardPost[] | null>(null);
-  console.log("DATA", postData);
+
+  const filteredPosts =
+    postData?.filter((post) => {
+      // If "All" is selected, return all posts
+      if (currentTab === "All") return true;
+
+      // Otherwise filter posts that have at least one category matching currentTab
+      return post.categories?.some((category) => category.title === currentTab);
+    }) || [];
   useEffect(() => {
     const getPost = async () => {
       const data = await getBlogCardPost();
@@ -33,12 +40,12 @@ const BlogPage = () => {
           </p>
         </div>
         {/* Tabs */}
-        <div>
-          {filtersTabs.map((tab, index) => (
+        <div className='flex space-x-2'>
+          {FILTERTABS.map((tab, index) => (
             <button
               key={index}
               className={`
-                px-6 py-2 cursor-pointer mt-4 w-[80px] text-center
+                px-6 py-2 cursor-pointer mt-4  text-center
                 ${bebasFont.className}
                 ${
                   currentTab === tab
@@ -56,20 +63,27 @@ const BlogPage = () => {
         </div>
 
         {/* Blog cards */}
-        <div className='my-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {postData?.map((post: BlogCardPost) => (
-            <BlogCard
-              key={post._id}
-              badge={post.categories[0].title}
-              date={post._createdAt}
-              readTime={post.readTime}
-              title={post.title}
-              subTitle={post.description}
-              author={post.author}
-              mainImage={post.mainImage}
-            />
-          ))}
-        </div>
+        {filteredPosts.length !== 0 ? (
+          <div className='my-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {filteredPosts?.map((post: BlogCardPost) => (
+              <BlogCard
+                key={post._id}
+                slug={post.slug}
+                badge={post.categories[0].title}
+                date={post._createdAt}
+                readTime={post.readTime}
+                title={post.title}
+                subTitle={post.description}
+                author={post.author}
+                mainImage={post.mainImage}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className='flex items-center justify-center h-[32vw] text-center w-full'>
+            <p className='w-full'>There are no blog post at this time</p>
+          </div>
+        )}
       </div>
     </div>
   );

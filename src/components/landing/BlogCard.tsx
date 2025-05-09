@@ -2,9 +2,11 @@ import { Badge } from "../ui/badge";
 import { formatDate } from "@/lib/dateUtils";
 import { urlFor } from "@/lib/sanity";
 import Image from 'next/image'
+import Link from "next/link";
 
 export interface BlogCardProps {
   badge: string;
+  slug: string;
   date: string;
   readTime: number;
   title: string;
@@ -26,10 +28,11 @@ const BlogCard = ({
   title,
   subTitle,
   author,
-  mainImage
+  mainImage,
+  slug
 }: BlogCardProps) => {
   return (
-    <div className='max-w-sm border border-edorange p-4  flex flex-col gap-4 hover:cursor-pointer hover:scale-[1.02]'>
+    <Link className='max-w-sm border border-edorange p-4  flex flex-col gap-4 hover:cursor-pointer hover:scale-[1.02]' href={`/blog/${slug}`}>
 
       {/* Image Container with Badge */}
       <div className='relative w-full h-48  overflow-hidden'>
@@ -73,7 +76,7 @@ const BlogCard = ({
         </div>
         <span className='text-md font-bold text-ednavy'>{author.name}</span>
       </div>
-    </div>
+    </Link>
   );
 };
 
