@@ -1,6 +1,10 @@
 import React from "react";
 import { bebasFont } from "@/lib/font";
+<<<<<<< HEAD
 import { menuItems } from "@/data/links";
+=======
+import { links } from "@/data/Links";
+>>>>>>> origin/main
 import Link from "next/link";
 import Image from "next/image";
 

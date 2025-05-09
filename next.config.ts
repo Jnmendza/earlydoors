@@ -7,7 +7,11 @@ const nextConfig: NextConfig = {
       "lh3.googleusercontent.com",
       "images.unsplash.com",
       "upload.wikimedia.org",
+<<<<<<< HEAD
       "assets.aceternity.com",
+=======
+      "cdn.sanity.io",
+>>>>>>> origin/main
     ],
   },
 };

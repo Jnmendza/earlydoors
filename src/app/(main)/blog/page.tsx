@@ -1,25 +1,31 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BlogHero from "@/components/landing/BlogHero";
 import { bebasFont } from "@/lib/font";
-import BlogCard, { BlogCardProps } from "@/components/landing/BlogCard";
-
-const filtersTabs = ["All", "Topic1", "Topic2", "Topic3", "Topic4"];
-const cardText: BlogCardProps = {
-  tab: "Matchday Guides",
-  date: "30 Jan 2025",
-  readTime: "10",
-  title: "Top 5 Formations in Football",
-  subTitle:
-    "Explore the latest in football management when it comes to point of attack.",
-  author: {
-    name: "Footy McFoot",
-    avatar: "",
-  },
-};
+import BlogCard from "@/components/landing/BlogCard";
+import { getBlogCardPost } from "@/data/posts";
+import { BlogCardPost } from "@/types/types";
+import { FILTERTABS } from "@/constants/ui";
 
 const BlogPage = () => {
   const [currentTab, setCurrentTab] = useState<string>("All");
+  const [postData, setPostData] = useState<BlogCardPost[] | null>(null);
+
+  const filteredPosts =
+    postData?.filter((post) => {
+      // If "All" is selected, return all posts
+      if (currentTab === "All") return true;
+
+      // Otherwise filter posts that have at least one category matching currentTab
+      return post.categories?.some((category) => category.title === currentTab);
+    }) || [];
+  useEffect(() => {
+    const getPost = async () => {
+      const data = await getBlogCardPost();
+      setPostData(data);
+    };
+    getPost();
+  }, []);
 
   return (
     <div>
@@ -34,12 +40,12 @@ const BlogPage = () => {
           </p>
         </div>
         {/* Tabs */}
-        <div>
-          {filtersTabs.map((tab, index) => (
+        <div className='flex space-x-2'>
+          {FILTERTABS.map((tab, index) => (
             <button
               key={index}
               className={`
-                px-6 py-2 cursor-pointer mt-4 w-[80px] text-center
+                px-6 py-2 cursor-pointer mt-4  text-center
                 ${bebasFont.className}
                 ${
                   currentTab === tab
@@ -57,16 +63,27 @@ const BlogPage = () => {
         </div>
 
         {/* Blog cards */}
-        <div className='mt-8'>
-          <BlogCard
-            tab={cardText.tab}
-            date={cardText.date}
-            readTime={cardText.readTime}
-            title={cardText.title}
-            subTitle={cardText.subTitle}
-            author={cardText.author}
-          />
-        </div>
+        {filteredPosts.length !== 0 ? (
+          <div className='my-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {filteredPosts?.map((post: BlogCardPost) => (
+              <BlogCard
+                key={post._id}
+                slug={post.slug}
+                badge={post.categories[0].title}
+                date={post._createdAt}
+                readTime={post.readTime}
+                title={post.title}
+                subTitle={post.description}
+                author={post.author}
+                mainImage={post.mainImage}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className='flex items-center justify-center h-[32vw] text-center w-full'>
+            <p className='w-full'>There are no blog post at this time</p>
+          </div>
+        )}
       </div>
     </div>
   );

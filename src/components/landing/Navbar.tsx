@@ -4,6 +4,10 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { bebasFont } from "@/lib/font";
+<<<<<<< HEAD
+=======
+import { links } from "@/data/Links";
+>>>>>>> origin/main
 
 const Navbar = () => {
   const pathname = usePathname();
