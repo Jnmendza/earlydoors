@@ -1,8 +1,11 @@
 import { Badge } from "../ui/badge";
+<<<<<<< HEAD
+=======
 import { formatDate } from "@/lib/dateUtils";
 import { urlFor } from "@/lib/sanity";
 import Image from 'next/image'
 import Link from "next/link";
+>>>>>>> origin/main
 
 export interface BlogCardProps {
   badge: string;
