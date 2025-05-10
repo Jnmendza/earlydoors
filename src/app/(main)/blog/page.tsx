@@ -5,12 +5,13 @@ import { bebasFont } from "@/lib/font";
 import BlogCard from "@/components/landing/BlogCard";
 import { getBlogCardPost } from "@/data/posts";
 import { BlogCardPost } from "@/types/types";
-import { FILTERTABS } from "@/constants/ui";
+import { getCategories } from "@/data/categories";
 
 const BlogPage = () => {
   const [currentTab, setCurrentTab] = useState<string>("All");
   const [postData, setPostData] = useState<BlogCardPost[] | null>(null);
-
+  const [categories, setCategories] = useState<string[]>([]);
+  const filteredCategories = ["All", ...categories];
   const filteredPosts =
     postData?.filter((post) => {
       // If "All" is selected, return all posts
@@ -24,7 +25,12 @@ const BlogPage = () => {
       const data = await getBlogCardPost();
       setPostData(data);
     };
+    const getCats = async () => {
+      const cats = await getCategories();
+      setCategories(cats);
+    };
     getPost();
+    getCats();
   }, []);
 
   return (
@@ -41,23 +47,23 @@ const BlogPage = () => {
         </div>
         {/* Tabs */}
         <div className='flex space-x-2'>
-          {FILTERTABS.map((tab, index) => (
+          {filteredCategories.map((title, index) => (
             <button
               key={index}
               className={`
                 px-6 py-2 cursor-pointer mt-4  text-center
                 ${bebasFont.className}
                 ${
-                  currentTab === tab
+                  currentTab === title
                     ? "bg-ednavy text-edorange"
                     : "text-ednavy hover:text-edorange hover:bg-ednavy"
                 }
               `}
               onClick={() => {
-                setCurrentTab(tab);
+                setCurrentTab(title);
               }}
             >
-              {tab}
+              {title}
             </button>
           ))}
         </div>
