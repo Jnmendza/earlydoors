@@ -90,6 +90,9 @@ const MapContainer = () => {
                   lat: venue.lat,
                   lng: venue.lng,
                   key: venue.id,
+                  name: venue.name,
+                  address: venue.address,
+                  city: venue.city,
                 }))}
                 setOpenMarkerKey={setOpenMarkerKey}
                 openMarkerKey={openMarkerKey}
