@@ -38,3 +38,35 @@ export const getVenueById = async (venueId: string) => {
     throw new Error("Failed to fetch venue");
   }
 };
+
+export const getVenuesByClubIds = async (clubId: string) => {
+  try {
+    const venues = await db.venue.findMany({
+      where: {
+        event: {
+          some: {
+            club_id: clubId,
+            date: { gte: new Date() },
+            status: Status.APPROVED,
+          },
+        },
+      },
+      include: {
+        event: {
+          where: {
+            club_id: clubId,
+            date: { gte: new Date() },
+            status: Status.APPROVED,
+          },
+          include: {
+            club: true,
+          },
+        },
+      },
+    });
+    return venues;
+  } catch (error) {
+    console.error(`Failed to fetch venue with club ${clubId}:`, error);
+    throw new Error("Failed to fetch venue");
+  }
+};

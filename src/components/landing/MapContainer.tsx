@@ -7,15 +7,14 @@ import { Venue } from "@prisma/client";
 import Markers from "./Markers";
 import { LOCATIONS } from "@/constants/maps";
 import { API_KEYS, MAP_CONFIG } from "@/constants/api";
-import { TABS } from "@/constants/ui";
+import VenueCard from "../landing/VenueCard";
+import Filters from "./Filters";
 
 const home = LOCATIONS.HOME;
 const apiKey = API_KEYS.GOOGLE_MAPS;
 const mapId = MAP_CONFIG.ID;
-const tabs = TABS;
 
 const MapContainer = () => {
-  const [currentTab, setCurrentTab] = useState<string>("Popular");
   const [openMarkerKey, setOpenMarkerKey] = useState<string | null>(null);
   const [venuesData, setVenuesData] = useState<Venue[]>([]);
 
@@ -36,8 +35,9 @@ const MapContainer = () => {
   return (
     <APIProvider apiKey={apiKey}>
       <div className='p-2 mt-4'>
-        <div className='flex justify-between items-center bg-ednavy w-full p-2 mb-4 h-[50px]'>
-          <div className='flex items-center'>
+        {/* Header */}
+        <div className='flex justify-between items-center bg-ednavy p-2 mb-4 space-x-8'>
+          <div className='flex items-center ml-4'>
             <Image
               src='/assets/ED_Text.png'
               alt='logo'
@@ -45,38 +45,48 @@ const MapContainer = () => {
               height={30}
             />
             <div className='w-[1px] h-8 bg-edcream mx-2'></div>
-            <p className={`text-edcream ${bebasFont.className}`}>
-              Total<span className='text-edorange'>12 Results</span>
+            <p className={`text-edcream text-2xl ${bebasFont.className}`}>
+              Total
+              <span className='text-edorange ml-2'>
+                {venuesData.length} Results
+              </span>
             </p>
           </div>
-          <div
-            className={`flex items-center gap-4 ${bebasFont.className} text-edcream`}
-          >
-            {tabs.map((tab, index) => (
-              <button
-                key={index}
-                className={`
-              py-1 px-2 cursor-pointer
-              ${
-                currentTab === tab
-                  ? "bg-edcream text-edorange"
-                  : "bg-transparent text-edcream"
-              }
-              `}
-                onClick={() => setCurrentTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
 
-            <div className='w-[1px] h-8 bg-edcream mx-2'></div>
-            <p className='mr-2'>MAP VIEW</p>
-          </div>
+          <Filters />
         </div>
 
-        <div className='flex'>
-          <div>Location Cards</div>
-          <div className='w-full h-[500px]'>
+        <div className='grid grid-cols-1 md:grid-cols-4 w-full gap-2'>
+          <div className='col-span-1 pr-2 space-y-2 overflow-y-auto max-h-[500px]'>
+            {venuesData.map(
+              (
+                {
+                  id,
+                  name,
+                  address,
+                  city,
+                  website_url,
+                  logo_url,
+                  google_maps_url,
+                },
+                index
+              ) => (
+                <VenueCard
+                  key={index}
+                  id={id}
+                  name={name}
+                  address={address}
+                  city={city}
+                  website_url={website_url}
+                  logo_url={logo_url || ""}
+                  google_maps_url={google_maps_url}
+                  openMarkerKey={openMarkerKey}
+                  setOpenMarkerKey={setOpenMarkerKey}
+                />
+              )
+            )}
+          </div>
+          <div className='col-span-3 h-[500px]'>
             <Map
               style={{ width: "100%", height: "100%" }}
               mapId={mapId}
@@ -93,6 +103,7 @@ const MapContainer = () => {
                   name: venue.name,
                   address: venue.address,
                   city: venue.city,
+                  logo_url: venue.logo_url || "",
                 }))}
                 setOpenMarkerKey={setOpenMarkerKey}
                 openMarkerKey={openMarkerKey}

@@ -8,12 +8,14 @@ import {
 } from "@vis.gl/react-google-maps";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 import Image from "next/image";
+import { IMAGE_PLACEHOLDER } from "@/constants/ui";
 
 type Point = google.maps.LatLngLiteral & {
   key: string;
   name: string;
   address: string;
   city: string;
+  logo_url: string;
 };
 
 type Props = {
@@ -81,7 +83,9 @@ const Markers = ({ points, setOpenMarkerKey, openMarkerKey }: Props) => {
                 shouldFocus={false}
               >
                 <Image
-                  src={"/assets/placeholder.png"}
+                  src={
+                    point.logo_url?.trim() ? point.logo_url : IMAGE_PLACEHOLDER
+                  }
                   alt='pub-image'
                   height={50}
                   width={50}
