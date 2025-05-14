@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { Status } from "@prisma/client";
 
 export const getVenues = async () => {
   try {
@@ -6,6 +7,20 @@ export const getVenues = async () => {
     return venues;
   } catch (error) {
     console.error("Error fetching venues:", error);
+    throw new Error("Failed to fetch venues");
+  }
+};
+
+export const getApprovedVenues = async () => {
+  try {
+    const approvedVenues = await db.venue.findMany({
+      where: {
+        status: Status.APPROVED,
+      },
+    });
+    return approvedVenues;
+  } catch (error) {
+    console.error("Error fetching venues", error);
     throw new Error("Failed to fetch venues");
   }
 };
