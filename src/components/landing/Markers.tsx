@@ -7,8 +7,17 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
+import Image from "next/image";
+import { IMAGE_PLACEHOLDER } from "@/constants/ui";
 
-type Point = google.maps.LatLngLiteral & { key: string };
+type Point = google.maps.LatLngLiteral & {
+  key: string;
+  name: string;
+  address: string;
+  city: string;
+  logo_url: string;
+};
+
 type Props = {
   points: Point[];
   setOpenMarkerKey: (key: string | null) => void;
@@ -73,7 +82,20 @@ const Markers = ({ points, setOpenMarkerKey, openMarkerKey }: Props) => {
                 anchor={markers[point.key]}
                 shouldFocus={false}
               >
-                <p>Window</p>
+                <Image
+                  src={
+                    point.logo_url?.trim() ? point.logo_url : IMAGE_PLACEHOLDER
+                  }
+                  alt='pub-image'
+                  height={50}
+                  width={50}
+                />
+                <div>
+                  <h1 className='text-lg font-bold'>{point.name}</h1>
+                  <p>
+                    {point.address}, {point.city}
+                  </p>
+                </div>
               </InfoWindow>
             )}
           </AdvancedMarker>

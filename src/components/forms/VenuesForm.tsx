@@ -87,7 +87,7 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
             city: "",
             zipcode: "",
             state: "",
-            lat: undefined, // or null if you handle it correctly
+            lat: undefined,
             lng: undefined,
             website_url: "",
             google_maps_url: "",

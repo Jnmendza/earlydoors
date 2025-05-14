@@ -32,7 +32,8 @@ export const venueFormSchema = z.object({
   logo_url: z
     .string()
     .url({ message: "Logo URL must be valid (https://...)" })
-    .optional(),
+    .optional()
+    .or(z.literal("")), // Allow empty string for optional field
 
   is_active: z.boolean(),
   has_garden: z.boolean(),
