@@ -25,7 +25,7 @@ export const CheckboxFilterGroup = ({
   };
 
   return (
-    <div className='grid gap-3'>
+    <div className='flex space-x-4'>
       {filterOptions.map(({ label, value }, idx) => (
         <div key={idx} className='flex items-center space-x-2'>
           <CheckboxPrimitive.Root
@@ -40,7 +40,10 @@ export const CheckboxFilterGroup = ({
               <CheckIcon className='h-4 w-4' />
             </CheckboxPrimitive.Indicator>
           </CheckboxPrimitive.Root>
-          <Label className='text-xl' htmlFor={value}>
+          <Label
+            className='text-md flex-1 whitespace-nowrap text-edcream'
+            htmlFor={value}
+          >
             {label}
           </Label>
         </div>
