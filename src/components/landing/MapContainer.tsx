@@ -1,14 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { bebasFont } from "@/lib/font";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { Venue } from "@prisma/client";
 import Markers from "./Markers";
 import { LOCATIONS } from "@/constants/maps";
 import { API_KEYS, MAP_CONFIG } from "@/constants/api";
 import VenueCard from "../landing/VenueCard";
 import Filters from "./Filters";
+import { useVenueStore } from "@/store/venue-store";
 
 const home = LOCATIONS.HOME;
 const apiKey = API_KEYS.GOOGLE_MAPS;
@@ -16,22 +16,15 @@ const mapId = MAP_CONFIG.ID;
 
 const MapContainer = () => {
   const [openMarkerKey, setOpenMarkerKey] = useState<string | null>(null);
-  const [venuesData, setVenuesData] = useState<Venue[]>([]);
-
+  const { fetchVenues } = useVenueStore();
+  const filteredVenuesFn = useVenueStore(
+    (state) => state.filteredVenuesCombined
+  );
+  const filteredVenues = filteredVenuesFn();
   useEffect(() => {
-    const fetchVenues = async () => {
-      try {
-        const response = await fetch("/api/venues");
-        const data = await response.json();
-        setVenuesData(data);
-      } catch (error) {
-        console.error("Error fetching venues:", error);
-      }
-    };
-
     fetchVenues();
-  }, []);
-
+  }, [fetchVenues]);
+  console.log("FILTERED", filteredVenues);
   return (
     <APIProvider apiKey={apiKey}>
       <div className='p-2 mt-4'>
@@ -48,7 +41,7 @@ const MapContainer = () => {
             <p className={`text-edcream text-2xl ${bebasFont.className}`}>
               Total
               <span className='text-edorange ml-2'>
-                {venuesData.length} Results
+                {filteredVenues.length} Results
               </span>
             </p>
           </div>
@@ -58,7 +51,7 @@ const MapContainer = () => {
 
         <div className='grid grid-cols-1 md:grid-cols-4 w-full gap-2'>
           <div className='col-span-1 pr-2 space-y-2 overflow-y-auto max-h-[500px]'>
-            {venuesData.map(
+            {filteredVenues.map(
               (
                 {
                   id,
@@ -96,7 +89,7 @@ const MapContainer = () => {
               disableDefaultUI={true}
             >
               <Markers
-                points={venuesData.map((venue) => ({
+                points={filteredVenues.map((venue) => ({
                   lat: venue.lat,
                   lng: venue.lng,
                   key: venue.id,

@@ -3,7 +3,7 @@ import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { CheckIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { FilterOption } from "./Filters";
+import { FilterOption } from "@/types/types";
 
 interface Props {
   filterOptions: FilterOption[];

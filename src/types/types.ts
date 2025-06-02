@@ -55,4 +55,18 @@ export type FullBlog = {
   _updatedAt: string;
 };
 
+export type VenueFilters = {
+  is_active?: boolean;
+  has_garden?: boolean;
+  has_big_screen?: boolean;
+  has_outdoor_screens?: boolean;
+  is_bookable?: boolean;
+  club_id?: string;
+};
+
+export interface FilterOption {
+  label: string;
+  value: string;
+}
+
 export type ActionType = "CREATE" | "UPDATE" | "DELETE" | "REJECT" | "APPROVE";

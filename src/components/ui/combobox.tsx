@@ -18,29 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-// const clubs = [
-//   {
-//     value: "fc-barcelona",
-//     label: "FC Barcelona",
-//   },
-//   {
-//     value: "everton",
-//     label: "Everton",
-//   },
-//   {
-//     value: "nuxt.js",
-//     label: "Nuxt.js",
-//   },
-//   {
-//     value: "remix",
-//     label: "Remix",
-//   },
-//   {
-//     value: "astro",
-//     label: "Astro",
-//   },
-// ];
+import { useVenueStore } from "@/store/venue-store";
 
 interface ComboBoxProps {
   selectPlaceholder: string;
@@ -52,6 +30,7 @@ export function Combobox({
   selectPlaceholder,
 }: ComboBoxProps) {
   const { fetchClubs, clubs } = useClubStore();
+  const { setClubId } = useVenueStore();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -86,6 +65,10 @@ export function Combobox({
                   key={club.name}
                   value={club.name}
                   onSelect={(currentValue) => {
+                    const matchedClub = clubs.find(
+                      (club) => club.name === currentValue
+                    );
+                    if (matchedClub) setClubId(matchedClub.id);
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
