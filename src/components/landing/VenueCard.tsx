@@ -1,17 +1,18 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import { IMAGE_PLACEHOLDER } from "@/constants/ui";
 
 interface VenueCardProps {
   id: string;
   name: string;
-  address: string;
   city: string;
-  website_url: string;
+  address: string;
   logo_url: string;
+  website_url: string;
   google_maps_url: string;
+  distance: string; // e.g. "100 meter"
+  openUntil: string; // e.g. "Open till 6 pm"
   openMarkerKey: string | null;
   setOpenMarkerKey: (id: string | null) => void;
 }
@@ -19,46 +20,44 @@ interface VenueCardProps {
 const VenueCard = ({
   id,
   name,
-  address,
-  city,
-  website_url,
   logo_url,
-  google_maps_url,
+  distance,
+  openUntil,
   openMarkerKey,
   setOpenMarkerKey,
 }: VenueCardProps) => {
   const isActive = id === openMarkerKey;
+
   return (
     <div
       className={cn(
-        "border-2 border-solid p-4",
+        "flex items-center space-x-4 py-3 px-4 ",
         isActive
-          ? "border-ednavy bg-edorange/10"
-          : "border-edorange cursor-pointer hover:bg-edorange/10"
+          ? "bg-edorange/10" // highlight when active
+          : "hover:bg-edorange/10 cursor-pointer" // hover effect when not active
       )}
       onClick={() => setOpenMarkerKey(id)}
     >
-      <div className='flex space-x-4'>
+      {/* Logo on the left (square, 48×48 or so) */}
+      <div className='flex-shrink-0'>
         <Image
           src={logo_url?.trim() ? logo_url : IMAGE_PLACEHOLDER}
-          alt='logo'
-          height={70}
-          width={70}
+          alt={`${name} logo`}
+          width={48}
+          height={48}
+          className='rounded-full bg-gray-100 object-cover'
         />
-        <h1 className='text-lg font-bold'>{name}</h1>
       </div>
-      <div className='mt-4'>
-        <p>
-          {address}, {city}
-        </p>
-        <div className='flex items-center space-x-2'>
-          <Link className='hover:text-edorange' href={website_url}>
-            Website
-          </Link>
-          <span className='text-edorange text-xl'>•</span>
-          <Link className='hover:text-edorange' href={google_maps_url}>
-            Directions
-          </Link>
+
+      {/* Name + subtitle on the right */}
+      <div className='flex flex-col justify-center text-left'>
+        {/* 1st line: Name */}
+        <h3 className='text-lg font-semibold text-gray-900'>{name}</h3>
+
+        {/* 2nd line: distance (gray) + “Open till…” (blue) */}
+        <div className='mt-1 flex space-x-2 text-sm'>
+          <span className='text-gray-500'>{distance}</span>
+          <span className='text-blue-600 font-medium'>{openUntil}</span>
         </div>
       </div>
     </div>

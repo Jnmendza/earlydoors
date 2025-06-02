@@ -166,3 +166,11 @@ body {
   font-weight: 400;
   font-style: italic;
 }
+
+.app-sidebar-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 20; /* ensure it’s above the map */
+}

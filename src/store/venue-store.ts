@@ -4,7 +4,7 @@ import { approveStatus, rejectStatus } from "@/actions/status-change";
 import { VenueFilters } from "@/types/types";
 import { Event } from "@prisma/client";
 
-type VenueWithEvents = Venue & {
+export type VenueWithEvents = Venue & {
   events?: Event[];
 };
 
