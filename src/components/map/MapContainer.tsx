@@ -7,7 +7,8 @@ import { LOCATIONS } from "@/constants/maps";
 import { API_KEYS, MAP_CONFIG } from "@/constants/api";
 import { useVenueStore } from "@/store/venue-store";
 import { SidebarTrigger } from "../ui/sidebar";
-import { AppSidebar } from "../ui/app-sidebar";
+import { AppSidebar } from "./AppSidebar";
+import VenueDetailsSidebar from "./VenueDetailsSidebar";
 
 const home = LOCATIONS.HOME;
 const apiKey = API_KEYS.GOOGLE_MAPS;
@@ -24,6 +25,10 @@ export default function MapContainer() {
   useEffect(() => {
     fetchVenues();
   }, [fetchVenues]);
+
+  const selectedVenue = openMarkerKey
+    ? filteredVenues.find((v) => v.id === openMarkerKey) || null
+    : null;
 
   return (
     <APIProvider apiKey={apiKey}>
@@ -62,6 +67,14 @@ export default function MapContainer() {
             <SidebarTrigger className='cursor-pointer' />
           </div>
         </div>
+        {selectedVenue && (
+          <div className='absolute top-1/2 -transalte-y-1/2 z-30'>
+            <VenueDetailsSidebar
+              venue={selectedVenue}
+              onClose={() => setOpenMarkerKey(null)}
+            />
+          </div>
+        )}
       </div>
     </APIProvider>
   );
