@@ -15,7 +15,9 @@ const HoverLink = ({ title, cardContent }: HoverLinksProps) => {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <Button variant='link'>{title}</Button>
+        <Button className='cursor-pointer' variant='link'>
+          {title}
+        </Button>
       </HoverCardTrigger>
       <HoverCardContent>
         <p>{cardContent}</p>
