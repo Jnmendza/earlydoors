@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -8,6 +9,9 @@ import {
 } from "@/components/ui/sidebar";
 import VenueCard from "../map/VenueCard";
 import { VenueWithEvents } from "@/store/venue-store";
+import { useDebounce } from "@/hooks/use-debounce";
+import { Input } from "./input";
+import { Search } from "lucide-react";
 
 interface AppSidebarProps {
   venues: VenueWithEvents[];
@@ -20,6 +24,15 @@ export function AppSidebar({
   openMarkerKey,
   setOpenMarkerKey,
 }: AppSidebarProps) {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const debounceSearch = useDebounce(searchQuery, 300);
+
+  const filteredList = useMemo(() => {
+    const term = debounceSearch.trim().toLowerCase();
+    if (term === "") return venues;
+    return venues.filter((v) => v.name.toLowerCase().includes(term));
+  }, [debounceSearch, venues]);
+
   return (
     <Sidebar variant='floating'>
       <SidebarContent>
@@ -28,8 +41,17 @@ export function AppSidebar({
             EarlyDoor Venues
           </SidebarHeader>
           <SidebarGroupContent className='mt-4'>
+            <div className='relative'>
+              <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+              <Input
+                placeholder='Search venues...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className='w-full pl-8'
+              />
+            </div>
             <SidebarMenu>
-              {venues.map(
+              {filteredList.map(
                 (
                   {
                     id,
