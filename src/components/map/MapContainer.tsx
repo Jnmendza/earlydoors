@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps"; // using your original library
-import Markers from "./Markers";
+import Markers from "../landing/Markers";
 import { LOCATIONS } from "@/constants/maps";
 import { API_KEYS, MAP_CONFIG } from "@/constants/api";
 import { useVenueStore } from "@/store/venue-store";

@@ -1,4 +1,4 @@
-import MapContainer from "@/components/landing/MapContainer";
+import MapContainer from "@/components/map/MapContainer";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import React from "react";
 
