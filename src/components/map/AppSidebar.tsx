@@ -7,10 +7,10 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
-import VenueCard from "../map/VenueCard";
+import VenueCard from "./VenueCard";
 import { VenueWithEvents } from "@/store/venue-store";
 import { useDebounce } from "@/hooks/use-debounce";
-import { Input } from "./input";
+import { Input } from "../ui/input";
 import { Search } from "lucide-react";
 
 interface AppSidebarProps {
