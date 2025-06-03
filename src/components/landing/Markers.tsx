@@ -9,7 +9,6 @@ import {
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 import Image from "next/image";
 import { IMAGE_PLACEHOLDER } from "@/constants/ui";
-import { Button } from "../ui/button";
 import HoverLink from "../map/HoverLink";
 import { Volleyball } from "lucide-react";
 
@@ -122,9 +121,6 @@ const Markers = ({ points, setOpenMarkerKey, openMarkerKey }: Props) => {
                     </React.Fragment>
                   ))}
                 </div>
-                <Button className='w-full cursor-pointer' variant='outline'>
-                  More Details
-                </Button>
               </InfoWindow>
             )}
           </AdvancedMarker>

@@ -8,7 +8,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <head>{/* Any meta or <link> tags go here */}</head>
       <body
         className={`
           h-screen 

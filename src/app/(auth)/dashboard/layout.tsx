@@ -1,6 +1,6 @@
 "use client";
 import { Fragment, useEffect } from "react";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar } from "@/components/AdminSidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
