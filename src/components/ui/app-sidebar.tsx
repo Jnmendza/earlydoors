@@ -6,7 +6,7 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
-import VenueCard from "../landing/VenueCard";
+import VenueCard from "../map/VenueCard";
 import { VenueWithEvents } from "@/store/venue-store";
 
 interface AppSidebarProps {
