@@ -30,7 +30,7 @@ const Footer = () => {
             />
             <Image
               className='mt-8'
-              src='/assets/text-cream.png'
+              src='https://i.imghippo.com/files/bifr4251GUs.png'
               alt='text-logo'
               height={50}
               width={250}
