@@ -50,7 +50,7 @@ export function AppSidebar({
                 className='w-full pl-8'
               />
             </div>
-            <SidebarMenu>
+            <SidebarMenu className='mt-4'>
               {filteredList.map(
                 (
                   {
