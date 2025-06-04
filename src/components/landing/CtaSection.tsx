@@ -9,7 +9,7 @@ const CtaSection = () => (
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     transition={{ duration: 0.8 }}
-    className='flex flex-col items-center text-ednavy py-12'
+    className='flex flex-col items-center text-center text-ednavy py-12'
     style={{
       backgroundImage:
         "url(https://www.transparenttextures.com/patterns/dark-stripes-light.png)",
@@ -22,7 +22,7 @@ const CtaSection = () => (
       height={200}
     />
 
-    <h2 className='text-3xl font-bold mb-2'>
+    <h2 className='text-3xl  font-bold mb-2'>
       Ready to Find Your Matchday Venue?
     </h2>
     <p className='text-xl mb-4'>

@@ -6,9 +6,9 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-    <footer className='flex justify-center bg-edorange '>
+    <footer className='flex justify-center bg-edorange mt-6'>
       <div
-        className={`flex flex-col w-3/4 py-6 h-[350px] text-3xl text-edcream ${bebasFont.className}`}
+        className={`flex flex-col w-3/4 py-6 text-3xl text-edcream ${bebasFont.className}`}
       >
         <div className='flex justify-between'>
           {/* Left */}

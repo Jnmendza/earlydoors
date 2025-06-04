@@ -15,16 +15,6 @@ const HeroSection = () => {
         />
         {/* Optional: a dark overlay so white text pops */}
         <div className='absolute inset-0 bg-ednavy/20' />
-
-        {/* <div
-          className='
-                absolute inset-x-0 bottom-0 
-                h-10
-                bg-gradient-to-t from-edcream/60 to-transparent 
-                pointer-events-none 
-                z-10
-              '
-        /> */}
       </div>
 
       {/* ─── Overlay Content ────────────────────────────────────────────────────── */}
