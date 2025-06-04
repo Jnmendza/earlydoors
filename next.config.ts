@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       "cdn.sanity.io",
     ],
   },
+  devIndicators: {
+    position: "bottom-right",
+  },
 };
 
 export default nextConfig;

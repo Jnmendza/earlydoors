@@ -7,13 +7,34 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
+import Image from "next/image";
+import { IMAGE_PLACEHOLDER } from "@/constants/ui";
+import HoverLink from "../map/HoverLink";
+import { Volleyball } from "lucide-react";
 
-type Point = google.maps.LatLngLiteral & { key: string };
+type Point = google.maps.LatLngLiteral & {
+  key: string;
+  name: string;
+  address: string;
+  city: string;
+  logo_url: string;
+};
+
 type Props = {
   points: Point[];
   setOpenMarkerKey: (key: string | null) => void;
   openMarkerKey: string | null;
 };
+
+type LinkData = {
+  title: string;
+  cardContent: string;
+};
+
+const linkData: LinkData[] = [
+  { title: "Directions", cardContent: "Google Maps Link" },
+  { title: "Website", cardContent: "Venues Webpage" },
+];
 
 const Markers = ({ points, setOpenMarkerKey, openMarkerKey }: Props) => {
   const map = useMap();
@@ -73,7 +94,33 @@ const Markers = ({ points, setOpenMarkerKey, openMarkerKey }: Props) => {
                 anchor={markers[point.key]}
                 shouldFocus={false}
               >
-                <p>Window</p>
+                <div className='flex items-center space-x-4'>
+                  <Image
+                    src={
+                      point.logo_url?.trim()
+                        ? point.logo_url
+                        : IMAGE_PLACEHOLDER
+                    }
+                    alt='pub-image'
+                    height={50}
+                    width={50}
+                    className='rounded-full bg-gray-100 object-cover'
+                  />
+                  <div>
+                    <h1 className='text-lg font-bold'>{point.name}</h1>
+                    <p>
+                      {point.address}, {point.city}
+                    </p>
+                  </div>
+                </div>
+                <div className='flex justify-end items-center'>
+                  {linkData.map(({ title, cardContent }, index) => (
+                    <React.Fragment key={index}>
+                      <HoverLink title={title} cardContent={cardContent} />
+                      {index < linkData.length - 1 && <Volleyball size={10} />}
+                    </React.Fragment>
+                  ))}
+                </div>
               </InfoWindow>
             )}
           </AdvancedMarker>
