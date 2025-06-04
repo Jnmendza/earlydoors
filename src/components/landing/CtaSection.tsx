@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 const CtaSection = () => (
   <motion.div
@@ -28,8 +29,12 @@ const CtaSection = () => (
       EarlyDoors helps you claim your spot before kickoff
     </p>
 
-    <Button size={"lg"} className='bg-edorange text-xl font-semibold mb-8'>
-      Search Now
+    <Button
+      size={"lg"}
+      className='bg-edorange text-xl font-semibold mb-8 hover:bg-ednavy'
+      asChild
+    >
+      <Link href={"/events"}>Search Now</Link>
     </Button>
   </motion.div>
 );

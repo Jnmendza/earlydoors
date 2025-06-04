@@ -4,10 +4,10 @@ import { bebasFont } from "@/lib/font";
 
 const BlogHero = () => {
   return (
-    <section className='relative w-full h-[60vh] overflow-hidden mt-10'>
+    <section className='relative w-full h-[60vh] overflow-hidden'>
       {/* Background image */}
       <Image
-        src='/assets/coffee2.jpg'
+        src='https://i.imghippo.com/files/hYAH9045WGA.png'
         alt='hero background'
         fill
         priority

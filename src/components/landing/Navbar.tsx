@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import { bebasFont } from "@/lib/font";
 import { links } from "@/data/Links";
 
@@ -35,19 +34,6 @@ const Navbar = () => {
           </Link>
         ))}
       </div>
-
-      {/* Logo — show on non‐home pages */}
-      {pathname !== "/" && (
-        <div className='absolute top-0 right-8 p-4'>
-          <Image
-            src='/assets/logo-main.png'
-            alt='EarlyDoors-Logo'
-            width={100}
-            height={100}
-            className='object-contain'
-          />
-        </div>
-      )}
     </nav>
   );
 };

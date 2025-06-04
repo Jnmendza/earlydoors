@@ -8,28 +8,30 @@ const Footer = () => {
   return (
     <footer className='flex justify-center bg-edorange '>
       <div
-        className={`flex flex-col w-3/4 py-6 h-[300px] text-3xl text-edcream ${bebasFont.className}`}
+        className={`flex flex-col w-3/4 py-6 h-[350px] text-3xl text-edcream ${bebasFont.className}`}
       >
         <div className='flex justify-between'>
           {/* Left */}
           <div className='flex flex-col gap-2'>
             {links.map(({ name, href }, index) => (
-              <Link key={index} href={href}>
+              <Link
+                key={index}
+                href={href}
+                className='transition-transform duration-200 hover:translate-x-2 cursor-pointer'
+              >
                 {name}
               </Link>
             ))}
-            <Link href={"/portal"}>Portal</Link>
+            <Link
+              href={"/portal"}
+              className='transition-transform duration-200 hover:translate-x-2 cursor-pointer'
+            >
+              Portal
+            </Link>
           </div>
           {/* Right  */}
           <div className='flex flex-col'>
-            <label>Join EarlyDoors newsletter</label>
-            <input
-              name='email'
-              className='bg-edcream p-2 text-black/25'
-              placeholder='Enter Email'
-            />
             <Image
-              className='mt-8'
               src='https://i.imghippo.com/files/bifr4251GUs.png'
               alt='text-logo'
               height={50}

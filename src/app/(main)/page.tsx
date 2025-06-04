@@ -1,5 +1,6 @@
 "use client";
 import CtaSection from "@/components/landing/CtaSection";
+import FeaturedLeagues from "@/components/landing/FeaturedLeagues";
 import HeroSection from "@/components/landing/HeroSection";
 import HowItWorks from "@/components/landing/HowItWorks";
 import QuoteSection from "@/components/landing/QuoteSection";
@@ -21,6 +22,7 @@ export default function Home() {
     <>
       <HeroSection />
       <HowItWorks />
+      <FeaturedLeagues />
       <QuoteSection />
       <CtaSection />
     </>
