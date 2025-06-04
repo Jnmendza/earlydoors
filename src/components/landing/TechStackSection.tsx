@@ -14,7 +14,13 @@ import {
 
 const TechStackSection = () => {
   return (
-    <div className='relative bg-edgreen overflow-hidden w-2/3 h-[500px]'>
+    <div
+      className='relative bg-edgreen overflow-hidden w-2/3 h-[500px]'
+      style={{
+        backgroundImage:
+          "url(https://www.transparenttextures.com/patterns/football-no-lines.png)",
+      }}
+    >
       {/* Field Markings */}
       <div className='absolute inset-0'>
         {/* Center circle */}

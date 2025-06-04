@@ -26,7 +26,7 @@ const QuoteSection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % quotes.length);
-    }, 6000);
+    }, 9000);
 
     return () => clearInterval(interval);
   }, []);

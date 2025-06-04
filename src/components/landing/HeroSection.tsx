@@ -30,10 +30,16 @@ const HeroSection = () => {
       {/* ─── Overlay Content ────────────────────────────────────────────────────── */}
       <div className='relative top-20 z-10 flex flex-col items-center justify-center h-full text-center px-4'>
         {/* Heading */}
+        <Image
+          src='https://i.imghippo.com/files/TmCm7432uhg.png'
+          alt='logo'
+          width={150}
+          height={150}
+        />
         <h1
           className={`${bebasFont.className} text-5xl sm:text-6xl md:text-7xl text-white font-bold leading-tight max-w-3xl`}
         >
-          Find Your Football Tribe 🍺⚽
+          Find Your Football Tribe
         </h1>
 
         {/* Subheading */}

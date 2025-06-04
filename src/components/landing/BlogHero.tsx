@@ -22,13 +22,11 @@ const BlogHero = () => {
         {/* Hero content */}
         <div className='flex flex-1 items-center justify-center text-edcream text-center px-6'>
           <div className='w-2/3'>
-            <h2 className='text-4xl font-bold mb-2'>
+            <h2 className={`text-4xl font-bold mb-2 ${bebasFont.className}`}>
               Inside EarlyDoors: Design, Dev, and the Drive behind whatever this
               is going to be.
             </h2>
-            <p
-              className={`text-xl max-w-lg mx-auto mt-4 ${bebasFont.className}`}
-            >
+            <p className={`text-xl max-w-lg mx-auto mt-4`}>
               Posts on what’s under the hood, what’s coming next, and how fútbol
               culture shaped it all.
             </p>
