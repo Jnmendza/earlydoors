@@ -1,69 +1,55 @@
 "use client";
 import React, { useState } from "react";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+import Image from "next/image";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import { bebasFont } from "@/lib/font";
 import { content } from "@/data/aboutuscontent";
-import Image from "next/image";
 
 const WhatsNext = () => {
   const LAST_INDEX = content.length - 1;
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const next = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const next = () =>
     setCurrentIndex((prev) => (prev === LAST_INDEX ? 0 : prev + 1));
-  };
-  const prev = () => {
+  const prev = () =>
     setCurrentIndex((prev) => (prev === 0 ? LAST_INDEX : prev - 1));
-  };
+
   return (
-    <ResizablePanelGroup
-      direction='horizontal'
-      className='max-w-md rounded-lg border md:min-w-2/3 flex mx-auto mt-4'
-    >
-      <ResizablePanel defaultSize={50}>
-        <div className='flex flex-col items-start h-[500px] justify-center p-6 text-ednavy'>
-          <h1 className={`${bebasFont.className} text-5xl `}>
-            What&apos;s Next?
-          </h1>
-          <div className='mt-6'>
-            <h3 className='text-edorange text-3xl'>
-              {content[currentIndex].title}
-            </h3>
-            <p className='text-xl mt-2'>{content[currentIndex].subTitle}</p>
-          </div>
+    <section className='max-w-5xl mx-auto mt-8 flex flex-col md:flex-row rounded-lg overflow-visible h-auto md:h-[500px]'>
+      {/* Text Section */}
+      <div className='w-full md:w-1/2 p-4 sm:p-6 text-ednavy flex flex-col justify-center'>
+        <h1 className={`${bebasFont.className} text-3xl sm:text-5xl`}>
+          What&apos;s Next?
+        </h1>
+        <h3 className='text-edorange text-2xl sm:text-3xl mt-4 sm:mt-6'>
+          {content[currentIndex].title}
+        </h3>
+        <p className='text-base sm:text-xl mt-2'>
+          {content[currentIndex].subTitle}
+        </p>
+      </div>
+
+      {/* Image + Arrows Section */}
+      <div className='w-full md:w-1/2 flex flex-col items-center justify-center p-4'>
+        <div className='flex-1 flex items-center justify-center w-full h-48 sm:h-full overflow-visible'>
+          <Image
+            src={`/assets/next${currentIndex}.jpg`}
+            alt='upcoming-feature'
+            width={300}
+            height={300}
+            className='rounded-md w-full max-w-xs sm:max-w-none object-contain h-full'
+          />
         </div>
-      </ResizablePanel>
-      <ResizableHandle />
-      <ResizablePanel defaultSize={50}>
-        <ResizablePanelGroup direction='vertical'>
-          <ResizablePanel defaultSize={75}>
-            <div className='flex h-full items-center justify-center p-6'>
-              <Image
-                src={`/assets/next${currentIndex}.jpg`}
-                alt='upcoming-features'
-                height={500}
-                width={250}
-              />
-            </div>
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel defaultSize={25}>
-            <div className='flex h-full items-center justify-center p-6'>
-              <span className='cursor-pointer' onClick={prev}>
-                <GrPrevious />
-              </span>
-              <span className='cursor-pointer' onClick={next}>
-                <GrNext />
-              </span>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        <div className='flex gap-6 mt-6 sm:mt-8'>
+          <button onClick={prev} aria-label='Previous' className='text-2xl'>
+            <GrPrevious />
+          </button>
+          <button onClick={next} aria-label='Next' className='text-2xl'>
+            <GrNext />
+          </button>
+        </div>
+      </div>
+    </section>
   );
 };
 

@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-    <footer className='flex justify-center bg-edorange mt-6'>
+    <footer className='flex justify-center bg-edorange '>
       <div
         className={`flex flex-col w-3/4 py-6 text-3xl text-edcream ${bebasFont.className}`}
       >
