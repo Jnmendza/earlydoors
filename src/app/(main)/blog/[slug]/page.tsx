@@ -11,8 +11,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { bebasFont } from "@/lib/font";
 
-const PostPage = async ({ params }: { params: { slug: string } }) => {
-  const slug = await params.slug;
+const PostPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
   const post: FullBlog = await getFullPost(slug);
   const { title, _createdAt, readTime, mainImage, body, categories, author } =
     post;

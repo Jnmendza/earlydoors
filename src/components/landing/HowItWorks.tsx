@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
+"use client";
 import React from "react";
+import { motion } from "framer-motion";
 import { SearchCheck, Volleyball, MapPinHouse } from "lucide-react";
 import { bebasFont } from "@/lib/font";
 

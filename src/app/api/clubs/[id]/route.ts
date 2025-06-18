@@ -6,11 +6,12 @@ import { ActionType } from "@/types/types";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const club = await db.club.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!club) {
@@ -29,8 +30,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await req.json();
     const parsed = clubFormSchema.safeParse(body);
@@ -43,7 +45,7 @@ export async function PUT(
     }
 
     const updatedClub = await db.club.update({
-      where: { id: params.id },
+      where: { id },
       data: body,
     });
 
@@ -65,8 +67,9 @@ export async function PUT(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { status } = await req.json();
 
@@ -75,7 +78,7 @@ export async function PATCH(
     }
 
     const updated = await db.club.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
     });
 
@@ -100,11 +103,12 @@ export async function PATCH(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    await db.club.delete({ where: { id: params.id } });
-    return NextResponse.json({ message: `Club ${params.id} deleted ` });
+    await db.club.delete({ where: { id } });
+    return NextResponse.json({ message: `Club ${id} deleted ` });
   } catch (error) {
     console.error("Error deleting club:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

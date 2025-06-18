@@ -4,7 +4,7 @@ import { bebasFont } from "@/lib/font";
 
 const HeroSection = () => {
   return (
-    <div className='relative h-screen w-full bg-ednavy'>
+    <div className='relative h-screen w-full'>
       {/* ─── Background Image ───────────────────────────────────────────────────── */}
       <div className='absolute inset-0'>
         <Image

@@ -37,7 +37,7 @@ const BlogPage = () => {
     <div>
       <BlogHero />
       {/* Container */}
-      <div className='max-w-5xl w-full mx-auto flex flex-col'>
+      <div className='max-w-5xl w-full mx-auto flex flex-col px-4 md:px-0'>
         {/* Title */}
         <div className='mt-10'>
           <h2 className='text-4xl  text-edorange'>Blog</h2>
@@ -46,7 +46,7 @@ const BlogPage = () => {
           </p>
         </div>
         {/* Tabs */}
-        <div className='flex space-x-2'>
+        <div className='flex space-x-2 mt-4'>
           {filteredCategories.map((title, index) => (
             <button
               key={index}
@@ -70,7 +70,7 @@ const BlogPage = () => {
 
         {/* Blog cards */}
         {filteredPosts.length !== 0 ? (
-          <div className='my-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+          <div className='my-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center'>
             {filteredPosts?.map((post: BlogCardPost) => (
               <BlogCard
                 key={post._id}

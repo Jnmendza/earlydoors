@@ -8,23 +8,38 @@ const AboutUs = () => {
   return (
     <div>
       {/* Hero Section */}
-      <div className='flex flex-col items-center mt-20'>
-        <h1 className={`text-4xl text-edorange text-center w-xl`}>
-          Bringing San Diego&apos;s Fútbol Community Together
-        </h1>
-        <h4 className={`${bebasFont.className} text-2xl mt-4`}>
-          Link up with San Diego&apos;s Loudest Supporters -- MatchDay Starts
-          Now!
-        </h4>
-        <div className='absolute top-1/2 left-1/6 transform -translate-y-1/2 -translate-x-1/2 -rotate-25'>
+      <div className='relative h-screen w-full overflow-hidden bg-ednavy'>
+        <div
+          className={`${bebasFont.className} absolute inset-0 z-0 flex flex-col justify-center overflow-hidden`}
+        >
+          <div className='w-[200%] -translate-x-1/4 opacity-30'>
+            <h1 className='text-[250px] text-gray-700 text-stroke-1 whitespace-nowrap'>
+              Gol! Goal! Golazo! Gol! Goal! Golazo!
+            </h1>
+            <h1 className='text-[250px] text-gray-700 text-stroke-1 whitespace-nowrap leading-[0.6]'>
+              EarlyDoors EarlyDoors EarlyDoors
+            </h1>
+            <h1 className='text-[250px] text-gray-700 text-stroke-1 whitespace-nowrap '>
+              Supporters Community Passion
+            </h1>
+          </div>
+        </div>
+
+        {/* Vignettes */}
+        <div className='absolute left-0 top-0 h-full w-1/3 z-1 bg-gradient-to-r from-ednavy to-transparent pointer-events-none' />
+        <div className='absolute right-0 top-0 h-full w-1/3 z-1 bg-gradient-to-l from-ednavy to-transparent pointer-events-none' />
+
+        <div className='absolute inset-0 z-10 flex flex-col justify-center items-center text-center p-8 space-y-4'>
           <Image
-            src='/assets/ticket.png'
-            alt='ticket'
-            width={200}
-            height={200}
+            src={"/assets/BeachDay.png"}
+            alt='beachday'
+            fill
+            className='object-contain'
           />
+          <div className='flex space-x-10 mt-2 text-primary'></div>
         </div>
       </div>
+
       {/* Me section */}
       <div className='flex gap-x-16 items-center justify-center ml-48'>
         <div>
@@ -32,16 +47,8 @@ const AboutUs = () => {
             Hey, I&apos;m Jonathan — a front-end engineer from San Diego with a
             love for fútbol, design, and building experiences that bring people
             together. I created EarlyDoors as both a personal project and a love
-            letter to my city’s vibrant matchday culture.
+            letter to my city&apos;s vibrant matchday culture.
           </p>
-        </div>
-        <div className='rotate-10 drop-shadow-xl ml-32 mt-10'>
-          <Image
-            src='/assets/PubScarf.png'
-            alt='scarf'
-            width={250}
-            height={450}
-          />
         </div>
       </div>
 

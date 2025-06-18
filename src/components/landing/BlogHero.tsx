@@ -4,7 +4,7 @@ import { bebasFont } from "@/lib/font";
 
 const BlogHero = () => {
   return (
-    <section className='relative w-full h-[60vh] overflow-hidden'>
+    <section className='relative w-full h-[60vh] overflow-hidden bg-ednavy'>
       {/* Background image */}
       <Image
         src='https://i.imghippo.com/files/hYAH9045WGA.png'

@@ -1,25 +1,17 @@
-"use client";
 import CtaSection from "@/components/landing/CtaSection";
 import FeaturedLeagues from "@/components/landing/FeaturedLeagues";
 import HeroSection from "@/components/landing/HeroSection";
 import HowItWorks from "@/components/landing/HowItWorks";
 import QuoteSection from "@/components/landing/QuoteSection";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense } from "react";
+import SearchParamRedirect from "@/components/landing/SearchParamRedirect";
 
 export default function Home() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (searchParams.get("code")) {
-      router.replace("/");
-    }
-  }, [searchParams, router]);
-
   return (
     <>
+      <Suspense fallback={null}>
+        <SearchParamRedirect />
+      </Suspense>
       <HeroSection />
       <HowItWorks />
       <FeaturedLeagues />
