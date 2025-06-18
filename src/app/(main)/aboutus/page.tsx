@@ -17,6 +17,7 @@ const AboutUs = () => {
             className='object-cover'
             priority
           />
+          <div className='absolute inset-0 bg-ednavy/20' />
         </div>
         <div className='relative text-white z-10 flex flex-col items-center justify-center h-full text-center px-4'>
           <h1
