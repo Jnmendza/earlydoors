@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
       "images.unsplash.com",
       "upload.wikimedia.org",
       "cdn.sanity.io",
+      "i.imghippo.com",
+      "www.imghippo.com",
     ],
   },
 };

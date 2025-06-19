@@ -6,11 +6,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const venue = await db.venue.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!venue) {
@@ -26,8 +27,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await req.json();
     const parsed = venueFormSchema.safeParse(body);
@@ -40,7 +42,7 @@ export async function PUT(
     }
 
     const updatedVenue = await db.venue.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...parsed.data,
         lat: Number(parsed.data.lat),
@@ -66,8 +68,9 @@ export async function PUT(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { status } = await req.json();
 
@@ -76,7 +79,7 @@ export async function PATCH(
     }
 
     const updated = await db.venue.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
     });
 
@@ -101,20 +104,21 @@ export async function PATCH(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    await db.venue.delete({ where: { id: params.id } });
+    await db.venue.delete({ where: { id } });
 
     await db.activityLog.create({
       data: {
         type: ActivityType.VENUE,
         action: "DELETE" as ActionType,
-        referenced_id: params.id,
-        message: `Venue ${params.id} was deleted`,
+        referenced_id: id,
+        message: `Venue ${id} was deleted`,
       },
     });
-    return NextResponse.json({ message: `Venue ${params.id} deleted ` });
+    return NextResponse.json({ message: `Venue ${id} deleted ` });
   } catch (error) {
     console.error("Error deleting venue:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

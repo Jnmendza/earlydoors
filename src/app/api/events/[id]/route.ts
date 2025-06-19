@@ -8,11 +8,12 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const event = await db.event.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!event) {
@@ -28,8 +29,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await req.json();
 
@@ -60,7 +62,7 @@ export async function PUT(
     }
 
     const updated = await db.event.update({
-      where: { id: params.id },
+      where: { id },
       data: parseResult.data,
     });
 
@@ -82,8 +84,9 @@ export async function PUT(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { status } = await req.json();
 
@@ -92,7 +95,7 @@ export async function PATCH(
     }
 
     const updated = await db.event.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
     });
 
@@ -117,20 +120,21 @@ export async function PATCH(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    await db.event.delete({ where: { id: params.id } });
+    await db.event.delete({ where: { id } });
 
     await db.activityLog.create({
       data: {
         type: ActivityType.EVENT,
         action: "DELETE" as ActionType,
-        referenced_id: params.id,
-        message: `Event ${params.id} was deleted`,
+        referenced_id: id,
+        message: `Event ${id} was deleted`,
       },
     });
-    return NextResponse.json({ message: `Event ${params.id} deleted ` });
+    return NextResponse.json({ message: `Event ${id} deleted ` });
   } catch (error) {
     console.error("Error deleting event:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

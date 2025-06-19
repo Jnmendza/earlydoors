@@ -11,10 +11,36 @@ import {
   SiGooglemaps,
   SiAdobephotoshop,
 } from "react-icons/si";
+import TechIcon from "./TechIcon";
 
 const TechStackSection = () => {
+  const iconGrid: Array<Array<{ Icon: React.ElementType; label: string }>> = [
+    [
+      { Icon: SiNextdotjs, label: "Next.js" },
+      { Icon: SiGooglemaps, label: "Google Maps" },
+      { Icon: SiSanity, label: "Sanity" },
+      { Icon: SiSupabase, label: "Supabase" },
+    ],
+    [
+      { Icon: SiShadcnui, label: "ShadCN" },
+      { Icon: SiTypescript, label: "TypeScript" },
+      { Icon: SiTailwindcss, label: "Tailwind" },
+    ],
+    [
+      { Icon: SiAdobeillustrator, label: "Illustrator" },
+      { Icon: SiFigma, label: "Figma" },
+      { Icon: SiAdobephotoshop, label: "Photoshop" },
+    ],
+  ];
+
   return (
-    <div className='relative bg-edgreen overflow-hidden w-2/3 h-[500px]'>
+    <div
+      className='relative bg-edgreen overflow-hidden w-2/3 h-[500px]'
+      style={{
+        backgroundImage:
+          "url(https://www.transparenttextures.com/patterns/football-no-lines.png)",
+      }}
+    >
       {/* Field Markings */}
       <div className='absolute inset-0'>
         {/* Center circle */}
@@ -32,22 +58,16 @@ const TechStackSection = () => {
 
       {/* Icons  */}
       <div className='grid grid-cols-3 h-full place-items-center'>
-        <div className='flex flex-col items-center justify-center gap-16'>
-          <SiNextdotjs className='text-edcream' size={58} />
-          <SiGooglemaps className='text-edcream' size={58} />
-          <SiSanity className='text-edcream' size={58} />
-          <SiSupabase className='text-edcream' size={58} />
-        </div>
-        <div className='flex flex-col items-center justify-center gap-16'>
-          <SiShadcnui className='text-edcream' size={58} />
-          <SiTypescript className='text-edcream' size={58} />
-          <SiTailwindcss className='text-edcream' size={58} />
-        </div>
-        <div className='flex flex-col items-center justify-center gap-16'>
-          <SiAdobeillustrator className='text-edcream' size={58} />
-          <SiFigma className='text-edcream' size={58} />
-          <SiAdobephotoshop className='text-edcream' size={58} />
-        </div>
+        {iconGrid.map((col, colIdx) => (
+          <div
+            key={colIdx}
+            className='flex flex-col items-center justify-center gap-16'
+          >
+            {col.map(({ Icon, label }) => (
+              <TechIcon key={label} Icon={Icon} label={label} />
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );

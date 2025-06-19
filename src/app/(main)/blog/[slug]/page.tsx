@@ -9,25 +9,17 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { bebasFont } from "@/lib/font";
 
-const PostPage = async ({ params }: { params: { slug: string } }) => {
-  const slug = await params.slug;
+const PostPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
   const post: FullBlog = await getFullPost(slug);
   const { title, _createdAt, readTime, mainImage, body, categories, author } =
     post;
 
   return (
-    <div className='flex flex-col justify-center items-center my-10'>
-      <div className='flex flex-col max-w-1/2 items-center text-center'>
-        <h1 className='text-4xl text-edorange'>{title}</h1>
-        <div className='flex text-center h-5 space-x-2 my-4'>
-          <p>{readTime} min read</p>
-          <Separator className='bg-edorange' orientation='vertical' />
-          <p>Published {formatDate(_createdAt)}</p>
-        </div>
-      </div>
-
-      <div className='relative w-full h-[60vh]'>
+    <div className='flex flex-col justify-center items-center'>
+      <div className='relative w-full h-[60vh] overflow-hidden'>
         <Image
           src={urlFor(mainImage).url()}
           alt={mainImage.alt}
@@ -35,6 +27,18 @@ const PostPage = async ({ params }: { params: { slug: string } }) => {
           className='object-cover'
           sizes='(max-width: 768px) 100vw, 50vw'
         />
+
+        {/* Optional overlay */}
+        <div className='absolute inset-0 bg-black/30 z-5' />
+
+        <div className='absolute inset-x-0 bottom-0 flex flex-col justify-center items-center text-white text-center px-6 z-10'>
+          <h1 className={`${bebasFont.className} text-4xl`}>{title}</h1>
+          <div className='flex text-center h-5 space-x-2 my-4'>
+            <p>{readTime} min read</p>
+            <Separator className='bg-edorange' orientation='vertical' />
+            <p>Published {formatDate(_createdAt)}</p>
+          </div>
+        </div>
       </div>
 
       <div className='flex mt-10'>

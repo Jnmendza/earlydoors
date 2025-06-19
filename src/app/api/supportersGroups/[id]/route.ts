@@ -6,11 +6,12 @@ import { ActionType } from "@/types/types";
 
 export async function GET(
   _: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const group = await db.supportersGroup.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { club: true },
     });
 
@@ -30,8 +31,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await req.json();
     const parseResult = groupsFormSchema.safeParse(body);
@@ -44,7 +46,7 @@ export async function PUT(
     }
 
     const updated = await db.supportersGroup.update({
-      where: { id: params.id },
+      where: { id },
       data: parseResult.data,
     });
 
@@ -66,8 +68,9 @@ export async function PUT(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { status } = await req.json();
 
@@ -76,7 +79,7 @@ export async function PATCH(
     }
 
     const updated = await db.supportersGroup.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
     });
 
@@ -101,20 +104,21 @@ export async function PATCH(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    await db.supportersGroup.delete({ where: { id: params.id } });
+    await db.supportersGroup.delete({ where: { id } });
 
     await db.activityLog.create({
       data: {
         type: ActivityType.SUPPORTERS_GROUP,
         action: "DELETE" as ActionType,
-        referenced_id: params.id,
-        message: `Supporters group ${params.id} was deleted`,
+        referenced_id: id,
+        message: `Supporters group ${id} was deleted`,
       },
     });
-    return NextResponse.json({ message: `Group ${params.id} deleted ` });
+    return NextResponse.json({ message: `Group ${id} deleted ` });
   } catch (error) {
     console.error("Error deleting group:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
