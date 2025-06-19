@@ -45,7 +45,7 @@ const AboutUs = () => {
         </div>
         <div className='w-full md:w-1/3'>
           <h1
-            className={`${bebasFont.className} text-3xl sm:text-5xl md:text-6xl`}
+            className={`${bebasFont.className} text-3xl sm:text-5xl md:text-6xl text-edorange`}
           >
             About the Guy Behind the Code
           </h1>
