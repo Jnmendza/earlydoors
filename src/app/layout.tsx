@@ -12,7 +12,7 @@ export default function RootLayout({
         className={`
           h-screen 
           w-screen 
-          ${bebasFont.className} 
+          ${bebasFont.variable} 
           ${oldStandordFont.className}
         `}
       >

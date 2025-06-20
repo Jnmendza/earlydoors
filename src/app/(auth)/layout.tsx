@@ -9,7 +9,7 @@ export default async function DashboardLayout({
   return (
     <html lang='en'>
       <body
-        className={`flex min-h-screen flex-col ${bebasFont.className} ${oldStandordFont.className} antialiased`}
+        className={`flex min-h-screen flex-col ${bebasFont.variable} ${oldStandordFont.variable} antialiased`}
       >
         <main>{children}</main>
       </body>

@@ -15,26 +15,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
-      <body
-        className={`
-          flex min-h-screen flex-col 
-          ${bebasFont.className} ${oldStandordFont.className} 
-          antialiased
-        `}
-      >
-        {/* Navbar is now static in the flow */}
-        <Navbar />
+    <html
+      lang='en'
+      className={`${bebasFont.variable} ${oldStandordFont.variable}`}
+    >
+      <body className='relative min-h-screen antialiased'>
+        {/* Absolute positioned navbar at top */}
+        <div className='absolute top-0 left-0 right-0 z-50'>
+          <Navbar />
+        </div>
 
-        {/* 
-          Apply a negative top margin to the first child (the Hero), pulling it up 
-          so the nav overlaps it initially. If your nav is ~4rem tall, use -mt-16 
-          (16 × 4px = 64px). Tweak “mt-?” until the HUD just covers the hero. 
-        */}
-        <main className='flex-grow'>
-          {/* We assume children[0] is HeroSection; wrap it in a div to apply -mt-16 */}
-          <div className='-mt-22'>{children}</div>
-        </main>
+        {/* Main content starts at top (navbar will overlap) */}
+        <main className='relative'>{children}</main>
 
         <Footer />
       </body>
