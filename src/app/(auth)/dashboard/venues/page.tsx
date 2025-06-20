@@ -15,15 +15,15 @@ export default function EventsPage() {
   return (
     <div className='p-6'>
       <div className='flex justify-between items-center mb-6'>
-        <h1 className='text-2xl font-bold'>All Events</h1>
+        <h1 className='text-2xl font-bold'>All Venues</h1>
         <Button asChild>
-          <Link href='/dashboard/events/create'>+ Create New Event</Link>
+          <Link href='/dashboard/venues/create'>+ Create New Venue</Link>
         </Button>
       </div>
 
       {isLoading && <p>Loading...</p>}
       {error && <p className='text-red-500'>{error}</p>}
-      {!isLoading && venues?.length === 0 && <p>No events found.</p>}
+      {!isLoading && venues?.length === 0 && <p>No venues found.</p>}
 
       <ul className='space-y-4'>
         {venues?.map((venue) => (

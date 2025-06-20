@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-
+import { useClubStore } from "@/store/club-store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,29 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-const clubs = [
-  {
-    value: "fc-barcelona",
-    label: "FC Barcelona",
-  },
-  {
-    value: "everton",
-    label: "Everton",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
+import { useVenueStore } from "@/store/venue-store";
 
 interface ComboBoxProps {
   selectPlaceholder: string;
@@ -51,8 +29,14 @@ export function Combobox({
   searchPlaceholder,
   selectPlaceholder,
 }: ComboBoxProps) {
+  const { fetchClubs, clubs } = useClubStore();
+  const { setClubId } = useVenueStore();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
+
+  useEffect(() => {
+    fetchClubs();
+  }, [fetchClubs]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -62,10 +46,10 @@ export function Combobox({
           variant='outline'
           role='combobox'
           aria-expanded={open}
-          className='w-full bg-transparent text-2xl justify-between border-b-2 border-l-0 border-r-0 border-t-0 border-ednavy rounded-none'
+          className=' bg-transparent text-xl text-edcream justify-between  border-l-0 border-r-0 border-t-0 border-ednavy rounded-none'
         >
           {value
-            ? clubs.find((club) => club.value === value)?.label
+            ? clubs.find((club) => club.name === value)?.name
             : selectPlaceholder}
           <ChevronsUpDown className='opacity-50' />
         </Button>
@@ -78,18 +62,22 @@ export function Combobox({
             <CommandGroup>
               {clubs.map((club) => (
                 <CommandItem
-                  key={club.value}
-                  value={club.value}
+                  key={club.name}
+                  value={club.name}
                   onSelect={(currentValue) => {
+                    const matchedClub = clubs.find(
+                      (club) => club.name === currentValue
+                    );
+                    if (matchedClub) setClubId(matchedClub.id);
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
-                  {club.label}
+                  {club.name}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === club.value ? "opacity-100" : "opacity-0"
+                      value === club.name ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

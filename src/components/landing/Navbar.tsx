@@ -10,7 +10,7 @@ const Navbar = () => {
   return (
     <nav
       className='
-        w-full z-50 
+        w-full z-500 
         bg-transparent 
         flex justify-center items-center
       '

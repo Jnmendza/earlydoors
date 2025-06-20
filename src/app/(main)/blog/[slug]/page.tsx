@@ -1,7 +1,7 @@
 import { getFullPost } from "@/data/posts";
 import { formatDate } from "@/lib/dateUtils";
 import { FullBlog } from "@/types/types";
-import { PortableText } from "next-sanity";
+import { PortableText } from "@portabletext/react";
 import Image from "next/image";
 import React from "react";
 import { urlFor } from "@/lib/sanity";
@@ -32,7 +32,7 @@ const PostPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className='absolute inset-0 bg-black/30 z-5' />
 
         <div className='absolute inset-x-0 bottom-0 flex flex-col justify-center items-center text-white text-center px-6 z-10'>
-          <h1 className={`${bebasFont.className} text-4xl`}>{title}</h1>
+          <h1 className={`${bebasFont.variable} text-4xl`}>{title}</h1>
           <div className='flex text-center h-5 space-x-2 my-4'>
             <p>{readTime} min read</p>
             <Separator className='bg-edorange' orientation='vertical' />

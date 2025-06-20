@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
       "www.imghippo.com",
     ],
   },
+  devIndicators: {
+    position: "bottom-right",
+  },
 };
 
 export default nextConfig;
