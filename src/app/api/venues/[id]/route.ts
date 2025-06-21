@@ -1,4 +1,6 @@
+import { uploadImageToStorage } from "@/actions/upload-img-to-storage";
 import { db } from "@/lib/db";
+import { extractLatLng } from "@/lib/utils";
 import { venueFormSchema } from "@/lib/validation/venuesSchema";
 import { ActionType } from "@/types/types";
 import { ActivityType, Status } from "@prisma/client";
@@ -41,12 +43,40 @@ export async function PUT(
       );
     }
 
+    const latLng = extractLatLng(parsed.data.google_maps_url);
+
+    if (!latLng) {
+      return NextResponse.json(
+        { error: "Invalid Google Maps URL" },
+        { status: 400 }
+      );
+    }
+    const { logo_url, ...restData } = parsed.data;
+
+    if (!logo_url) {
+      return NextResponse.json(
+        { error: "Logo file is required" },
+        { status: 400 }
+      );
+    }
+
+    // Upload to subabase storage if logo_url is a file
+    const imgUrlResult = await uploadImageToStorage({
+      file: logo_url,
+      folder: "venues",
+    });
+
+    if (!imgUrlResult.success) {
+      return NextResponse.json({ error: imgUrlResult.error }, { status: 500 });
+    }
+
     const updatedVenue = await db.venue.update({
       where: { id },
       data: {
-        ...parsed.data,
-        lat: Number(parsed.data.lat),
-        lng: Number(parsed.data.lng),
+        ...restData,
+        lat: Number(latLng?.lat),
+        lng: Number(latLng?.lng),
+        logo_url: imgUrlResult.url,
       },
     });
 

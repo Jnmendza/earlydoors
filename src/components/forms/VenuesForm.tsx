@@ -3,6 +3,7 @@ import { VenueFormData, venueFormSchema } from "@/lib/validation/venuesSchema";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { US_STATES } from "@/constants/us-states";
+import { CiImageOn } from "react-icons/ci";
 import {
   Form,
   FormControl,
@@ -23,6 +24,7 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { toast } from "sonner";
 
 type VenuesFormProps = {
@@ -32,6 +34,9 @@ type VenuesFormProps = {
 
 const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  console.log("Upload Progress", uploadProgress);
   const form = useForm<VenueFormData>({
     resolver: zodResolver(venueFormSchema),
     defaultValues: initialData ?? {
@@ -40,11 +45,9 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
       city: "",
       zipcode: "",
       state: "",
-      lat: undefined,
-      lng: undefined,
       website_url: "",
       google_maps_url: "",
-      logo_url: "",
+      logo_url: undefined,
       is_active: false,
       has_garden: false,
       has_big_screen: false,
@@ -53,80 +56,153 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
     },
   });
 
-  const onSubmit = (values: VenueFormData) => {
+  const onSubmit = async (values: VenueFormData) => {
     setIsLoading(true);
+    let finalLogoUrl = initialData?.logo_url;
 
-    const promise = async () => {
-      const res = await fetch(
+    try {
+      // 1. Handle image upload if new file was selected
+      if (values.logo_url instanceof File) {
+        const formData = new FormData();
+        formData.append("file", values.logo_url);
+        formData.append("folder", "venues");
+
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          const error = await uploadResponse.json();
+          throw new Error(error.error || "Image upload failed");
+        }
+
+        const { url } = await uploadResponse.json();
+        finalLogoUrl = url;
+        setImageUrl(url);
+      }
+
+      // 2. Submit venue data with the final image URL
+      const response = await fetch(
         venueId ? `/api/venues/${venueId}` : "/api/venues",
         {
           method: venueId ? "PUT" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...values,
+            logo_url: finalLogoUrl,
+          }),
         }
       );
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error?.message || "Failed to create venue");
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to save venue");
       }
 
-      return { name: values.name };
-    };
+      const data = await response.json();
+      toast.success(
+        `${data.name} was successfully ${venueId ? "updated" : "created"}!`
+      );
 
-    toast.promise(promise, {
-      loading: venueId ? "Updating venue..." : "Creating venue...",
-      success: (data) => {
-        setIsLoading(false);
-        if (!venueId) {
-          form.reset({
-            name: "",
-            address: "",
-            city: "",
-            zipcode: "",
-            state: "",
-            lat: undefined,
-            lng: undefined,
-            website_url: "",
-            google_maps_url: "",
-            logo_url: "",
-            is_active: false,
-            has_garden: false,
-            has_big_screen: false,
-            has_outdoor_screens: false,
-            is_bookable: false,
-          });
-        }
-        return `${data.name} was successfully created!`;
-      },
-      error: (err) => {
-        setIsLoading(false);
-        return (
-          err.message ||
-          "An unexpected error occured while attempting to create a venue."
-        );
-      },
-    });
+      if (!venueId) {
+        form.reset({
+          name: "",
+          address: "",
+          city: "",
+          zipcode: "",
+          state: "",
+          website_url: "",
+          google_maps_url: "",
+          logo_url: undefined,
+          is_active: false,
+          has_garden: false,
+          has_big_screen: false,
+          has_outdoor_screens: false,
+          is_bookable: false,
+        });
+        setImageUrl("");
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
+    } finally {
+      setIsLoading(false);
+      setUploadProgress(0);
+    }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 w-2/3'>
-        <FormField
-          control={form.control}
-          name='name'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl className='rounded-none'>
-                <Input placeholder='name' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className='flex space-x-4'>
+          <FormField
+            control={form.control}
+            name='name'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel>Name</FormLabel>
+                <FormControl className='rounded-none'>
+                  <Input placeholder='name' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='logo_url'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <div className='flex items-end gap-4'>
+                  {/* Image preview container */}
+                  <div className='w-12 h-12 flex items-center justify-center border rounded-md overflow-hidden bg-gray-50'>
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt='venue-logo'
+                        className='w-full h-full object-contain'
+                        width={12}
+                        height={12}
+                      />
+                    ) : (
+                      <CiImageOn className='w-10 h-10 text-gray-400' />
+                    )}
+                  </div>
+
+                  {/* Input container */}
+                  <div className='flex-1 space-y-2'>
+                    <FormLabel>Venue Logo</FormLabel>
+                    <FormControl className='rounded-none'>
+                      <Input
+                        type='file'
+                        accept='image/*'
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          field.onChange(file);
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              setImageUrl(event.target?.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          } else {
+                            setImageUrl("");
+                          }
+                        }}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </div>
+              </FormItem>
+            )}
+          />
+        </div>
         <div className='flex space-x-4'>
           <FormField
             control={form.control}
@@ -203,47 +279,6 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
           />
         </div>
 
-        <div className='flex space-x-4'>
-          <FormField
-            control={form.control}
-            name='lat'
-            render={({ field }) => (
-              <FormItem className='w-full'>
-                <FormLabel>Latitude</FormLabel>
-                <FormControl className='rounded-none'>
-                  <Input
-                    type='any'
-                    min={-90}
-                    max={90}
-                    placeholder='e.g 32.715736'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='lng'
-            render={({ field }) => (
-              <FormItem className='w-full'>
-                <FormLabel>Longitude</FormLabel>
-                <FormControl className='rounded-none'>
-                  <Input
-                    type='any'
-                    min={-180}
-                    max={180}
-                    placeholder='e.g -117.161087'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
         <div className='flex gap-4'>
           <FormField
             control={form.control}
@@ -279,7 +314,7 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name='logo_url'
             render={({ field }) => (
@@ -295,7 +330,7 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
 
         <FormLabel>Venue Details</FormLabel>
