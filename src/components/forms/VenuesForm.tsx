@@ -132,16 +132,23 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
   }, [form]);
 
   const handleSuccess = useCallback(
-    (data: { venue: { name: string }; redirectTo: string }) => {
+    (response: {
+      success: boolean;
+      data: {
+        venue: { name: string };
+        redirectTo: string;
+      };
+    }) => {
       toast.success(
-        `${data.venue.name} was successfully ${
+        `${response.data.venue.name} was successfully ${
           venueId ? "updated" : "created"
         }!`
       );
       if (!venueId) {
         resetForm();
+        router.push(response.data.redirectTo);
       } else {
-        router.push(data.redirectTo);
+        router.push(response.data.redirectTo);
       }
     },
     [router, venueId, resetForm]

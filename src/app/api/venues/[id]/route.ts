@@ -85,7 +85,7 @@ export async function PUT(
     }
 
     // Update venue
-    const venue = await db.venue.update({
+    const updatedVenue = await db.venue.update({
       where: { id },
       data: {
         name: parsed.data.name,
@@ -116,9 +116,10 @@ export async function PUT(
     return NextResponse.json(
       {
         success: true,
-        message: "Venue updated successfully",
-        venue,
-        redirectTo: "/dashboard/venues",
+        data: {
+          venue: updatedVenue,
+          redirectTo: "/dashboard/venues",
+        },
       },
       { status: 200 }
     );

@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { DeleteDialog } from "@/components/DeleteDialog";
 import { useClubStore } from "@/store/club-store";
 import Image from "next/image";
+import { Status } from "@prisma/client";
 
 export default function ClubsCreatePage() {
   const { clubs, fetchClubs } = useClubStore();
-
+  const clubsApproved = clubs.filter((c) => c.status === Status.APPROVED);
   useEffect(() => {
     fetchClubs();
   }, [fetchClubs]);
@@ -23,7 +24,7 @@ export default function ClubsCreatePage() {
         </Button>
       </div>
       <ul className='space-y-4'>
-        {clubs.map((club) => (
+        {clubsApproved.map((club) => (
           <li
             key={club.id}
             className='border p-4 rounded-md flex justify-between items-center'

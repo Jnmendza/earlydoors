@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await db.activityLog.create({
+    const newVenue = await db.activityLog.create({
       data: {
         type: ActivityType.VENUE,
         action: "CREATE" as ActionType,
@@ -89,7 +89,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(venue, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          venue: newVenue,
+          redirectTo: "/dashboard/venues",
+        },
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating a venue", error);
     return NextResponse.json(
