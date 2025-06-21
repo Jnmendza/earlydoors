@@ -77,7 +77,7 @@ const PostPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
           </Link>
         </div>
         <article
-          className=' flex flex-col justify-center ml-6
+          className=' flex flex-col justify-center ml-6 mb-10
                 prose prose-lg 
                prose-headings:font-bebas
                prose-p:font-oldstandard

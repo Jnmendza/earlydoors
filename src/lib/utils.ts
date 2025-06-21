@@ -118,3 +118,27 @@ export function transformToCalendarEvents(
       };
     });
 }
+
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+export function extractLatLng(url: string): LatLng | null {
+  const preciseMatch = url.match(/!3d([\d.-]+)!4d([\d.-]+)/);
+  if (preciseMatch) {
+    return {
+      lat: parseFloat(preciseMatch[1]),
+      lng: parseFloat(preciseMatch[2]),
+    };
+  }
+
+  const approxMatch = url.match(/@([\d.-]+),([\d.-]+)/);
+  if (approxMatch) {
+    return {
+      lat: parseFloat(approxMatch[1]),
+      lng: parseFloat(approxMatch[2]),
+    };
+  }
+
+  return null;
+}

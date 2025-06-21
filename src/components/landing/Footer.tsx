@@ -32,7 +32,7 @@ const Footer = () => {
           {/* Right  */}
           <div className='flex flex-col'>
             <Image
-              src='https://i.imghippo.com/files/bifr4251GUs.png'
+              src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/text-cream.png'
               alt='text-logo'
               height={50}
               width={250}

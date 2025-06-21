@@ -56,7 +56,9 @@ const PortalLogin = () => {
   return (
     <div className='min-h-screen flex flex-col items-center justify-center p-4 '>
       <Image
-        src={"/assets/logo-main.png"}
+        src={
+          "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/logo-main.png"
+        }
         alt='logo'
         width={200}
         height={200}
