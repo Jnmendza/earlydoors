@@ -3,12 +3,12 @@ import Image from "next/image";
 
 // Array of club badge image paths (replace with your actual badge URLs)
 const clubBadges = [
-  "https://i.imghippo.com/files/BRz8430c.png",
-  "https://i.imghippo.com/files/Ggli9006FgY.png",
-  "https://i.imghippo.com/files/IVML4242J.png",
-  "https://i.imghippo.com/files/uWi7649Uzc.png",
-  "https://i.imghippo.com/files/Nmz1639YA.png",
-  "https://i.imghippo.com/files/ZtXS5891Rss.png",
+  "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/MLS.png",
+  "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/PL.png",
+  "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/Fifa.png",
+  "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/LaLiga.png",
+  "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/LigaMX.png",
+  "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/Bundesliga.png",
 ];
 
 const FeaturedLeagues = () => {

@@ -11,7 +11,9 @@ const AboutUs = () => {
       <div className='relative h-[60vh] md:h-screen w-full overflow-hidden'>
         <div className='absolute inset-0 z-0'>
           <Image
-            src={"https://i.imghippo.com/files/TWjQ1461mPE.png"}
+            src={
+              "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/beach_match.png"
+            }
             alt='beachday'
             fill
             className='object-cover'
@@ -32,7 +34,7 @@ const AboutUs = () => {
       <div className='flex flex-col md:flex-row items-center justify-center bg-ednavy text-white w-full p-4 md:p-10 gap-6 md:gap-0'>
         <div className='flex flex-col items-center border-2 border-edorange p-4 mb-4 md:mb-0 md:mr-10 w-full max-w-xs'>
           <Image
-            src='https://i.imghippo.com/files/dBW2500dCk.jpg'
+            src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/fan.jpg'
             alt='profile-image'
             width={250}
             height={250}
@@ -69,7 +71,7 @@ const AboutUs = () => {
           <span className='self-start'>The</span>
           <div className='relative w-full h-12 sm:h-20 md:h-24 lg:h-32'>
             <Image
-              src='/assets/ED_Text.png'
+              src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/ED_Text.png'
               alt='text-logo'
               fill
               className='object-contain'

@@ -90,7 +90,7 @@ export default function MapContainer() {
             '
           >
             <Image
-              src='/assets/icon.png'
+              src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/icon.png'
               alt='icon-image'
               height={32}
               width={32}

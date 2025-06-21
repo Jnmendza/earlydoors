@@ -8,7 +8,7 @@ const HeroSection = () => {
       {/* ─── Background Image ───────────────────────────────────────────────────── */}
       <div className='absolute inset-0'>
         <Image
-          src='https://i.imghippo.com/files/xYK1680ylw.png'
+          src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/hero_bg.png'
           alt='Football fans cheering in a pub'
           fill
           className='object-cover'
@@ -21,7 +21,7 @@ const HeroSection = () => {
       <div className='relative top-20 z-10 flex flex-col items-center justify-center h-full text-center px-4'>
         {/* Heading */}
         <Image
-          src='https://i.imghippo.com/files/TmCm7432uhg.png'
+          src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/logo-main.png'
           alt='logo'
           width={150}
           height={150}

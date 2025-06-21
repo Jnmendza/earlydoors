@@ -38,7 +38,7 @@ const QuoteSection = () => {
         {/* ─── Left: Pub Image ───────────────────────────────────────────────────── */}
         <div className='relative w-full md:w-1/2 h-64 md:h-full'>
           <Image
-            src='https://i.imghippo.com/files/FnK7532MM.png'
+            src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/pub.png'
             alt='Fans celebrating in a cozy pub'
             fill
             className='object-cover'

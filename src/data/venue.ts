@@ -7,9 +7,6 @@ export const getVenues = async () => {
       include: {
         event: true,
       },
-      where: {
-        status: Status.APPROVED,
-      },
     });
     return venues;
   } catch (error) {

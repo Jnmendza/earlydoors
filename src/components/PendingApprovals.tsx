@@ -4,8 +4,15 @@ import { useVenueStore } from "@/store/venue-store";
 import { useClubStore } from "@/store/club-store";
 import { useGroupStore } from "@/store/group-store";
 import { Status } from "@prisma/client";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { useEffect } from "react";
+import Link from "next/link";
 
 const PendingApprovals = () => {
   const { events, fetchEvents } = useEventStore();
@@ -42,6 +49,11 @@ const PendingApprovals = () => {
     <Card>
       <CardHeader>
         <CardTitle>Pending Approvals</CardTitle>
+        <CardDescription className='text-sm text-gray-500'>
+          <Link href={"/dashboard/moderation"}>
+            * Approve items in Moderation
+          </Link>
+        </CardDescription>
       </CardHeader>
       <CardContent className='flex-1 grid grid-cols-2 grid-rows-2 gap-4'>
         {items.map((item, index) => (

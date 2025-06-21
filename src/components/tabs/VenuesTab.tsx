@@ -9,7 +9,7 @@ import { Badge } from "../ui/badge";
 
 const VenuesTab = () => {
   const { venues, fetchVenues, approveVenue, rejectVenue } = useVenueStore();
-
+  console.log("VENUES", venues);
   useEffect(() => {
     fetchVenues();
   }, [fetchVenues]);
@@ -34,13 +34,13 @@ const VenuesTab = () => {
     }
   };
 
-  const clubsPending = venues.filter((e) => e.status === Status.PENDING);
+  const venuesPending = venues.filter((e) => e.status === Status.PENDING);
 
   return (
     <div className='w-full overflow-hidden relative h-auto rounded-2xl p-10 text-xl md:text-4xl font-bold text-black bg-white border-1 border-edorange border-solid space-y-2'>
       <p>Venues Tab</p>
       <ModerationTable
-        data={clubsPending}
+        data={venuesPending}
         onApprove={handleApprove}
         onReject={handleReject}
         columns={[

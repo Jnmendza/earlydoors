@@ -23,15 +23,14 @@ export default async function EditVenuePage({
   return (
     <div className='flex flex-col mt-10 p-4 items-center h-screen'>
       <h3 className='mb-6 text-2xl text-edorange'>Edit Venue</h3>
-      {venue && (
-        <VenuesForm
-          venueId={id}
-          initialData={{
-            ...venue,
-            logo_url: venue.logo_url ?? undefined,
-          }}
-        />
-      )}
+
+      <VenuesForm
+        venueId={id}
+        initialData={{
+          ...venue,
+          logo_url: venue.logo_url || null,
+        }}
+      />
     </div>
   );
 }

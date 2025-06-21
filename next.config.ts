@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       "cdn.sanity.io",
       "i.imghippo.com",
       "www.imghippo.com",
+      "qtmkwwvomuvavuoaqjcn.supabase.co",
     ],
   },
   devIndicators: {

@@ -17,7 +17,7 @@ const CtaSection = () => (
     }}
   >
     <Image
-      src='https://i.imghippo.com/files/mdHG4669Lvc.png'
+      src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/ticket.png'
       alt='ticket'
       width={200}
       height={200}

@@ -118,3 +118,7 @@ export function transformToCalendarEvents(
       };
     });
 }
+
+export function cleanInstagramHandle(handle: string): string {
+  return handle.startsWith("@") ? handle.slice(1) : handle;
+}
