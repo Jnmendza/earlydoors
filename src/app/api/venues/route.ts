@@ -1,6 +1,6 @@
 import { getVenues } from "@/data/venue";
 import { db } from "@/lib/db";
-import { extractLatLng } from "@/lib/utils";
+import { extractLatLng } from "@/utils/storage";
 import { venueFormSchema } from "@/lib/validation/venuesSchema";
 import { ActionType } from "@/types/types";
 import { ActivityType, Status } from "@prisma/client";

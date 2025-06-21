@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { DeleteDialog } from "@/components/DeleteDialog";
 import Image from "next/image";
 import { IMAGE_PLACEHOLDER } from "@/constants/ui";
+import { Status } from "@prisma/client";
 
 export default function EventsPage() {
   const { venues, fetchVenues, isLoading, error } = useVenueStore();
+  const venuesApproved = venues.filter((e) => e.status === Status.APPROVED);
 
   useEffect(() => {
     fetchVenues();
@@ -25,10 +27,10 @@ export default function EventsPage() {
 
       {isLoading && <p>Loading...</p>}
       {error && <p className='text-red-500'>{error}</p>}
-      {!isLoading && venues?.length === 0 && <p>No venues found.</p>}
+      {!isLoading && venuesApproved?.length === 0 && <p>No venues found.</p>}
 
       <ul className='space-y-4'>
-        {venues?.map((venue) => (
+        {venuesApproved?.map((venue) => (
           <li
             key={venue.id}
             className='border p-4 rounded flex justify-between items-center'

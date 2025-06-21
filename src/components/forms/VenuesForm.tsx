@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { VenueFormData, venueFormSchema } from "@/lib/validation/venuesSchema";
-import React, { useRef, useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useForm, UseFormSetValue } from "react-hook-form";
 import { US_STATES } from "@/constants/us-states";
 import { CiImageOn } from "react-icons/ci";
 import {
@@ -28,6 +27,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { LuLoaderCircle } from "react-icons/lu";
 
 type VenuesFormProps = {
   initialData?: VenueFormData;
@@ -59,30 +59,37 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
     },
   });
 
-  // Initialize image from existing data
   useEffect(() => {
     if (initialData?.logo_url) {
       if (typeof initialData.logo_url === "string") {
         setImageUrl(initialData.logo_url);
       }
-      // Set the form value to the existing URL
       form.setValue("logo_url", initialData.logo_url);
     }
   }, [initialData, form]);
 
-  const handleFileChange = (
+  const createImagePreview = async (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => resolve(event.target?.result as string);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: any
+    setValue: UseFormSetValue<VenueFormData>
   ) => {
     const file = e.target.files?.[0];
-    field.onChange(file); // This sets form value to the File object
+    setValue("logo_url", file);
 
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImageUrl(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const previewUrl = await createImagePreview(file);
+        setImageUrl(previewUrl);
+      } catch {
+        toast.error("Failed to create image preview");
+      }
     } else {
       setImageUrl(
         typeof initialData?.logo_url === "string" ? initialData.logo_url : ""
@@ -90,43 +97,80 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
     }
   };
 
-  const handleRemoveLogo = (field: any) => {
-    field.onChange(null);
+  const handleRemoveLogo = (setValue: UseFormSetValue<VenueFormData>) => {
+    setValue("logo_url", null);
     setImageUrl("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
+  const createFormData = (file: File, folder: string): FormData => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", folder);
+    return formData;
+  };
+
+  const resetForm = useCallback(() => {
+    form.reset({
+      name: "",
+      address: "",
+      city: "",
+      zipcode: "",
+      state: "",
+      website_url: "",
+      google_maps_url: "",
+      logo_url: undefined,
+      is_active: false,
+      has_garden: false,
+      has_big_screen: false,
+      has_outdoor_screens: false,
+      is_bookable: false,
+    });
+    setImageUrl("");
+  }, [form]);
+
+  const handleSuccess = useCallback(
+    (data: { venue: { name: string }; redirectTo: string }) => {
+      toast.success(
+        `${data.venue.name} was successfully ${
+          venueId ? "updated" : "created"
+        }!`
+      );
+      if (!venueId) {
+        resetForm();
+      } else {
+        router.push(data.redirectTo);
+      }
+    },
+    [router, venueId, resetForm]
+  );
+
   const onSubmit = async (values: VenueFormData) => {
     setIsLoading(true);
-    let finalLogoUrl = values.logo_url; // Start with current form value
+    let finalLogoUrl = values.logo_url;
 
     try {
-      // If a new file was selected, upload it
       if (values.logo_url instanceof File) {
-        const formData = new FormData();
-        formData.append("file", values.logo_url);
-        formData.append("folder", "venues");
-
         const uploadResponse = await fetch("/api/upload", {
           method: "POST",
-          body: formData,
+          body: createFormData(values.logo_url, "venues"),
         });
 
         if (!uploadResponse.ok) {
           const error = await uploadResponse.json();
-          throw new Error(error.error || "Image upload failed");
+          throw new Error(
+            uploadResponse.status === 413
+              ? "Image too large (max 5MB)"
+              : error.error || "Image upload failed"
+          );
         }
 
         const { url } = await uploadResponse.json();
         finalLogoUrl = url;
       }
 
-      // Submit with either:
-      // - The new URL (if uploaded)
-      // - The existing URL (if no change)
-      // - null (if removed)
       const response = await fetch(
         venueId ? `/api/venues/${venueId}` : "/api/venues",
         {
@@ -141,29 +185,19 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error?.message || "Failed to save venue");
+        throw new Error(
+          response.status === 409
+            ? "Venue with this name already exists"
+            : error?.message || "Failed to save venue"
+        );
       }
 
       const data = await response.json();
-      console.log("VENUES FORM DATA", data);
-      toast.success(
-        `${data.venue.name} was successfully ${
-          venueId ? "updated" : "created"
-        }!`
-      );
-
-      if (!venueId) {
-        form.reset();
-        setImageUrl("");
-      } else {
-        // Update the image URL state after successful update
-        if (finalLogoUrl && typeof finalLogoUrl === "string") {
-          setImageUrl(finalLogoUrl);
-        }
-        router.push(data.redirectTo);
-      }
+      handleSuccess(data);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An error occurred");
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -192,7 +226,6 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <div className='flex items-end gap-4'>
-                  {/* Image preview container */}
                   <div className='relative w-24 h-24 flex items-center justify-center border rounded-md overflow-hidden bg-gray-50'>
                     {imageUrl ? (
                       <>
@@ -206,7 +239,7 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
                         <button
                           type='button'
                           className='absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'
-                          onClick={() => handleRemoveLogo(field)}
+                          onClick={() => handleRemoveLogo(form.setValue)}
                         >
                           ×
                         </button>
@@ -216,7 +249,6 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
                     )}
                   </div>
 
-                  {/* Input container */}
                   <div className='flex-1 space-y-2'>
                     <FormLabel>Venue Logo</FormLabel>
                     <div className='flex items-center gap-2'>
@@ -224,7 +256,7 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
                         <Input
                           type='file'
                           accept='image/*'
-                          onChange={(e) => handleFileChange(e, field)}
+                          onChange={(e) => handleFileChange(e, form.setValue)}
                           onBlur={field.onBlur}
                           name={field.name}
                           ref={fileInputRef}
@@ -244,6 +276,7 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
             )}
           />
         </div>
+
         <div className='flex space-x-4'>
           <FormField
             control={form.control}
@@ -429,23 +462,22 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
           />
         </div>
 
-        {venueId ? (
-          <Button
-            className='rounded-none cursor-pointer'
-            type='submit'
-            disabled={isLoading}
-          >
-            {isLoading ? "Updating..." : "Update"}
-          </Button>
-        ) : (
-          <Button
-            type='submit'
-            className='cursor-pointer rounded-none'
-            disabled={isLoading}
-          >
-            {isLoading ? "Submitting..." : "Submit"}
-          </Button>
-        )}
+        <Button
+          type='submit'
+          className='rounded-none cursor-pointer'
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className='flex items-center gap-2'>
+              <LuLoaderCircle className='h-4 w-4 animate-spin' />
+              {venueId ? "Updating..." : "Creating..."}
+            </div>
+          ) : venueId ? (
+            "Update"
+          ) : (
+            "Submit"
+          )}
+        </Button>
       </form>
     </Form>
   );

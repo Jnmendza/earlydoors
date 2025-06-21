@@ -118,39 +118,3 @@ export function transformToCalendarEvents(
       };
     });
 }
-
-interface LatLng {
-  lat: number;
-  lng: number;
-}
-export function extractLatLng(url: string): LatLng | null {
-  const preciseMatch = url.match(/!3d([\d.-]+)!4d([\d.-]+)/);
-  if (preciseMatch) {
-    return {
-      lat: parseFloat(preciseMatch[1]),
-      lng: parseFloat(preciseMatch[2]),
-    };
-  }
-
-  const approxMatch = url.match(/@([\d.-]+),([\d.-]+)/);
-  if (approxMatch) {
-    return {
-      lat: parseFloat(approxMatch[1]),
-      lng: parseFloat(approxMatch[2]),
-    };
-  }
-
-  return null;
-}
-
-export async function convertBlobUrlToFile(blobUrl: string) {
-  const response = await fetch(blobUrl);
-  const blob = await response.blob();
-  const fileName = Math.random().toString(36).slice(2, 9);
-  const mimeType = blob.type || "application/octet-stream";
-  const file = new File([blob], `${fileName}.${mimeType.split("/")[1]}`, {
-    type: mimeType,
-  });
-
-  return file;
-}

@@ -1,6 +1,6 @@
 import { uploadImageToStorage } from "@/actions/upload-img-to-storage";
 import { db } from "@/lib/db";
-import { extractLatLng } from "@/lib/utils";
+import { deleteVenueImage, extractLatLng } from "@/utils/storage";
 import { venueFormSchema } from "@/lib/validation/venuesSchema";
 import { ActionType } from "@/types/types";
 import { ActivityType, Status } from "@prisma/client";
@@ -63,11 +63,13 @@ export async function PUT(
 
     // Handle logo_url: if it's a File, upload it, otherwise use as is
     let logoUrlToSave: string | null | undefined = null;
+
     if (parsed.data.logo_url instanceof File) {
       const imgUrlResult = await uploadImageToStorage({
         file: parsed.data.logo_url,
         folder: "venues",
       });
+
       if (!imgUrlResult.success) {
         return NextResponse.json(
           { error: imgUrlResult.error },
@@ -102,6 +104,14 @@ export async function PUT(
         is_bookable: parsed.data.is_bookable,
       },
     });
+
+    if (existingVenue.logo_url && logoUrlToSave !== existingVenue.logo_url) {
+      const deleteResult = await deleteVenueImage(existingVenue.logo_url);
+      if (!deleteResult.success) {
+        console.error("Failed to delete old venue image:", deleteResult.error);
+        // Consider adding to a cleanup queue for later retry
+      }
+    }
 
     return NextResponse.json(
       {
