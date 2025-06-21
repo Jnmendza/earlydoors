@@ -58,7 +58,16 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json(updatedClub);
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          club: updatedClub,
+          redirectTo: "/dashboard/clubs",
+        },
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error updating club:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
