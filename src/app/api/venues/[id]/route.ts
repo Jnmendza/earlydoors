@@ -43,56 +43,81 @@ export async function PUT(
       );
     }
 
-    const latLng = extractLatLng(parsed.data.google_maps_url);
+    // Get existing venue to compare
+    const existingVenue = await db.venue.findUnique({
+      where: { id },
+    });
 
+    if (!existingVenue) {
+      return NextResponse.json({ error: "Venue not found" }, { status: 404 });
+    }
+
+    // Handle coordinates
+    const latLng = extractLatLng(parsed.data.google_maps_url);
     if (!latLng) {
       return NextResponse.json(
         { error: "Invalid Google Maps URL" },
         { status: 400 }
       );
     }
-    const { logo_url, ...restData } = parsed.data;
 
-    if (!logo_url) {
-      return NextResponse.json(
-        { error: "Logo file is required" },
-        { status: 400 }
-      );
+    // Handle logo_url: if it's a File, upload it, otherwise use as is
+    let logoUrlToSave: string | null | undefined = null;
+    if (parsed.data.logo_url instanceof File) {
+      const imgUrlResult = await uploadImageToStorage({
+        file: parsed.data.logo_url,
+        folder: "venues",
+      });
+      if (!imgUrlResult.success) {
+        return NextResponse.json(
+          { error: imgUrlResult.error },
+          { status: 500 }
+        );
+      }
+      logoUrlToSave = imgUrlResult.url;
+    } else if (
+      typeof parsed.data.logo_url === "string" ||
+      parsed.data.logo_url == null
+    ) {
+      logoUrlToSave = parsed.data.logo_url;
     }
 
-    // Upload to subabase storage if logo_url is a file
-    const imgUrlResult = await uploadImageToStorage({
-      file: logo_url,
-      folder: "venues",
-    });
-
-    if (!imgUrlResult.success) {
-      return NextResponse.json({ error: imgUrlResult.error }, { status: 500 });
-    }
-
-    const updatedVenue = await db.venue.update({
+    // Update venue
+    const venue = await db.venue.update({
       where: { id },
       data: {
-        ...restData,
-        lat: Number(latLng?.lat),
-        lng: Number(latLng?.lng),
-        logo_url: imgUrlResult.url,
+        name: parsed.data.name,
+        address: parsed.data.address,
+        city: parsed.data.city,
+        zipcode: parsed.data.zipcode,
+        state: parsed.data.state,
+        lat: latLng.lat,
+        lng: latLng.lng,
+        website_url: parsed.data.website_url,
+        google_maps_url: parsed.data.google_maps_url,
+        logo_url: logoUrlToSave,
+        has_garden: parsed.data.has_garden,
+        has_big_screen: parsed.data.has_big_screen,
+        has_outdoor_screens: parsed.data.has_outdoor_screens,
+        is_bookable: parsed.data.is_bookable,
       },
     });
 
-    await db.activityLog.create({
-      data: {
-        type: ActivityType.VENUE,
-        action: "UPDATE",
-        referenced_id: updatedVenue.id,
-        message: `Venue ${updatedVenue.name} was updated`,
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Venue updated successfully",
+        venue,
+        redirectTo: "/dashboard/venues",
       },
-    });
-
-    return NextResponse.json(updatedVenue);
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error updating venue:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update venue" },
+      { status: 500 }
+    );
   }
 }
 

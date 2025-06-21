@@ -5,8 +5,8 @@ export type IMAGE_TYPE = "clubs" | "venues" | "groups";
 
 type UploadImageProps = {
   file: File | Buffer;
-  folder?: string; // Changed to string for flexibility
-  originalName?: string; // New prop for original filename
+  folder?: string;
+  originalName?: string;
   bucket?: string;
   compressOptions?: {
     quality?: number;

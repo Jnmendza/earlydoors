@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { VenueFormData, venueFormSchema } from "@/lib/validation/venuesSchema";
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { US_STATES } from "@/constants/us-states";
 import { CiImageOn } from "react-icons/ci";
@@ -25,6 +26,7 @@ import {
 import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type VenuesFormProps = {
@@ -33,10 +35,11 @@ type VenuesFormProps = {
 };
 
 const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-  console.log("Upload Progress", uploadProgress);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<VenueFormData>({
     resolver: zodResolver(venueFormSchema),
     defaultValues: initialData ?? {
@@ -56,12 +59,51 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
     },
   });
 
+  // Initialize image from existing data
+  useEffect(() => {
+    if (initialData?.logo_url) {
+      if (typeof initialData.logo_url === "string") {
+        setImageUrl(initialData.logo_url);
+      }
+      // Set the form value to the existing URL
+      form.setValue("logo_url", initialData.logo_url);
+    }
+  }, [initialData, form]);
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: any
+  ) => {
+    const file = e.target.files?.[0];
+    field.onChange(file); // This sets form value to the File object
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImageUrl(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImageUrl(
+        typeof initialData?.logo_url === "string" ? initialData.logo_url : ""
+      );
+    }
+  };
+
+  const handleRemoveLogo = (field: any) => {
+    field.onChange(null);
+    setImageUrl("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const onSubmit = async (values: VenueFormData) => {
     setIsLoading(true);
-    let finalLogoUrl = initialData?.logo_url;
+    let finalLogoUrl = values.logo_url; // Start with current form value
 
     try {
-      // 1. Handle image upload if new file was selected
+      // If a new file was selected, upload it
       if (values.logo_url instanceof File) {
         const formData = new FormData();
         formData.append("file", values.logo_url);
@@ -79,10 +121,12 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
 
         const { url } = await uploadResponse.json();
         finalLogoUrl = url;
-        setImageUrl(url);
       }
 
-      // 2. Submit venue data with the final image URL
+      // Submit with either:
+      // - The new URL (if uploaded)
+      // - The existing URL (if no change)
+      // - null (if removed)
       const response = await fetch(
         venueId ? `/api/venues/${venueId}` : "/api/venues",
         {
@@ -97,39 +141,31 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Failed to save venue");
+        throw new Error(error?.message || "Failed to save venue");
       }
 
       const data = await response.json();
+      console.log("VENUES FORM DATA", data);
       toast.success(
-        `${data.name} was successfully ${venueId ? "updated" : "created"}!`
+        `${data.venue.name} was successfully ${
+          venueId ? "updated" : "created"
+        }!`
       );
 
       if (!venueId) {
-        form.reset({
-          name: "",
-          address: "",
-          city: "",
-          zipcode: "",
-          state: "",
-          website_url: "",
-          google_maps_url: "",
-          logo_url: undefined,
-          is_active: false,
-          has_garden: false,
-          has_big_screen: false,
-          has_outdoor_screens: false,
-          is_bookable: false,
-        });
+        form.reset();
         setImageUrl("");
+      } else {
+        // Update the image URL state after successful update
+        if (finalLogoUrl && typeof finalLogoUrl === "string") {
+          setImageUrl(finalLogoUrl);
+        }
+        router.push(data.redirectTo);
       }
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "An unexpected error occurred"
-      );
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsLoading(false);
-      setUploadProgress(0);
     }
   };
 
@@ -157,15 +193,24 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
               <FormItem className='w-full'>
                 <div className='flex items-end gap-4'>
                   {/* Image preview container */}
-                  <div className='w-12 h-12 flex items-center justify-center border rounded-md overflow-hidden bg-gray-50'>
+                  <div className='relative w-24 h-24 flex items-center justify-center border rounded-md overflow-hidden bg-gray-50'>
                     {imageUrl ? (
-                      <Image
-                        src={imageUrl}
-                        alt='venue-logo'
-                        className='w-full h-full object-contain'
-                        width={12}
-                        height={12}
-                      />
+                      <>
+                        <Image
+                          src={imageUrl}
+                          alt='Current venue logo'
+                          className='w-full h-full object-contain'
+                          width={96}
+                          height={96}
+                        />
+                        <button
+                          type='button'
+                          className='absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'
+                          onClick={() => handleRemoveLogo(field)}
+                        >
+                          ×
+                        </button>
+                      </>
                     ) : (
                       <CiImageOn className='w-10 h-10 text-gray-400' />
                     )}
@@ -174,29 +219,25 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
                   {/* Input container */}
                   <div className='flex-1 space-y-2'>
                     <FormLabel>Venue Logo</FormLabel>
-                    <FormControl className='rounded-none'>
-                      <Input
-                        type='file'
-                        accept='image/*'
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          field.onChange(file);
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (event) => {
-                              setImageUrl(event.target?.result as string);
-                            };
-                            reader.readAsDataURL(file);
-                          } else {
-                            setImageUrl("");
-                          }
-                        }}
-                        onBlur={field.onBlur}
-                        name={field.name}
-                        ref={field.ref}
-                      />
-                    </FormControl>
+                    <div className='flex items-center gap-2'>
+                      <FormControl className='rounded-none'>
+                        <Input
+                          type='file'
+                          accept='image/*'
+                          onChange={(e) => handleFileChange(e, field)}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={fileInputRef}
+                          className='w-full'
+                        />
+                      </FormControl>
+                    </div>
                     <FormMessage />
+                    {initialData?.logo_url && !imageUrl && (
+                      <p className='text-sm text-muted-foreground'>
+                        Current logo will be removed on save
+                      </p>
+                    )}
                   </div>
                 </div>
               </FormItem>
@@ -314,23 +355,6 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name='logo_url'
-            render={({ field }) => (
-              <FormItem className='flex-1'>
-                <FormLabel>Logo Url</FormLabel>
-                <FormControl className='rounded-none'>
-                  <Input
-                    type='url'
-                    placeholder='https://example.com/logo.png'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
         </div>
 
         <FormLabel>Venue Details</FormLabel>
