@@ -6,10 +6,11 @@ import { useGroupStore } from "@/store/group-store";
 import { DeleteDialog } from "@/components/DeleteDialog";
 import Image from "next/image";
 import { cleanInstagramHandle } from "@/lib/utils";
+import { Status } from "@prisma/client";
 
 export default function SupportersGroupsPage() {
   const { groups, fetchGroups, isLoading, error } = useGroupStore();
-
+  const approvedGroups = groups.filter((g) => g.status === Status.APPROVED);
   useEffect(() => {
     fetchGroups();
   }, [fetchGroups]);
@@ -19,16 +20,18 @@ export default function SupportersGroupsPage() {
       <div className='flex justify-between items-center mb-6'>
         <h1 className='text-2xl font-bold'>All Supporters Groups</h1>
         <Button asChild>
-          <Link href='/dashboard/events/create'>+ Create New Group</Link>
+          <Link href='/dashboard/supportersGroups/create'>
+            + Create New Group
+          </Link>
         </Button>
       </div>
 
       {isLoading && <p>Loading...</p>}
       {error && <p className='text-red-500'>{error}</p>}
-      {!isLoading && groups?.length === 0 && <p>No events found.</p>}
+      {!isLoading && approvedGroups?.length === 0 && <p>No events found.</p>}
 
       <ul className='space-y-4'>
-        {groups?.map((group) => (
+        {approvedGroups?.map((group) => (
           <li
             key={group.id}
             className='border p-4 rounded flex justify-between items-center'

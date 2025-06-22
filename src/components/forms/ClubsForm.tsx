@@ -36,6 +36,8 @@ type ClubsFormProps = {
 
 const ClubsForm = ({ initialData, clubId }: ClubsFormProps) => {
   const router = useRouter();
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<ClubFormData>({
     resolver: zodResolver(clubFormSchema),
@@ -156,51 +158,7 @@ const ClubsForm = ({ initialData, clubId }: ClubsFormProps) => {
     } finally {
       setIsLoading(false);
     }
-
-    // const promise = async () => {
-    //   const res = await fetch(clubId ? `/api/clubs/${clubId}` : "/api/clubs", {
-    //     method: clubId ? "PUT" : "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(values),
-    //   });
-
-    //   if (!res.ok) {
-    //     const error = await res.json();
-    //     throw new Error(error?.message || "Failed to create a club");
-    //   }
-
-    //   return { name: values.name };
-    // };
-
-    // toast.promise(promise, {
-    //   loading: clubId ? "Updating club..." : "Creating club...",
-    //   success: (data) => {
-    //     setIsLoading(false);
-    //     if (!clubId)
-    //       form.reset({
-    //         name: "",
-    //         logo_url: "",
-    //         league: "",
-    //         country: "",
-    //       });
-    //     return `${data.name} was successfully ${
-    //       clubId ? "updated" : "created"
-    //     }!`;
-    //   },
-    //   error: (err) => {
-    //     setIsLoading(false);
-    //     return (
-    //       err.message ||
-    //       "An unexpected error occured while attempting to create a new club."
-    //     );
-    //   },
-    // });
   };
-  useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleRemoveLogo = (setValue: UseFormSetValue<ClubFormData>) => {
     setValue("logo_url", null);

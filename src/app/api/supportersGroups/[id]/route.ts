@@ -45,21 +45,30 @@ export async function PUT(
       );
     }
 
-    const updated = await db.supportersGroup.update({
+    const updatedGroup = await db.supportersGroup.update({
       where: { id },
-      data: parseResult.data,
+      data: body,
     });
 
     await db.activityLog.create({
       data: {
         type: ActivityType.SUPPORTERS_GROUP,
         action: "UPDATE" as ActionType,
-        referenced_id: updated.id,
-        message: `Supporters group ${updated.name} was updated`,
+        referenced_id: updatedGroup.id,
+        message: `Supporters group ${updatedGroup.name} was updated`,
       },
     });
 
-    return NextResponse.json(updated);
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          group: updatedGroup,
+          redirectTo: "/dashboard/supportersGroups",
+        },
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error updating group:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
