@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { SignInButton } from "@/components/SignInButton";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
+import Link from "next/link";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -55,15 +56,15 @@ const PortalLogin = () => {
 
   return (
     <div className='min-h-screen flex flex-col items-center justify-center p-4 '>
-      <Image
-        src={
-          "https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/logo-main.png"
-        }
-        alt='logo'
-        width={200}
-        height={200}
-        className='mb-4'
-      />
+      <Link href='/' passHref className='cursor-pointer'>
+        <Image
+          src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/logo-main.png'
+          alt='logo'
+          width={200}
+          height={200}
+          className='mb-4'
+        />
+      </Link>
       <div className='w-full max-w-md space-y-6 border border-edorange p-6'>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
