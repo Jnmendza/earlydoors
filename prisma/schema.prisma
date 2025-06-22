@@ -9,23 +9,27 @@ datasource db {
 }
 
 model SupportersGroup {
-  id             String       @id(map: "supporters_group_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at     DateTime     @default(now()) @db.Timestamptz(6)
-  club_id        String       @db.Uuid
+  id             String   @id(map: "supporters_group_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  club_id        String   @db.Uuid
   name           String
-  group_logo_url String?      @default("")
+  group_logo_url String?  @default("")
   city           String
   description    String
-  website_url    String?      @default("")
-  ig_handle      String?      @default("")
+  website_url    String?  @default("")
+  ig_handle      String?  @default("")
   state          String
-  status         Status?      @default(PENDING)
-  club           Club         @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: Restrict, map: "supporters_group_club_id_fkey")
+  status         Status?  @default(PENDING)
+  club           Club     @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: Restrict, map: "supporters_group_club_id_fkey")
+  Event          Event[]
+
+  @@index([club_id])
+
 }
 
 model Venue {
-  id                  String       @id(map: "venues_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at          DateTime     @default(now()) @db.Timestamptz(6)
+  id                  String   @id(map: "venues_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
   name                String
   address             String
   city                String
@@ -33,35 +37,44 @@ model Venue {
   lng                 Float
   website_url         String
   google_maps_url     String
-  logo_url            String?       @default("")
+  logo_url            String?  @default("")
   is_active           Boolean
-  has_garden          Boolean      @default(false)
-  has_big_screen      Boolean      @default(false)
-  has_outdoor_screens Boolean      @default(false)
-  is_bookable         Boolean      @default(false)
+  has_garden          Boolean  @default(false)
+  has_big_screen      Boolean  @default(false)
+  has_outdoor_screens Boolean  @default(false)
+  is_bookable         Boolean  @default(false)
   zipcode             String
   state               String
-  status              Status?      @default(PENDING)
+  status              Status?  @default(PENDING)
   event               Event[]
+
+  @@index([name])
 }
 
 model Event {
-  id                  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at          DateTime     @default(now()) @db.Timestamptz(6)
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at          DateTime         @default(now()) @db.Timestamptz(6)
   name                String
   description         String
   start_time          String
   end_time            String?
-  venue_id            String       @db.Uuid
-  club_id             String?      @db.Uuid
-  has_garden          Boolean      @default(false)
-  has_big_screen      Boolean      @default(false)
-  has_outdoor_screens Boolean      @default(false)
-  is_bookable         Boolean      @default(false)
-  status              Status?      @default(PENDING)
-  date                DateTime     @db.Date
-  club                Club?        @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Event_club_id_fkey")
-  venue               Venue        @relation(fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  venue_id            String           @db.Uuid
+  club_id             String?          @db.Uuid
+  supporters_group_id String?          @db.Uuid
+  is_watch_party      Boolean          @default(false)
+  has_garden          Boolean          @default(false)
+  has_big_screen      Boolean          @default(false)
+  has_outdoor_screens Boolean          @default(false)
+  is_bookable         Boolean          @default(false)
+  status              Status?          @default(PENDING)
+  date                DateTime         @db.Date
+  supportersGroup     SupportersGroup? @relation(fields: [supporters_group_id], references: [id])
+  club                Club?            @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Event_club_id_fkey")
+  venue               Venue            @relation(fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([club_id])
+  @@index([supporters_group_id])
+  @@index([venue_id])
 }
 
 model Club {
@@ -74,15 +87,17 @@ model Club {
   status          Status?           @default(PENDING)
   event           Event[]
   supportersGroup SupportersGroup[]
+
+  @@index([name])
 }
 
 model ActivityLog {
-  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at      DateTime          @default(now()) @db.Timestamptz(6)
-  type            ActivityType
-  action          String
-  referenced_id   String
-  message         String
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at    DateTime     @default(now()) @db.Timestamptz(6)
+  type          ActivityType
+  action        String
+  referenced_id String
+  message       String
 }
 
 enum ActivityType {

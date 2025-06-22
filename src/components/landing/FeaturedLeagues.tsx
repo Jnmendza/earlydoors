@@ -71,6 +71,7 @@ const FeaturedLeagues = () => {
                 transition duration-300 
                 group-hover:scale-105
               '
+              style={{ width: "auto", height: "auto" }}
             />
           </div>
         ))}

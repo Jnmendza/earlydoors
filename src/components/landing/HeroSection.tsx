@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { bebasFont } from "@/lib/font";
+import SearchBar from "./SearchBar";
 
 const HeroSection = () => {
   return (
@@ -11,10 +12,8 @@ const HeroSection = () => {
           src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/hero_bg.png'
           alt='Football fans cheering in a pub'
           fill
-          className='object-cover'
+          className='object-cover w-auto h-auto'
         />
-        {/* Optional: a dark overlay so white text pops */}
-        <div className='absolute inset-0 bg-ednavy/20' />
       </div>
 
       {/* ─── Overlay Content ────────────────────────────────────────────────────── */}
@@ -40,16 +39,7 @@ const HeroSection = () => {
 
         {/* Search Bar */}
         <div className='mt-8 w-full max-w-lg px-2'>
-          <div className='bg-white rounded-full shadow-lg flex overflow-hidden'>
-            <input
-              type='text'
-              placeholder='Search by club or location...'
-              className='flex-1 px-4 py-3 text-gray-700 placeholder-gray-400 focus:outline-none'
-            />
-            <button className='bg-[#e24e1b] px-6 py-3 text-white font-semibold hover:bg-orange-700 transition'>
-              Find a Spot
-            </button>
-          </div>
+          <SearchBar />
         </div>
       </div>
     </div>
