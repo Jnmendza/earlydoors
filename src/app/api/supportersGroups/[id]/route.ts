@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { groupsFormSchema } from "@/lib/validation/groupsSchema";
 import { ActivityType, Status } from "@prisma/client";
 import { ActionType } from "@/types/types";
+import { uploadImageToStorage } from "@/actions/upload-img-to-storage";
+import { imageCleanUp } from "@/utils/storage";
 
 export async function GET(
   _: NextRequest,
@@ -45,9 +47,52 @@ export async function PUT(
       );
     }
 
+    // Get existing group to compare
+    const existingGroup = await db.supportersGroup.findUnique({
+      where: { id },
+    });
+
+    if (!existingGroup) {
+      return NextResponse.json(
+        { error: "Supporters group not found" },
+        { status: 404 }
+      );
+    }
+
+    let logoUrlToSave: string | null | undefined = null;
+
+    if (parseResult.data.group_logo_url instanceof File) {
+      const imgUrlResult = await uploadImageToStorage({
+        file: parseResult.data.group_logo_url,
+        folder: "groups",
+      });
+
+      if (!imgUrlResult.success) {
+        return NextResponse.json(
+          { error: imgUrlResult.error },
+          { status: 500 }
+        );
+      }
+      logoUrlToSave = imgUrlResult.url;
+    } else if (
+      typeof parseResult.data.group_logo_url === "string" ||
+      parseResult.data.group_logo_url === null
+    ) {
+      logoUrlToSave = parseResult.data.group_logo_url;
+    }
+
     const updatedGroup = await db.supportersGroup.update({
       where: { id },
-      data: body,
+      data: {
+        name: parseResult.data.name,
+        group_logo_url: logoUrlToSave,
+        club_id: parseResult.data.club_id,
+        city: parseResult.data.city,
+        state: parseResult.data.state,
+        description: parseResult.data.description,
+        website_url: parseResult.data.website_url,
+        ig_handle: parseResult.data.ig_handle,
+      },
     });
 
     await db.activityLog.create({
@@ -58,6 +103,16 @@ export async function PUT(
         message: `Supporters group ${updatedGroup.name} was updated`,
       },
     });
+
+    if (
+      existingGroup.group_logo_url &&
+      logoUrlToSave !== existingGroup.group_logo_url
+    ) {
+      const deleteResult = await imageCleanUp(existingGroup.group_logo_url);
+      if (!deleteResult.success) {
+        console.error("Failed to delete old groups image:", deleteResult.error);
+      }
+    }
 
     return NextResponse.json(
       {

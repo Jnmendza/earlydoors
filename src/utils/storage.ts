@@ -36,7 +36,7 @@ export async function convertBlobUrlToFile(blobUrl: string) {
   return file;
 }
 
-export const deleteVenueImage = async (imageUrl: string) => {
+export const imageCleanUp = async (imageUrl: string) => {
   try {
     const supabase = createAdminClient();
 

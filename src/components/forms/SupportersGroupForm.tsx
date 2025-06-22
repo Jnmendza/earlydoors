@@ -34,6 +34,7 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { CiImageOn } from "react-icons/ci";
 import { useRouter } from "next/navigation";
+import { createFormData, createImagePreview } from "@/lib/form";
 
 type SupportersGroupFormProps = {
   initialData?: GroupsFormSchema;
@@ -81,13 +82,6 @@ const SupportersGroupForm = ({
     }
   };
 
-  const createFormData = (file: File, folder: string): FormData => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("folder", folder);
-    return formData;
-  };
-
   const resetForm = useCallback(() => {
     form.reset({
       name: "",
@@ -100,14 +94,6 @@ const SupportersGroupForm = ({
     });
     setImageUrl("");
   }, [form]);
-
-  const createImagePreview = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (event) => resolve(event.target?.result as string);
-      reader.readAsDataURL(file);
-    });
-  };
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -214,55 +200,6 @@ const SupportersGroupForm = ({
     } finally {
       setIsLoading(false);
     }
-
-    // const promise = async () => {
-    //   const res = await fetch(
-    //     groupId ? `/api/supportersGroups/${groupId}` : "/api/supportersGroups",
-    //     {
-    //       method: groupId ? "PUT" : "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify(values),
-    //     }
-    //   );
-
-    //   if (!res.ok) {
-    //     const error = await res.json();
-    //     throw new Error(error?.message || "Failed to create supporters group");
-    //   }
-
-    //   return { name: values.name };
-    // };
-
-    // toast.promise(promise, {
-    //   loading: groupId
-    //     ? "Updating supporters group..."
-    //     : "Creating supporters group...",
-    //   success: (data) => {
-    //     setIsLoading(false);
-    //     if (!groupId)
-    //       form.reset({
-    //         name: "",
-    //         club_id: "",
-    //         group_logo_url: "",
-    //         city: "",
-    //         description: "",
-    //         website_url: "",
-    //         ig_handle: "",
-    //       });
-    //     return `${data.name} was successfully ${
-    //       groupId ? "updated" : "created"
-    //     }`;
-    //   },
-    //   error: (err) => {
-    //     setIsLoading(false);
-    //     return (
-    //       err.message ||
-    //       "An unexpected error occurred while attempting to create a supporters group."
-    //     );
-    //   },
-    // });
   };
 
   return (

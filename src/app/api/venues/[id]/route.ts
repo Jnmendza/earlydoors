@@ -1,6 +1,6 @@
 import { uploadImageToStorage } from "@/actions/upload-img-to-storage";
 import { db } from "@/lib/db";
-import { deleteVenueImage, extractLatLng } from "@/utils/storage";
+import { imageCleanUp, extractLatLng } from "@/utils/storage";
 import { venueFormSchema } from "@/lib/validation/venuesSchema";
 import { ActionType } from "@/types/types";
 import { ActivityType, Status } from "@prisma/client";
@@ -105,8 +105,17 @@ export async function PUT(
       },
     });
 
+    await db.activityLog.create({
+      data: {
+        type: ActivityType.VENUE,
+        action: "UPDATE" as ActionType,
+        referenced_id: updatedVenue.id,
+        message: `Venue ${updatedVenue.name} was updated`,
+      },
+    });
+
     if (existingVenue.logo_url && logoUrlToSave !== existingVenue.logo_url) {
-      const deleteResult = await deleteVenueImage(existingVenue.logo_url);
+      const deleteResult = await imageCleanUp(existingVenue.logo_url);
       if (!deleteResult.success) {
         console.error("Failed to delete old venue image:", deleteResult.error);
         // Consider adding to a cleanup queue for later retry

@@ -28,6 +28,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LuLoaderCircle } from "react-icons/lu";
+import { createFormData, createImagePreview } from "@/lib/form";
 
 type VenuesFormProps = {
   initialData?: VenueFormData;
@@ -68,14 +69,6 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
     }
   }, [initialData, form]);
 
-  const createImagePreview = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (event) => resolve(event.target?.result as string);
-      reader.readAsDataURL(file);
-    });
-  };
-
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     setValue: UseFormSetValue<VenueFormData>
@@ -103,13 +96,6 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-  };
-
-  const createFormData = (file: File, folder: string): FormData => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("folder", folder);
-    return formData;
   };
 
   const resetForm = useCallback(() => {
@@ -176,17 +162,21 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
 
         const { url } = await uploadResponse.json();
         finalLogoUrl = url;
+      } else if (values.logo_url === null) {
+        finalLogoUrl = "";
       }
+
+      const payload = {
+        ...values,
+        logo_url: typeof finalLogoUrl === "string" ? finalLogoUrl : "",
+      };
 
       const response = await fetch(
         venueId ? `/api/venues/${venueId}` : "/api/venues",
         {
           method: venueId ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...values,
-            logo_url: finalLogoUrl,
-          }),
+          body: JSON.stringify(payload),
         }
       );
 

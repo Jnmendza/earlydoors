@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { CiImageOn } from "react-icons/ci";
 import { useRouter } from "next/navigation";
+import { createFormData, createImagePreview } from "@/lib/form";
 
 type ClubsFormProps = {
   initialData?: ClubFormData;
@@ -58,13 +59,6 @@ const ClubsForm = ({ initialData, clubId }: ClubsFormProps) => {
       // form.reset(initialData);
     }
   }, [initialData, form]);
-
-  const createFormData = (file: File, folder: string): FormData => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("folder", folder);
-    return formData;
-  };
 
   const resetForm = useCallback(() => {
     form.reset({
@@ -166,14 +160,6 @@ const ClubsForm = ({ initialData, clubId }: ClubsFormProps) => {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-  };
-
-  const createImagePreview = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (event) => resolve(event.target?.result as string);
-      reader.readAsDataURL(file);
-    });
   };
 
   const handleFileChange = async (
