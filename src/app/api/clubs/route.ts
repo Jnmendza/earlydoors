@@ -1,9 +1,9 @@
-import { getClubs } from "@/data/club";
-import { clubFormSchema } from "@/lib/validation/clubsSchema";
-import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { ActivityType, Status } from "@prisma/client";
+import { getClubs } from "@/data/club";
 import { ActionType } from "@/types/types";
+import { NextRequest, NextResponse } from "next/server";
+import { ActivityType, Status } from "@prisma/client";
+import { clubApiSchema } from "@/lib/validation/clubsSchema";
 
 export async function GET() {
   try {
@@ -20,24 +20,41 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const requestData = await req.json();
+    const body = await req.json();
+    const parsed = clubApiSchema.safeParse(body);
 
-    const parseResult = clubFormSchema.safeParse(requestData);
-    if (!parseResult.success) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid fields", details: parseResult.error.errors },
+        { error: "Invalid fields", details: parsed.error.errors },
         { status: 400 }
       );
     }
 
-    const { name, logo_url, league, country } = parseResult.data;
+    // At this point, logo_url should already be a URL string from Supabase
+    if (!parsed.data.logo_url) {
+      return NextResponse.json(
+        { error: "Logo URL is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate it's a proper URL
+    if (
+      typeof parsed.data.logo_url !== "string" ||
+      !parsed.data.logo_url.startsWith("https://")
+    ) {
+      return NextResponse.json(
+        { error: "Invalid logo URL format" },
+        { status: 400 }
+      );
+    }
 
     const newClub = await db.club.create({
       data: {
-        name,
-        logo_url,
-        league,
-        country,
+        name: parsed.data.name,
+        logo_url: parsed.data.logo_url,
+        league: parsed.data.league,
+        country: parsed.data.country,
         status: Status.PENDING,
       },
     });
@@ -50,7 +67,16 @@ export async function POST(req: NextRequest) {
         message: `Club ${newClub.name} was created`,
       },
     });
-    return NextResponse.json(newClub, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          club: newClub,
+          redirectTo: "/dashboard/clubs",
+        },
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating a new club", error);
     return NextResponse.json(

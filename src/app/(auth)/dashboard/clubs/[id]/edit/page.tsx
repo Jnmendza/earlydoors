@@ -21,7 +21,7 @@ export default async function EditClubPage({
           clubId={id}
           initialData={{
             ...club,
-            logo_url: club.logo_url ?? "",
+            logo_url: club.logo_url ?? null,
           }}
         />
       )}

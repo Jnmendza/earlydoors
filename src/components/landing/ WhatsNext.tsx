@@ -33,7 +33,8 @@ const WhatsNext = () => {
       <div className='w-full md:w-1/2 flex flex-col items-center justify-center p-4'>
         <div className='flex-1 flex items-center justify-center w-full h-48 sm:h-full overflow-visible'>
           <Image
-            src={`/assets/next${currentIndex}.jpg`}
+            // src={`/assets/next${currentIndex}.jpg`}
+            src={content[currentIndex].imagePath}
             alt='upcoming-feature'
             width={300}
             height={300}

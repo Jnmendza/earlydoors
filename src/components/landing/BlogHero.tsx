@@ -7,7 +7,7 @@ const BlogHero = () => {
     <section className='relative w-full h-[60vh] overflow-hidden bg-ednavy'>
       {/* Background image */}
       <Image
-        src='https://i.imghippo.com/files/hYAH9045WGA.png'
+        src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/coffee2.jpg'
         alt='hero background'
         fill
         priority

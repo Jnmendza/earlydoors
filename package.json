@@ -69,6 +69,7 @@
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.3",
     "shadcn": "2.4.0-canary.17",
+    "sharp": "^0.34.2",
     "sonner": "^2.0.3",
     "styled-components": "^6.1.19",
     "swr": "^2.3.3",

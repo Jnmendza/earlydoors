@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useForm, UseFormSetValue } from "react-hook-form";
 import {
   groupsFormSchema,
   GroupsFormSchema,
@@ -30,7 +30,11 @@ import RequiredLabel from "../RequiredLabel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useClubStore } from "@/store/club-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
+import Image from "next/image";
 import { toast } from "sonner";
+import { CiImageOn } from "react-icons/ci";
+import { useRouter } from "next/navigation";
+import { createFormData, createImagePreview } from "@/lib/form";
 
 type SupportersGroupFormProps = {
   initialData?: GroupsFormSchema;
@@ -41,7 +45,10 @@ const SupportersGroupForm = ({
   initialData,
   groupId,
 }: SupportersGroupFormProps) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { fetchClubs, clubs } = useClubStore();
 
   const form = useForm<GroupsFormSchema>({
@@ -49,7 +56,7 @@ const SupportersGroupForm = ({
     defaultValues: initialData ?? {
       name: "",
       club_id: "",
-      group_logo_url: "",
+      group_logo_url: undefined,
       city: "",
       description: "",
       website_url: "",
@@ -58,59 +65,141 @@ const SupportersGroupForm = ({
   });
 
   useEffect(() => {
+    if (initialData?.group_logo_url) {
+      if (typeof initialData.group_logo_url === "string") {
+        setImageUrl(initialData.group_logo_url);
+      }
+      form.setValue("group_logo_url", initialData.group_logo_url);
+    }
     fetchClubs();
-  }, [fetchClubs]);
+  }, [initialData, form, fetchClubs]);
+
+  const handleRemoveLogo = (setValue: UseFormSetValue<GroupsFormSchema>) => {
+    setValue("group_logo_url", null);
+    setImageUrl("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const resetForm = useCallback(() => {
+    form.reset({
+      name: "",
+      club_id: "",
+      group_logo_url: undefined,
+      city: "",
+      description: "",
+      website_url: "",
+      ig_handle: "",
+    });
+    setImageUrl("");
+  }, [form]);
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setValue: UseFormSetValue<GroupsFormSchema>
+  ) => {
+    const file = e.target.files?.[0];
+    setValue("group_logo_url", file);
+
+    if (file) {
+      try {
+        const previewUrl = await createImagePreview(file);
+        setImageUrl(previewUrl);
+      } catch {
+        toast.error("Failed to create image preview");
+      }
+    } else {
+      setImageUrl(
+        typeof initialData?.group_logo_url === "string"
+          ? initialData.group_logo_url
+          : ""
+      );
+    }
+  };
+
+  const handleSuccess = useCallback(
+    (response: {
+      success: boolean;
+      data: {
+        group: { name: string };
+        redirectTo: string;
+      };
+    }) => {
+      toast.success(
+        `${response.data.group.name} was successfully ${
+          groupId ? "updated" : "created"
+        }!`
+      );
+      if (!groupId) {
+        resetForm();
+        router.push(response.data.redirectTo);
+      } else {
+        router.push(response.data.redirectTo);
+      }
+    },
+    [router, groupId, resetForm]
+  );
 
   const onSubmit = async (values: GroupsFormSchema) => {
     setIsLoading(true);
-    const promise = async () => {
-      const res = await fetch(
+    let finalGroupLogoUrl = values.group_logo_url;
+
+    try {
+      if (values.group_logo_url instanceof File) {
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: createFormData(values.group_logo_url, "groups"),
+        });
+
+        if (!uploadResponse.ok) {
+          const error = await uploadResponse.json();
+          throw new Error(
+            uploadResponse.status === 413
+              ? "Image too large (max 5MB)"
+              : error.error || "Image upload failed"
+          );
+        }
+
+        const { url } = await uploadResponse.json();
+        finalGroupLogoUrl = url;
+      } else if (values.group_logo_url === null) {
+        finalGroupLogoUrl = "";
+      }
+
+      const payload = {
+        ...values,
+        group_logo_url:
+          typeof finalGroupLogoUrl === "string" ? finalGroupLogoUrl : "",
+      };
+
+      const response = await fetch(
         groupId ? `/api/supportersGroups/${groupId}` : "/api/supportersGroups",
         {
           method: groupId ? "PUT" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         }
       );
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error?.message || "Failed to create supporters group");
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(
+          response.status === 409
+            ? "Group with this name already exists"
+            : error?.message || "Failed to save supporters group"
+        );
       }
 
-      return { name: values.name };
-    };
-
-    toast.promise(promise, {
-      loading: groupId
-        ? "Updating supporters group..."
-        : "Creating supporters group...",
-      success: (data) => {
-        setIsLoading(false);
-        if (!groupId)
-          form.reset({
-            name: "",
-            club_id: "",
-            group_logo_url: "",
-            city: "",
-            description: "",
-            website_url: "",
-            ig_handle: "",
-          });
-        return `${data.name} was successfully ${
-          groupId ? "updated" : "created"
-        }`;
-      },
-      error: (err) => {
-        setIsLoading(false);
-        return (
-          err.message ||
-          "An unexpected error occurred while attempting to create a supporters group."
-        );
-      },
-    });
+      const data = await response.json();
+      handleSuccess(data);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -133,6 +222,64 @@ const SupportersGroupForm = ({
             )}
           ></FormField>
 
+          <FormField
+            control={form.control}
+            name='group_logo_url'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <div className='flex items-end gap-4'>
+                  <div className='relative w-24 h-24 flex items-center justify-center border rounded-md overflow-hidden bg-gray-50'>
+                    {imageUrl ? (
+                      <>
+                        <Image
+                          src={imageUrl}
+                          alt='Current venue logo'
+                          className='w-full h-full object-contain'
+                          width={96}
+                          height={96}
+                        />
+                        <button
+                          type='button'
+                          className='absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'
+                          onClick={() => handleRemoveLogo(form.setValue)}
+                        >
+                          ×
+                        </button>
+                      </>
+                    ) : (
+                      <CiImageOn className='w-10 h-10 text-gray-400' />
+                    )}
+                  </div>
+
+                  <div className='flex-1 space-y-2'>
+                    <FormLabel>Club Logo</FormLabel>
+                    <div className='flex items-center gap-2'>
+                      <FormControl className='rounded-none'>
+                        <Input
+                          type='file'
+                          accept='image/*'
+                          onChange={(e) => handleFileChange(e, form.setValue)}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={fileInputRef}
+                          className='w-full'
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                    {initialData?.group_logo_url && !imageUrl && (
+                      <p className='text-sm text-muted-foreground'>
+                        Current logo will be removed on save
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className='flex space-x-4'>
           <FormField
             control={form.control}
             name='club_id'
@@ -166,25 +313,6 @@ const SupportersGroupForm = ({
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className='flex space-x-4'>
-          <FormField
-            control={form.control}
-            name='group_logo_url'
-            render={({ field }) => (
-              <FormItem className='w-full'>
-                <FormLabel>Logo Url</FormLabel>
-                <FormControl className='rounded-none'>
-                  <Input
-                    placeholder='https://example.com/logo.png'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
