@@ -20,7 +20,7 @@ export const useClubStore = create<ClubStore>((set, get) => ({
   error: null,
   setClubs: (clubs) => set({ clubs }),
   addClub: (club) => set((state) => ({ clubs: [...state.clubs, club] })),
-  // in clubStore.ts
+
   getClubMap: () => {
     const { clubs } = get();
     return clubs.reduce((acc, club) => {

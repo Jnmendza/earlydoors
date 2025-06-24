@@ -14,7 +14,7 @@ import { useClubStore } from "@/store/club-store";
 import { useVenueStore } from "@/store/venue-store";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
 interface AppSidebarProps {
   openMarkerKey: string | null;
@@ -31,14 +31,18 @@ export function AppSidebar({
   const filteredVenuesFn = useVenueStore(
     (state) => state.filteredVenuesCombined
   );
-  const { getClubMap } = useClubStore();
-
+  const { getClubMap, fetchClubs, isLoading: isClubLoading } = useClubStore();
   const clubMap = getClubMap();
 
   const filteredVenues = useMemo(() => {
     return filteredVenuesFn(clubMap);
   }, [filteredVenuesFn, clubMap]);
 
+  useEffect(() => {
+    fetchClubs();
+  }, [fetchClubs]);
+
+  if (isClubLoading) return null;
   return (
     <Sidebar variant='floating'>
       <SidebarContent>
