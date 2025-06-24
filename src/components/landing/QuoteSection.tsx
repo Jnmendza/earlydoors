@@ -41,6 +41,7 @@ const QuoteSection = () => {
             src='https://qtmkwwvomuvavuoaqjcn.supabase.co/storage/v1/object/public/ed-public/landing/pub.png'
             alt='Fans celebrating in a cozy pub'
             fill
+            sizes='(max-width: 768px) 100vw, 50vw'
             className='object-cover'
           />
         </div>
