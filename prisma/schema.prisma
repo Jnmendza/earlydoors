@@ -24,7 +24,6 @@ model SupportersGroup {
   Event          Event[]
 
   @@index([club_id])
-
 }
 
 model Venue {
@@ -46,7 +45,7 @@ model Venue {
   zipcode             String
   state               String
   status              Status?  @default(PENDING)
-  event               Event[]
+  events              Event[]  @relation("VenueEvents")
 
   @@index([name])
 }
@@ -70,7 +69,7 @@ model Event {
   date                DateTime         @db.Date
   supportersGroup     SupportersGroup? @relation(fields: [supporters_group_id], references: [id])
   club                Club?            @relation(fields: [club_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Event_club_id_fkey")
-  venue               Venue            @relation(fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  venue               Venue            @relation("VenueEvents", fields: [venue_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([club_id])
   @@index([supporters_group_id])
@@ -78,15 +77,16 @@ model Event {
 }
 
 model Club {
-  id              String            @id(map: "clubs_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  id              String                   @id(map: "clubs_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime                 @default(now()) @db.Timestamptz(6)
   name            String
-  logo_url        String?           @default("")
+  logo_url        String?                  @default("")
   league          String
   country         String
-  status          Status?           @default(PENDING)
+  status          Status?                  @default(PENDING)
   event           Event[]
   supportersGroup SupportersGroup[]
+  search_vector   Unsupported("tsvector")?
 
   @@index([name])
 }

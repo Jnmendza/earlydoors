@@ -19,8 +19,10 @@ import {
 } from "@/components/ui/popover";
 import { useClubStore } from "@/store/club-store";
 import { Status } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 const SearchBar = () => {
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState(""); // This will store the club ID
   const { clubs, fetchClubs } = useClubStore();
@@ -31,6 +33,10 @@ const SearchBar = () => {
       fetchClubs();
     }
   }, [clubs.length, fetchClubs]);
+
+  const handleSearch = () => {
+    if (selectedId) router.push(`/events?clubId=${selectedId}`);
+  };
 
   // Find the selected club
   const selectedClub = approvedClubs.find((club) => club.id === selectedId);
@@ -81,7 +87,10 @@ const SearchBar = () => {
         </PopoverContent>
       </Popover>
       <div>
-        <button className='bg-[#e24e1b] px-5 py-3 text-white font-semibold hover:bg-orange-700 transition'>
+        <button
+          onClick={handleSearch}
+          className='bg-[#e24e1b] px-5 py-3 text-white font-semibold hover:bg-orange-700 transition cursor-pointer'
+        >
           Search
         </button>
       </div>

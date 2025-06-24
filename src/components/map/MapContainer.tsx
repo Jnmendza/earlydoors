@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps"; // using your original library
 import Markers from "../landing/Markers";
 import { LOCATIONS } from "@/constants/maps";
@@ -11,6 +11,7 @@ import { AppSidebar } from "./AppSidebar";
 import VenueDetailsSidebar from "./VenueDetailsSidebar";
 import Link from "next/link";
 import Image from "next/image";
+import { useClubStore } from "@/store/club-store";
 
 const home = LOCATIONS.HOME;
 const apiKey = API_KEYS.GOOGLE_MAPS;
@@ -23,7 +24,15 @@ export default function MapContainer() {
   const filteredVenuesFn = useVenueStore(
     (state) => state.filteredVenuesCombined
   );
-  const filteredVenues = filteredVenuesFn();
+  const clubs = useClubStore((state) => state.clubs);
+  const clubMap = useMemo(() => {
+    return clubs.reduce((acc, club) => {
+      acc[club.id] = club.name.toLowerCase();
+      return acc;
+    }, {} as Record<string, string>);
+  }, [clubs]);
+
+  const filteredVenues = filteredVenuesFn(clubMap); // ✅
 
   useEffect(() => {
     fetchVenues();
@@ -62,7 +71,7 @@ export default function MapContainer() {
 
         <div className='absolute top-0 left-0 h-full z-20'>
           <AppSidebar
-            venues={filteredVenues}
+            // venues={filteredVenues}
             openMarkerKey={openMarkerKey}
             setOpenMarkerKey={setOpenMarkerKey}
           />

@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+"use client";
+import { useMemo } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -8,30 +9,38 @@ import {
   SidebarMenu,
 } from "@/components/ui/sidebar";
 import VenueCard from "./VenueCard";
-import { VenueWithEvents } from "@/store/venue-store";
-import { useDebounce } from "@/hooks/use-debounce";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
+import { useClubStore } from "@/store/club-store";
+import { useVenueStore } from "@/store/venue-store";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 interface AppSidebarProps {
-  venues: VenueWithEvents[];
   openMarkerKey: string | null;
   setOpenMarkerKey: (key: string | null) => void;
 }
 
 export function AppSidebar({
-  venues,
   openMarkerKey,
   setOpenMarkerKey,
 }: AppSidebarProps) {
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const debounceSearch = useDebounce(searchQuery, 300);
+  const router = useRouter();
+  const { searchQuery, setSearchQuery, setClubId, selectedClubId } =
+    useVenueStore();
+  const filteredVenuesFn = useVenueStore(
+    (state) => state.filteredVenuesCombined
+  );
+  const clubs = useClubStore((state) => state.clubs);
 
-  const filteredList = useMemo(() => {
-    const term = debounceSearch.trim().toLowerCase();
-    if (term === "") return venues;
-    return venues.filter((v) => v.name.toLowerCase().includes(term));
-  }, [debounceSearch, venues]);
+  const clubMap = useMemo(() => {
+    return clubs.reduce((acc, club) => {
+      acc[club.id] = club.name.toLowerCase();
+      return acc;
+    }, {} as Record<string, string>);
+  }, [clubs]);
+
+  const filteredVenues = filteredVenuesFn(clubMap);
 
   return (
     <Sidebar variant='floating'>
@@ -40,46 +49,46 @@ export function AppSidebar({
           <SidebarHeader className='text-center'>
             EarlyDoor Venues
           </SidebarHeader>
+
           <SidebarGroupContent className='mt-4'>
             <div className='relative'>
               <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
               <Input
-                placeholder='Search venues...'
+                placeholder='Search venues or clubs...'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className='w-full pl-8'
               />
-            </div>
-            <SidebarMenu className='mt-4'>
-              {filteredList.map(
-                (
-                  {
-                    id,
-                    name,
-                    address,
-                    city,
-                    website_url,
-                    logo_url,
-                    google_maps_url,
-                  },
-                  index
-                ) => (
-                  <VenueCard
-                    id={id}
-                    name={name}
-                    key={index}
-                    city={city}
-                    distance='100 meters'
-                    openUntil='Open till 6pm'
-                    address={address}
-                    website_url={website_url}
-                    logo_url={logo_url || ""}
-                    google_maps_url={google_maps_url}
-                    openMarkerKey={openMarkerKey}
-                    setOpenMarkerKey={setOpenMarkerKey}
-                  />
-                )
+              {selectedClubId && (
+                <Button
+                  variant='outline'
+                  onClick={() => {
+                    setClubId(null);
+                    router.push("/events"); // removes the ?clubId param
+                  }}
+                >
+                  Clear Filter
+                </Button>
               )}
+            </div>
+
+            <SidebarMenu className='mt-4'>
+              {filteredVenues.map((venue) => (
+                <VenueCard
+                  key={venue.id}
+                  id={venue.id}
+                  name={venue.name}
+                  city={venue.city}
+                  distance='100 meters'
+                  openUntil='Open till 6pm'
+                  address={venue.address}
+                  website_url={venue.website_url}
+                  logo_url={venue.logo_url || ""}
+                  google_maps_url={venue.google_maps_url}
+                  openMarkerKey={openMarkerKey}
+                  setOpenMarkerKey={setOpenMarkerKey}
+                />
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

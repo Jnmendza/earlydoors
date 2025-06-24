@@ -1,8 +1,7 @@
 import { create } from "zustand";
-import { Venue } from "@prisma/client";
+import { Venue, Event } from "@prisma/client";
 import { approveStatus, rejectStatus } from "@/actions/status-change";
 import { VenueFilters } from "@/types/types";
-import { Event } from "@prisma/client";
 
 export type VenueWithEvents = Venue & {
   events?: Event[];
@@ -15,12 +14,14 @@ type VenueStore = {
 
   filters: VenueFilters;
   selectedClubId: string | null;
+  searchQuery: string;
 
   // Setters
   addVenue: (venue: Venue) => void;
   setClubId: (clubId: string | null) => void;
   setVenues: (venues: Array<Venue>) => void;
   setFilters: (filters: Partial<VenueStore["filters"]>) => void;
+  setSearchQuery: (query: string) => void;
 
   // Async
   fetchVenues: () => Promise<void>;
@@ -28,7 +29,9 @@ type VenueStore = {
   approveVenue: (id: string) => Promise<void>;
 
   // Filtering
-  filteredVenuesCombined: () => VenueWithEvents[];
+  filteredVenuesCombined: (
+    clubMap: Record<string, string>
+  ) => VenueWithEvents[];
 };
 
 export const useVenueStore = create<VenueStore>((set, get) => ({
@@ -38,15 +41,21 @@ export const useVenueStore = create<VenueStore>((set, get) => ({
 
   filters: {},
   selectedClubId: null,
+  searchQuery: "",
 
   setClubId: (club_id) => set({ selectedClubId: club_id }),
   setFilters: (filters: VenueFilters) =>
     set((state) => ({ filters: { ...state.filters, ...filters } })),
   setVenues: (venues) => set({ venues }),
+  setSearchQuery: (query) => set({ searchQuery: query }),
+
   addVenue: (venue) => set((state) => ({ venues: [...state.venues, venue] })),
-  filteredVenuesCombined: () => {
-    const { venues, filters, selectedClubId } = get();
-    const venueData = venues
+
+  filteredVenuesCombined: (clubMap: Record<string, string>) => {
+    const { venues, filters, selectedClubId, searchQuery } = get();
+    const term = searchQuery?.trim().toLowerCase() ?? "";
+
+    return venues
       .filter((venue) => {
         const match = [
           filters.is_active === undefined ||
@@ -63,12 +72,31 @@ export const useVenueStore = create<VenueStore>((set, get) => ({
         return match.every(Boolean);
       })
       .filter((venue) => {
-        if (!selectedClubId) return true;
-        return venue.events?.some((e) => e.club_id === selectedClubId);
+        if (
+          selectedClubId &&
+          !venue.events?.some((e) => e.club_id === selectedClubId)
+        ) {
+          return false;
+        }
+
+        // Filter by search query
+        if (term) {
+          const matchesVenue = venue.name.toLowerCase().includes(term);
+
+          const matchesClub = Array.isArray(venue.events)
+            ? venue.events.some((event) => {
+                const clubName = clubMap?.[event.club_id ?? ""] ?? "";
+                return clubName.toLowerCase().includes(term);
+              })
+            : false;
+
+          return matchesVenue || matchesClub;
+        }
+
+        return true;
       });
-    console.log("VENUE STORE", venueData);
-    return venueData;
   },
+
   fetchVenues: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -82,10 +110,12 @@ export const useVenueStore = create<VenueStore>((set, get) => ({
       set({ error: errorMessage, isLoading: false });
     }
   },
+
   approveVenue: async (id) => {
     await approveStatus(id, "venue");
     await get().fetchVenues();
   },
+
   rejectVenue: async (id) => {
     await rejectStatus(id, "venue");
     await get().fetchVenues();

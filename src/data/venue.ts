@@ -5,7 +5,7 @@ export const getVenues = async () => {
   try {
     const venues = await db.venue.findMany({
       include: {
-        event: true,
+        events: true,
       },
     });
     return venues;
@@ -47,7 +47,7 @@ export const getVenuesByClubIds = async (clubId: string) => {
   try {
     const venues = await db.venue.findMany({
       where: {
-        event: {
+        events: {
           some: {
             club_id: clubId,
             date: { gte: new Date() },
@@ -56,7 +56,7 @@ export const getVenuesByClubIds = async (clubId: string) => {
         },
       },
       include: {
-        event: {
+        events: {
           where: {
             club_id: clubId,
             date: { gte: new Date() },
