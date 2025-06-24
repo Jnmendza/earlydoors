@@ -9,6 +9,7 @@ type ClubStore = {
   setClubs: (clubs: Array<Club>) => void;
   addClub: (club: Club) => void;
   fetchClubs: () => Promise<void>;
+  getClubMap: () => Record<string, string>;
   approveClub: (id: string) => Promise<void>;
   rejectClub: (id: string) => Promise<void>;
 };
@@ -19,6 +20,14 @@ export const useClubStore = create<ClubStore>((set, get) => ({
   error: null,
   setClubs: (clubs) => set({ clubs }),
   addClub: (club) => set((state) => ({ clubs: [...state.clubs, club] })),
+  // in clubStore.ts
+  getClubMap: () => {
+    const { clubs } = get();
+    return clubs.reduce((acc, club) => {
+      acc[club.id] = club.name.toLowerCase();
+      return acc;
+    }, {} as Record<string, string>);
+  },
 
   fetchClubs: async () => {
     set({ isLoading: true, error: null });

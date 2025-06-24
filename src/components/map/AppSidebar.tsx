@@ -1,5 +1,4 @@
 "use client";
-import { useMemo } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +14,7 @@ import { useClubStore } from "@/store/club-store";
 import { useVenueStore } from "@/store/venue-store";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 interface AppSidebarProps {
   openMarkerKey: string | null;
@@ -31,16 +31,13 @@ export function AppSidebar({
   const filteredVenuesFn = useVenueStore(
     (state) => state.filteredVenuesCombined
   );
-  const clubs = useClubStore((state) => state.clubs);
+  const { getClubMap } = useClubStore();
 
-  const clubMap = useMemo(() => {
-    return clubs.reduce((acc, club) => {
-      acc[club.id] = club.name.toLowerCase();
-      return acc;
-    }, {} as Record<string, string>);
-  }, [clubs]);
+  const clubMap = getClubMap();
 
-  const filteredVenues = filteredVenuesFn(clubMap);
+  const filteredVenues = useMemo(() => {
+    return filteredVenuesFn(clubMap);
+  }, [filteredVenuesFn, clubMap]);
 
   return (
     <Sidebar variant='floating'>

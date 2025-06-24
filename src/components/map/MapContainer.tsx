@@ -24,15 +24,13 @@ export default function MapContainer() {
   const filteredVenuesFn = useVenueStore(
     (state) => state.filteredVenuesCombined
   );
-  const clubs = useClubStore((state) => state.clubs);
-  const clubMap = useMemo(() => {
-    return clubs.reduce((acc, club) => {
-      acc[club.id] = club.name.toLowerCase();
-      return acc;
-    }, {} as Record<string, string>);
-  }, [clubs]);
+  const { getClubMap } = useClubStore();
 
-  const filteredVenues = filteredVenuesFn(clubMap); // ✅
+  const clubMap = getClubMap();
+
+  const filteredVenues = useMemo(() => {
+    return filteredVenuesFn(clubMap);
+  }, [filteredVenuesFn, clubMap]);
 
   useEffect(() => {
     fetchVenues();
