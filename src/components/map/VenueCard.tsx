@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
+import RoadDistanceCalculator from "./RoadDistanceCalculator";
 import { IMAGE_PLACEHOLDER } from "@/constants/ui";
 
 interface VenueCardProps {
@@ -11,8 +12,8 @@ interface VenueCardProps {
   logo_url: string;
   website_url: string;
   google_maps_url: string;
-  distance: string; // e.g. "100 meter"
-  openUntil: string; // e.g. "Open till 6 pm"
+  venueLat: number;
+  venueLng: number;
   openMarkerKey: string | null;
   setOpenMarkerKey: (id: string | null) => void;
 }
@@ -21,8 +22,8 @@ const VenueCard = ({
   id,
   name,
   logo_url,
-  distance,
-  openUntil,
+  venueLat,
+  venueLng,
   openMarkerKey,
   setOpenMarkerKey,
 }: VenueCardProps) => {
@@ -56,8 +57,7 @@ const VenueCard = ({
 
         {/* 2nd line: distance (gray) + “Open till…” (blue) */}
         <div className='mt-1 flex space-x-2 text-sm'>
-          <span className='text-gray-500'>{distance}</span>
-          <span className='text-blue-600 font-medium'>{openUntil}</span>
+          <RoadDistanceCalculator venueLat={venueLat} venueLng={venueLng} />
         </div>
       </div>
     </div>

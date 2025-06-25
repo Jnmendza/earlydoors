@@ -80,8 +80,8 @@ export function AppSidebar({
                   id={venue.id}
                   name={venue.name}
                   city={venue.city}
-                  distance='100 meters'
-                  openUntil='Open till 6pm'
+                  venueLat={venue.lat}
+                  venueLng={venue.lng}
                   address={venue.address}
                   website_url={venue.website_url}
                   logo_url={venue.logo_url || ""}
