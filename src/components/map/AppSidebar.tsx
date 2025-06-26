@@ -14,7 +14,8 @@ import { useClubStore } from "@/store/club-store";
 import { useVenueStore } from "@/store/venue-store";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { useMemo, useEffect } from "react";
+import { useEffect } from "react";
+import { Separator } from "../ui/separator";
 
 interface AppSidebarProps {
   openMarkerKey: string | null;
@@ -26,17 +27,16 @@ export function AppSidebar({
   setOpenMarkerKey,
 }: AppSidebarProps) {
   const router = useRouter();
-  const { searchQuery, setSearchQuery, setClubId, selectedClubId } =
-    useVenueStore();
-  const filteredVenuesFn = useVenueStore(
-    (state) => state.filteredVenuesCombined
-  );
-  const { getClubMap, fetchClubs, isLoading: isClubLoading } = useClubStore();
-  const clubMap = getClubMap();
+  const {
+    searchQuery,
+    setSearchQuery,
+    setClubId,
+    selectedClubId,
+    filteredVenuesCombined,
+  } = useVenueStore();
 
-  const filteredVenues = useMemo(() => {
-    return filteredVenuesFn(clubMap);
-  }, [filteredVenuesFn, clubMap]);
+  const { fetchClubs, isLoading: isClubLoading } = useClubStore();
+  const filteredVenues = filteredVenuesCombined();
 
   useEffect(() => {
     fetchClubs();
@@ -55,41 +55,56 @@ export function AppSidebar({
             <div className='relative'>
               <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
               <Input
-                placeholder='Search venues or clubs...'
+                disabled={selectedClubId ? true : false}
+                placeholder={
+                  selectedClubId
+                    ? "Clear filters to type"
+                    : "Search name or club affiliates..."
+                }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className='w-full pl-8'
               />
               {selectedClubId && (
-                <Button
-                  variant='outline'
-                  onClick={() => {
-                    setClubId(null);
-                    router.push("/events"); // removes the ?clubId param
-                  }}
-                >
-                  Clear Filter
-                </Button>
+                <div className='flex flex-col justify-end mt-2'>
+                  <Button
+                    className='cursor-pointer'
+                    variant='outline'
+                    onClick={() => {
+                      setClubId(null);
+                      router.push("/events"); // removes the ?clubId param
+                    }}
+                  >
+                    Clear Filter
+                  </Button>
+                  <Separator orientation='horizontal' className='mt-4' />
+                </div>
               )}
             </div>
 
             <SidebarMenu className='mt-4'>
-              {filteredVenues.map((venue) => (
-                <VenueCard
-                  key={venue.id}
-                  id={venue.id}
-                  name={venue.name}
-                  city={venue.city}
-                  venueLat={venue.lat}
-                  venueLng={venue.lng}
-                  address={venue.address}
-                  website_url={venue.website_url}
-                  logo_url={venue.logo_url || ""}
-                  google_maps_url={venue.google_maps_url}
-                  openMarkerKey={openMarkerKey}
-                  setOpenMarkerKey={setOpenMarkerKey}
-                />
-              ))}
+              {filteredVenues.length === 0 ? (
+                <p className='text-center text-muted-foreground py-8'>
+                  No venues at this moment
+                </p>
+              ) : (
+                filteredVenues.map((venue) => (
+                  <VenueCard
+                    key={venue.id}
+                    id={venue.id}
+                    name={venue.name}
+                    city={venue.city}
+                    venueLat={venue.lat}
+                    venueLng={venue.lng}
+                    address={venue.address}
+                    website_url={venue.website_url}
+                    logo_url={venue.logo_url || ""}
+                    google_maps_url={venue.google_maps_url}
+                    openMarkerKey={openMarkerKey}
+                    setOpenMarkerKey={setOpenMarkerKey}
+                  />
+                ))
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

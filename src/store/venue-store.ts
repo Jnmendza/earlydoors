@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { Venue, Event, VenueClubAffiliate } from "@prisma/client";
 import { approveStatus, rejectStatus } from "@/actions/status-change";
 import { VenueFilters } from "@/types/types";
+import { useClubStore } from "./club-store";
 
 export type VenueWithEvents = Venue & {
   events?: Event[];
@@ -30,9 +31,7 @@ type VenueStore = {
   approveVenue: (id: string) => Promise<void>;
 
   // Filtering
-  filteredVenuesCombined: (
-    clubMap: Record<string, string>
-  ) => VenueWithEvents[];
+  filteredVenuesCombined: () => VenueWithEvents[];
 };
 
 export const useVenueStore = create<VenueStore>((set, get) => ({
@@ -52,9 +51,11 @@ export const useVenueStore = create<VenueStore>((set, get) => ({
 
   addVenue: (venue) => set((state) => ({ venues: [...state.venues, venue] })),
 
-  filteredVenuesCombined: (clubMap: Record<string, string>) => {
+  filteredVenuesCombined: () => {
     const { venues, filters, selectedClubId, searchQuery } = get();
     const term = searchQuery?.trim().toLowerCase() ?? "";
+
+    const clubMap = useClubStore.getState().getClubMap();
 
     return venues
       .filter((venue) => {
@@ -73,29 +74,22 @@ export const useVenueStore = create<VenueStore>((set, get) => ({
         return match.every(Boolean);
       })
       .filter((venue) => {
+        // Filter by selected club
         if (
           selectedClubId &&
-          !venue.events?.some((e) => e.club_id === selectedClubId)
+          !venue.club_affiliates?.some((c) => c.clubId === selectedClubId)
         ) {
           return false;
         }
 
-        // Filter by search query
+        // Filter by search term
         if (term) {
           const matchesVenue = venue.name.toLowerCase().includes(term);
 
-          const matchesClub =
-            Array.isArray(venue.events) || Array.isArray(venue.club_affiliates)
-              ? [
-                  ...(venue.events ?? []),
-                  ...(venue.club_affiliates?.map((c) => ({ club_id: c.id })) ??
-                    []),
-                ].some((entry) => {
-                  const clubId = entry.club_id ?? undefined;
-                  const clubName = clubId ? clubMap[clubId] ?? "" : "";
-                  return clubName.toLowerCase().includes(term);
-                })
-              : false;
+          const matchesClub = venue.club_affiliates?.some((entry) => {
+            const clubName = clubMap[entry.clubId]?.toLowerCase() ?? "";
+            return clubName.includes(term);
+          });
 
           return matchesVenue || matchesClub;
         }

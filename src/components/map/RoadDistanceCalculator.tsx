@@ -14,7 +14,7 @@ function RoadDistanceCalculator({
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  console.error("Road Distance Calc", error);
   useEffect(() => {
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser");
@@ -69,15 +69,7 @@ function RoadDistanceCalculator({
   }, [venueLat, venueLng, apiKey]);
 
   if (isLoading) return <div className='loading'>Getting your location...</div>;
-  if (error)
-    return (
-      <div className='error'>
-        <p>Error: {error}</p>
-        {error.includes("permission") && (
-          <p>Please enable location permissions in your browser settings</p>
-        )}
-      </div>
-    );
+  if (error) return;
 
   return (
     <>
