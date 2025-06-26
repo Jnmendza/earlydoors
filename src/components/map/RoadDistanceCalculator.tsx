@@ -75,10 +75,8 @@ function RoadDistanceCalculator({
     <>
       {distance && (
         <div className='distance-result'>
-          <>
-            <p>{distance.mi}</p>
-            <p>ETA: {distance.time}</p>
-          </>
+          <p>{distance.mi}</p>
+          <p>ETA: {distance.time}</p>
         </div>
       )}
     </>

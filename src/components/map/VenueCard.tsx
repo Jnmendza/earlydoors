@@ -39,7 +39,6 @@ const VenueCard = ({
       )}
       onClick={() => setOpenMarkerKey(id)}
     >
-      {/* Logo on the left (square, 48×48 or so) */}
       <div className='flex-shrink-0'>
         <Image
           src={logo_url?.trim() ? logo_url : IMAGE_PLACEHOLDER}
@@ -50,15 +49,10 @@ const VenueCard = ({
         />
       </div>
 
-      {/* Name + subtitle on the right */}
       <div className='flex flex-col justify-center text-left'>
-        {/* 1st line: Name */}
         <h3 className='text-lg font-semibold text-gray-900'>{name}</h3>
 
-        {/* 2nd line: distance (gray) + “Open till…” (blue) */}
-        <div className='mt-1 flex space-x-2 text-sm'>
-          <RoadDistanceCalculator venueLat={venueLat} venueLng={venueLng} />
-        </div>
+        <RoadDistanceCalculator venueLat={venueLat} venueLng={venueLng} />
       </div>
     </div>
   );

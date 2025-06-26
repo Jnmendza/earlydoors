@@ -1,20 +1,27 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { ArrowLeft } from "lucide-react";
-import { Venue } from "@prisma/client";
 import { Button } from "../ui/button";
 import Image from "next/image";
-
+import { useClubStore } from "@/store/club-store";
+import { VenueWithEvents } from "@/store/venue-store";
+import { IMAGE_PLACEHOLDER } from "@/constants/ui";
 interface VenueDetailsProps {
-  venue: Venue;
+  venue: VenueWithEvents;
   onClose: () => void;
 }
 
 const VenueDetailsSidebar = ({ venue, onClose }: VenueDetailsProps) => {
+  const getClubMap = useClubStore((state) => state.getClubMap);
+  const clubMap = useMemo(() => getClubMap(), [getClubMap]);
+  const affiliatedClubs = venue.club_affiliates?.map(
+    (aff) => clubMap[aff.clubId]
+  );
+  console.log("VENUE DETSS", affiliatedClubs);
   return (
     <Sidebar variant='floating' className='my-auto left-78 h-5/6 w-80 z-30'>
       <SidebarContent className='flex flex-col h-full'>
@@ -82,6 +89,20 @@ const VenueDetailsSidebar = ({ venue, onClose }: VenueDetailsProps) => {
                 </a>
               )}
             </div>
+          </div>
+
+          <div className='space-y-1'>
+            <h3>Affiliated Clubs</h3>
+            {affiliatedClubs?.map((aff) => (
+              <Image
+                key={aff.name}
+                src={aff.logo_url || IMAGE_PLACEHOLDER}
+                alt={`${aff.name}-logo`}
+                width={42}
+                height={42}
+                className='rounded-md object-cover bg-gray-100'
+              />
+            ))}
           </div>
 
           {/* Additional details placeholder */}

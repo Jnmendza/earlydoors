@@ -87,7 +87,7 @@ export const useVenueStore = create<VenueStore>((set, get) => ({
           const matchesVenue = venue.name.toLowerCase().includes(term);
 
           const matchesClub = venue.club_affiliates?.some((entry) => {
-            const clubName = clubMap[entry.clubId]?.toLowerCase() ?? "";
+            const clubName = clubMap[entry.clubId]?.name.toLowerCase() ?? "";
             return clubName.includes(term);
           });
 
