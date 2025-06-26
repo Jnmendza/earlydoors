@@ -48,6 +48,10 @@ export function capitalizeFirstLetterOnly(input: string): string {
   return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
 }
 
+export function capitalizeWords(input: string): string {
+  return input.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export function textBadgeColor(text: string) {
   switch (text) {
     case Status.APPROVED:

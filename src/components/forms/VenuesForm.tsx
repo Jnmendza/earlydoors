@@ -29,6 +29,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LuLoaderCircle } from "react-icons/lu";
 import { createFormData, createImagePreview } from "@/lib/form";
+import MultiSelect from "./MultiSelect";
+import { useClubStore } from "@/store/club-store";
 
 type VenuesFormProps = {
   initialData?: VenueFormData;
@@ -39,8 +41,14 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedClubIds, setSelectedClubIds] = useState<string[]>(
+    initialData?.club_affiliates ?? []
+  );
+  const [clubAffiliatesTouched, setClubAffiliatesTouched] = useState(false);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { clubs, fetchClubs } = useClubStore();
+  console.log(selectedClubIds);
   const form = useForm<VenueFormData>({
     resolver: zodResolver(venueFormSchema),
     defaultValues: initialData ?? {
@@ -57,6 +65,7 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
       has_big_screen: false,
       has_outdoor_screens: false,
       is_bookable: false,
+      club_affiliates: [],
     },
   });
 
@@ -67,7 +76,14 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
       }
       form.setValue("logo_url", initialData.logo_url);
     }
-  }, [initialData, form]);
+    if (initialData?.club_affiliates) {
+      if (initialData.club_affiliates.length > 0) {
+        setSelectedClubIds(initialData.club_affiliates);
+      }
+      form.setValue("club_affiliates", initialData.club_affiliates);
+    }
+    fetchClubs();
+  }, [initialData, form, fetchClubs]);
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -140,6 +156,9 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
     [router, venueId, resetForm]
   );
 
+  // Form control for the controlled component MultiSelect
+  form.setValue("club_affiliates", selectedClubIds);
+
   const onSubmit = async (values: VenueFormData) => {
     setIsLoading(true);
     let finalLogoUrl = values.logo_url;
@@ -169,6 +188,7 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
       const payload = {
         ...values,
         logo_url: typeof finalLogoUrl === "string" ? finalLogoUrl : "",
+        club_affiliates: clubAffiliatesTouched ? selectedClubIds : undefined,
       };
 
       const response = await fetch(
@@ -459,9 +479,20 @@ const VenuesForm = ({ initialData, venueId }: VenuesFormProps) => {
           />
         </div>
 
+        <div>
+          <FormLabel className='mb-2'>Club Affiliates</FormLabel>
+          <MultiSelect
+            type='club affiliates'
+            options={clubs}
+            selectedOptions={selectedClubIds}
+            onChange={setSelectedClubIds}
+            onTouched={() => setClubAffiliatesTouched(true)}
+          />
+        </div>
+
         <Button
           type='submit'
-          className='rounded-none cursor-pointer'
+          className='rounded-none cursor-pointer bg-edorange'
           disabled={isLoading}
         >
           {isLoading ? (

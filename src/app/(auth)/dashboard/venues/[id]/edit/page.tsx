@@ -29,6 +29,9 @@ export default async function EditVenuePage({
         initialData={{
           ...venue,
           logo_url: venue.logo_url || null,
+          club_affiliates: venue.club_affiliates.map(
+            (affiliate: { clubId: string }) => affiliate.clubId
+          ),
         }}
       />
     </div>

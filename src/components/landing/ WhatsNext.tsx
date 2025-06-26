@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import { bebasFont } from "@/lib/font";
-import { content } from "@/data/aboutuscontent";
+import { content } from "@/data/AboutusContent";
 
 const WhatsNext = () => {
   const LAST_INDEX = content.length - 1;

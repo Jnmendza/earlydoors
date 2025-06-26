@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { APIProvider, Map } from "@vis.gl/react-google-maps"; // using your original library
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import Markers from "../landing/Markers";
 import { LOCATIONS } from "@/constants/maps";
 import { API_KEYS, MAP_CONFIG } from "@/constants/api";
@@ -11,7 +11,6 @@ import { AppSidebar } from "./AppSidebar";
 import VenueDetailsSidebar from "./VenueDetailsSidebar";
 import Link from "next/link";
 import Image from "next/image";
-import { useClubStore } from "@/store/club-store";
 
 const home = LOCATIONS.HOME;
 const apiKey = API_KEYS.GOOGLE_MAPS;
@@ -20,17 +19,22 @@ const mapId = MAP_CONFIG.ID;
 export default function MapContainer() {
   const [openMarkerKey, setOpenMarkerKey] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { fetchVenues } = useVenueStore();
+  const { fetchVenues, venues, selectedClubId, searchQuery } = useVenueStore();
   const filteredVenuesFn = useVenueStore(
     (state) => state.filteredVenuesCombined
   );
-  const { getClubMap } = useClubStore();
 
-  const clubMap = getClubMap();
+  {
+    /**
+    Reason for eslint disable:
+    'venues', 'selectedClubId' & 'searchQuery' are from Zustand state, but ESLint thinks its a normal local state value. 
+    */
+  }
 
   const filteredVenues = useMemo(() => {
-    return filteredVenuesFn(clubMap);
-  }, [filteredVenuesFn, clubMap]);
+    return filteredVenuesFn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredVenuesFn, venues, selectedClubId, searchQuery]);
 
   useEffect(() => {
     fetchVenues();
@@ -51,7 +55,6 @@ export default function MapContainer() {
           gestureHandling='greedy'
           disableDefaultUI={true}
         >
-          {/* 3) Render markers on top of the map */}
           <Markers
             points={filteredVenues.map((venue) => ({
               lat: venue.lat,
@@ -60,7 +63,9 @@ export default function MapContainer() {
               name: venue.name,
               address: venue.address,
               city: venue.city,
-              logo_url: venue.logo_url || "",
+              logo_url: venue.logo_url ?? "",
+              google_maps_url: venue.google_maps_url,
+              website_url: venue.website_url,
             }))}
             setOpenMarkerKey={setOpenMarkerKey}
             openMarkerKey={openMarkerKey}
@@ -69,7 +74,6 @@ export default function MapContainer() {
 
         <div className='absolute top-0 left-0 h-full z-20'>
           <AppSidebar
-            // venues={filteredVenues}
             openMarkerKey={openMarkerKey}
             setOpenMarkerKey={setOpenMarkerKey}
           />

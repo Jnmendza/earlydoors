@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         lng: latLng.lng,
         website_url: parsed.data.website_url,
         google_maps_url: parsed.data.google_maps_url,
-        logo_url: parsed.data.logo_url, // Use the URL directly
+        logo_url: parsed.data.logo_url,
         has_garden: parsed.data.has_garden,
         has_big_screen: parsed.data.has_big_screen,
         has_outdoor_screens: parsed.data.has_outdoor_screens,
@@ -79,6 +79,16 @@ export async function POST(req: NextRequest) {
         status: Status.PENDING,
       },
     });
+
+    if (parsed.data.club_affiliates?.length) {
+      await db.venueClubAffiliate.createMany({
+        data: parsed.data.club_affiliates.map((clubId: string) => ({
+          venueId: venue.id,
+          clubId,
+        })),
+        skipDuplicates: true, // Prevent duplicate entries
+      });
+    }
 
     const newVenue = await db.activityLog.create({
       data: {
