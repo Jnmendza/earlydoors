@@ -15,21 +15,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang='en'
-      className={`${bebasFont.variable} ${oldStandordFont.variable}`}
+    <div
+      className={`${bebasFont.variable} ${oldStandordFont.variable} relative min-h-screen antialiased`}
     >
-      <body className='relative min-h-screen antialiased'>
-        {/* Absolute positioned navbar at top */}
-        <div className='absolute top-0 left-0 right-0 z-50'>
-          <Navbar />
-        </div>
+      <div className='absolute top-0 left-0 right-0 z-50'>
+        <Navbar />
+      </div>
 
-        {/* Main content starts at top (navbar will overlap) */}
-        <main className='relative'>{children}</main>
+      <main className='relative'>{children}</main>
 
-        <Footer />
-      </body>
-    </html>
+      <Footer />
+    </div>
   );
 }

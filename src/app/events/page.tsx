@@ -13,7 +13,7 @@ const EventsPage = () => {
         <ClubSearchHandler />
       </Suspense>
       <SidebarProvider>
-        <main className=''>
+        <main>
           <MapContainer />
         </main>
       </SidebarProvider>
