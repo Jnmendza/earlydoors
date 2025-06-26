@@ -43,8 +43,7 @@ export default function MapContainer() {
   const selectedVenue = openMarkerKey
     ? filteredVenues.find((v) => v.id === openMarkerKey) || null
     : null;
-  console.log("Venues", venues);
-  console.log("Filtered Venues", filteredVenues);
+
   return (
     <APIProvider apiKey={apiKey}>
       <div className='relative h-screen w-screen'>
@@ -56,7 +55,6 @@ export default function MapContainer() {
           gestureHandling='greedy'
           disableDefaultUI={true}
         >
-          {/* 3) Render markers on top of the map */}
           <Markers
             points={filteredVenues.map((venue) => ({
               lat: venue.lat,
@@ -65,7 +63,9 @@ export default function MapContainer() {
               name: venue.name,
               address: venue.address,
               city: venue.city,
-              logo_url: venue.logo_url || "",
+              logo_url: venue.logo_url ?? "",
+              google_maps_url: venue.google_maps_url,
+              website_url: venue.website_url,
             }))}
             setOpenMarkerKey={setOpenMarkerKey}
             openMarkerKey={openMarkerKey}

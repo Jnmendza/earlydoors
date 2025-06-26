@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useClubStore } from "@/store/club-store";
 import { VenueWithEvents } from "@/store/venue-store";
 import { IMAGE_PLACEHOLDER } from "@/constants/ui";
+import Link from "next/link";
 interface VenueDetailsProps {
   venue: VenueWithEvents;
   onClose: () => void;
@@ -21,7 +22,7 @@ const VenueDetailsSidebar = ({ venue, onClose }: VenueDetailsProps) => {
   const affiliatedClubs = venue.club_affiliates?.map(
     (aff) => clubMap[aff.clubId]
   );
-  console.log("VENUE DETSS", affiliatedClubs);
+
   return (
     <Sidebar variant='floating' className='my-auto left-78 h-5/6 w-80 z-30'>
       <SidebarContent className='flex flex-col h-full'>
@@ -69,24 +70,24 @@ const VenueDetailsSidebar = ({ venue, onClose }: VenueDetailsProps) => {
             <h3 className='text-sm font-medium text-gray-600'>Links</h3>
             <div className='flex space-x-4'>
               {venue.website_url && (
-                <a
+                <Link
                   href={venue.website_url}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='text-blue-600 hover:underline text-sm'
                 >
                   Website
-                </a>
+                </Link>
               )}
               {venue.google_maps_url && (
-                <a
+                <Link
                   href={venue.google_maps_url}
                   target='_blank'
                   rel='noopener noreferrer'
                   className='text-blue-600 hover:underline text-sm'
                 >
                   Directions
-                </a>
+                </Link>
               )}
             </div>
           </div>
