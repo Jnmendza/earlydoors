@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { Club } from "@prisma/client";
-
+import { IoMdArrowDropdown } from "react-icons/io";
 interface MultiSelectProps {
   type: string;
   options: Club[];
@@ -42,10 +42,11 @@ const MultiSelect = ({
   return (
     <>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger className='w-full border p-2 rounded-none text-left text-sm text-gray-700'>
+        <PopoverTrigger className='w-full flex justify-between border p-2 rounded-none text-left text-sm text-gray-700'>
           {selectedOptions.length > 0
             ? "Selected: " + selectedOptions.length
             : `Select ${type}`}
+          <IoMdArrowDropdown />
         </PopoverTrigger>
         <PopoverContent className='w-[300px] p-0'>
           <Command>

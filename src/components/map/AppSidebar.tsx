@@ -16,6 +16,8 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Separator } from "../ui/separator";
+import { GoShieldSlash } from "react-icons/go";
+import { BsHouseSlash } from "react-icons/bs";
 
 interface AppSidebarProps {
   openMarkerKey: string | null;
@@ -31,18 +33,37 @@ export function AppSidebar({
     searchQuery,
     setSearchQuery,
     setClubId,
+    isLoading: venuesLoading,
     selectedClubId,
     filteredVenuesCombined,
   } = useVenueStore();
 
-  const { fetchClubs, isLoading: isClubLoading } = useClubStore();
+  const { fetchClubs } = useClubStore();
   const filteredVenues = filteredVenuesCombined();
 
   useEffect(() => {
     fetchClubs();
   }, [fetchClubs]);
 
-  if (isClubLoading) return null;
+  const EmptyState = ({
+    selectedClubId,
+  }: {
+    selectedClubId: string | null;
+  }) => {
+    const icon = selectedClubId ? <GoShieldSlash /> : <BsHouseSlash />;
+    const message = selectedClubId
+      ? "No venue is affiliated with this club, clear the filter to continue searching"
+      : "No venues at this moment";
+
+    return (
+      <div className='flex flex-col items-center py-8'>
+        <div className='mb-2 text-3xl text-muted-foreground'>{icon}</div>
+        <p className='text-center text-muted-foreground'>{message}</p>
+      </div>
+    );
+  };
+
+  if (venuesLoading) return null;
   return (
     <Sidebar variant='floating'>
       <SidebarContent>
@@ -84,9 +105,7 @@ export function AppSidebar({
 
             <SidebarMenu className='mt-4'>
               {filteredVenues.length === 0 ? (
-                <p className='text-center text-muted-foreground py-8'>
-                  No venues at this moment
-                </p>
+                <EmptyState selectedClubId={selectedClubId} />
               ) : (
                 filteredVenues.map((venue) => (
                   <VenueCard

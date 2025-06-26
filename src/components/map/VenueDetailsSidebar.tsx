@@ -91,19 +91,21 @@ const VenueDetailsSidebar = ({ venue, onClose }: VenueDetailsProps) => {
             </div>
           </div>
 
-          <div className='space-y-1'>
-            <h3>Affiliated Clubs</h3>
-            {affiliatedClubs?.map((aff) => (
-              <Image
-                key={aff.name}
-                src={aff.logo_url || IMAGE_PLACEHOLDER}
-                alt={`${aff.name}-logo`}
-                width={42}
-                height={42}
-                className='rounded-md object-cover bg-gray-100'
-              />
-            ))}
-          </div>
+          {affiliatedClubs && affiliatedClubs.length > 0 && (
+            <div className='space-y-1'>
+              <h3>Affiliated Clubs</h3>
+              {affiliatedClubs.map((aff) => (
+                <Image
+                  key={aff.name}
+                  src={aff.logo_url || IMAGE_PLACEHOLDER}
+                  alt={`${aff.name}-logo`}
+                  width={42}
+                  height={42}
+                  className='rounded-md object-cover bg-gray-100'
+                />
+              ))}
+            </div>
+          )}
 
           {/* Additional details placeholder */}
           <div>
