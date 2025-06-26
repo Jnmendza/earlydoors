@@ -80,14 +80,16 @@ function RoadDistanceCalculator({
     );
 
   return (
-    <div className='distance-result'>
+    <>
       {distance && (
-        <>
-          <p>{distance.mi}</p>
-          <p>ETA: {distance.time}</p>
-        </>
+        <div className='distance-result'>
+          <>
+            <p>{distance.mi}</p>
+            <p>ETA: {distance.time}</p>
+          </>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 

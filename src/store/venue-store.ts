@@ -1,10 +1,11 @@
 import { create } from "zustand";
-import { Venue, Event } from "@prisma/client";
+import { Venue, Event, VenueClubAffiliate } from "@prisma/client";
 import { approveStatus, rejectStatus } from "@/actions/status-change";
 import { VenueFilters } from "@/types/types";
 
 export type VenueWithEvents = Venue & {
   events?: Event[];
+  club_affiliates?: VenueClubAffiliate[];
 };
 
 type VenueStore = {
@@ -83,12 +84,18 @@ export const useVenueStore = create<VenueStore>((set, get) => ({
         if (term) {
           const matchesVenue = venue.name.toLowerCase().includes(term);
 
-          const matchesClub = Array.isArray(venue.events)
-            ? venue.events.some((event) => {
-                const clubName = clubMap?.[event.club_id ?? ""] ?? "";
-                return clubName.toLowerCase().includes(term);
-              })
-            : false;
+          const matchesClub =
+            Array.isArray(venue.events) || Array.isArray(venue.club_affiliates)
+              ? [
+                  ...(venue.events ?? []),
+                  ...(venue.club_affiliates?.map((c) => ({ club_id: c.id })) ??
+                    []),
+                ].some((entry) => {
+                  const clubId = entry.club_id ?? undefined;
+                  const clubName = clubId ? clubMap[clubId] ?? "" : "";
+                  return clubName.toLowerCase().includes(term);
+                })
+              : false;
 
           return matchesVenue || matchesClub;
         }

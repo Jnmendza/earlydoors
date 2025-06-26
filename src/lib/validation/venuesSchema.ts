@@ -24,6 +24,7 @@ export const venueFormSchema = z.object({
   has_big_screen: z.boolean(),
   has_outdoor_screens: z.boolean(),
   is_bookable: z.boolean(),
+  club_affiliates: z.array(z.string()).optional(),
 });
 
 export type VenueFormData = z.infer<typeof venueFormSchema>;

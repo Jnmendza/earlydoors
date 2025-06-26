@@ -84,6 +84,12 @@ export async function PUT(
       logoUrlToSave = parsed.data.logo_url;
     }
 
+    if (parsed.data.club_affiliates !== undefined) {
+      await db.venueClubAffiliate.deleteMany({
+        where: { venueId: id },
+      });
+    }
+
     // Update venue
     const updatedVenue = await db.venue.update({
       where: { id },
@@ -102,8 +108,19 @@ export async function PUT(
         has_big_screen: parsed.data.has_big_screen,
         has_outdoor_screens: parsed.data.has_outdoor_screens,
         is_bookable: parsed.data.is_bookable,
+        is_active: parsed.data.is_active,
       },
     });
+
+    if (parsed.data.club_affiliates?.length) {
+      await db.venueClubAffiliate.createMany({
+        data: parsed.data.club_affiliates.map((clubId: string) => ({
+          venueId: updatedVenue.id,
+          clubId,
+        })),
+        skipDuplicates: true, // Prevent duplicate entries
+      });
+    }
 
     await db.activityLog.create({
       data: {
