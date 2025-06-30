@@ -321,7 +321,7 @@ const ClubsForm = ({ initialData, clubId }: ClubsFormProps) => {
         </div>
         <Button
           type='submit'
-          className='cursor-pointer rounded-none'
+          className='cursor-pointer rounded-none bg-edorange'
           disabled={isLoading}
         >
           {isLoading ? "Submitting..." : "Submit"}

@@ -402,7 +402,7 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
           </Button>
         ) : (
           <Button
-            className='rounded-none cursor-pointer'
+            className='rounded-none cursor-pointer bg-edorange'
             type='submit'
             disabled={isLoading}
           >

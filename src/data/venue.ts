@@ -6,6 +6,7 @@ export const getVenues = async () => {
     const venues = await db.venue.findMany({
       include: {
         events: true,
+        club_affiliates: true,
       },
     });
     return venues;
@@ -34,6 +35,9 @@ export const getVenueById = async (venueId: string) => {
     const venue = await db.venue.findUnique({
       where: {
         id: venueId,
+      },
+      include: {
+        club_affiliates: true,
       },
     });
     return venue;

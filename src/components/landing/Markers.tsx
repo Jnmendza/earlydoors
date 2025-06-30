@@ -9,8 +9,7 @@ import {
 import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 import Image from "next/image";
 import { IMAGE_PLACEHOLDER } from "@/constants/ui";
-import HoverLink from "../map/HoverLink";
-import { Volleyball } from "lucide-react";
+import Link from "next/link";
 
 type Point = google.maps.LatLngLiteral & {
   key: string;
@@ -18,23 +17,15 @@ type Point = google.maps.LatLngLiteral & {
   address: string;
   city: string;
   logo_url: string;
+  google_maps_url: string;
+  website_url: string;
 };
 
-type Props = {
+interface Props {
   points: Point[];
   setOpenMarkerKey: (key: string | null) => void;
   openMarkerKey: string | null;
-};
-
-type LinkData = {
-  title: string;
-  cardContent: string;
-};
-
-const linkData: LinkData[] = [
-  { title: "Directions", cardContent: "Google Maps Link" },
-  { title: "Website", cardContent: "Venues Webpage" },
-];
+}
 
 const Markers = ({ points, setOpenMarkerKey, openMarkerKey }: Props) => {
   const map = useMap();
@@ -113,13 +104,19 @@ const Markers = ({ points, setOpenMarkerKey, openMarkerKey }: Props) => {
                     </p>
                   </div>
                 </div>
-                <div className='flex justify-end items-center'>
-                  {linkData.map(({ title, cardContent }, index) => (
-                    <React.Fragment key={index}>
-                      <HoverLink title={title} cardContent={cardContent} />
-                      {index < linkData.length - 1 && <Volleyball size={10} />}
-                    </React.Fragment>
-                  ))}
+                <div className='flex justify-end items-center space-x-2 mt-2'>
+                  <Link
+                    href={point.website_url}
+                    className='text-blue-600 hover:underline text-sm'
+                  >
+                    Website
+                  </Link>
+                  <Link
+                    href={point.google_maps_url}
+                    className='text-blue-600 hover:underline text-sm'
+                  >
+                    Directions
+                  </Link>
                 </div>
               </InfoWindow>
             )}
