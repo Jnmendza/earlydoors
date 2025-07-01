@@ -4,9 +4,10 @@ export const eventFormSchema = z.object({
   name: z.string().min(1, { message: "Event name is required" }),
   description: z.string().optional(),
   date: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in yyyy-MM-dd format"),
-
+    .date()
+    .refine((date) => date >= new Date(new Date().setHours(0, 0, 0, 0)), {
+      message: "Date and time must be in the future",
+    }),
   venue_id: z.string().uuid({ message: "A valid venue must be selected" }),
   club_id: z
     .string()
