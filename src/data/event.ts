@@ -40,13 +40,13 @@ export const getUpcomingEventsByVenueId = async (venueId: string) => {
     const events = await db.event.findMany({
       where: {
         venue_id: venueId,
-        // date: {
-        //   gte: currentDate,
-        // },
+        date: {
+          gte: currentDate,
+        },
       },
-      // orderBy: {
-      //   date: "asc",
-      // },
+      orderBy: {
+        date: "asc",
+      },
     });
     return events;
   } catch (error) {
