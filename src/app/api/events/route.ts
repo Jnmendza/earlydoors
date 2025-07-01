@@ -3,6 +3,7 @@ import { getEvents } from "@/data/event";
 import { db } from "@/lib/db";
 import { ActivityType, Event, Status } from "@prisma/client";
 import { ActionType } from "@/types/types";
+import { apiEventSchema } from "@/lib/validation/eventsSchema";
 
 export const dynamic = "force-dynamic";
 
@@ -22,31 +23,49 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body: Event = await req.json();
+    const parseResult = apiEventSchema.safeParse(body);
 
-    // Convert incoming date to UTC right at the entry point
-    const utcDate = new Date(body.date);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: "Validation failed", issues: parseResult.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const {
+      name,
+      start_time,
+      date,
+      description,
+      venue_id,
+      club_id,
+      supporters_group_id,
+      has_big_screen,
+      has_garden,
+      has_outdoor_screens,
+      is_bookable,
+    } = parseResult.data;
+
+    // Combine date and start_time into a UTC DateTime
+    const [year, month, day] = date.split("-").map(Number);
+    const [hours, minutes] = start_time.split(":").map(Number);
     const utcDateString = new Date(
-      Date.UTC(
-        utcDate.getUTCFullYear(),
-        utcDate.getUTCMonth(),
-        utcDate.getUTCDate(),
-        utcDate.getUTCHours(),
-        utcDate.getUTCMinutes()
-      )
+      Date.UTC(year, month - 1, day, hours, minutes)
     ).toISOString();
 
     const event = await db.event.create({
       data: {
-        name: body.name,
-        description: body.description,
-        start_time: body.start_time,
+        name,
+        start_time,
         date: utcDateString,
-        venue_id: body.venue_id,
-        club_id: body.club_id,
-        has_garden: body.has_garden,
-        has_big_screen: body.has_big_screen,
-        has_outdoor_screens: body.has_outdoor_screens,
-        is_bookable: body.is_bookable,
+        description: description || "",
+        venue_id,
+        supporters_group_id,
+        club_id,
+        has_big_screen,
+        has_garden,
+        has_outdoor_screens,
+        is_bookable,
         status: Status.PENDING,
       },
     });

@@ -305,9 +305,9 @@ const SupportersGroupForm = ({
                       {clubs.map(({ id, logo_url, name }, index) => (
                         <SelectItemWithIcon
                           key={index}
-                          clubId={id}
-                          clubLogoUrl={logo_url ?? ""}
-                          clubName={name}
+                          id={id}
+                          logoUrl={logo_url ?? ""}
+                          value={name}
                         />
                       ))}
                     </SelectGroup>
