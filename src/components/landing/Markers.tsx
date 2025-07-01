@@ -6,10 +6,10 @@ import {
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
+import Link from "next/link";
 import Image from "next/image";
 import { IMAGE_PLACEHOLDER } from "@/constants/ui";
-import Link from "next/link";
+import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 
 type Point = google.maps.LatLngLiteral & {
   key: string;

@@ -1,3 +1,4 @@
+"use server";
 import { db } from "@/lib/db";
 
 export const getEvents = async () => {
@@ -30,5 +31,26 @@ export const getEventById = async (eventId: string) => {
   } catch (error) {
     console.error(`Failed to fetch event with ${eventId}:`, error);
     throw new Error("Failed to fetch event");
+  }
+};
+
+export const getUpcomingEventsByVenueId = async (venueId: string) => {
+  const currentDate = new Date();
+  try {
+    const events = await db.event.findMany({
+      where: {
+        venue_id: venueId,
+        // date: {
+        //   gte: currentDate,
+        // },
+      },
+      // orderBy: {
+      //   date: "asc",
+      // },
+    });
+    return events;
+  } catch (error) {
+    console.error(`Failed to fetch events for venue ${venueId}:`, error);
+    throw new Error("Failed to fetch events for venue");
   }
 };

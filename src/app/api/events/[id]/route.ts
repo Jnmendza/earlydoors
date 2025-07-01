@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { eventFormSchema } from "@/lib/validation/eventsSchema";
+import { apiEventSchema } from "@/lib/validation/eventsSchema";
 import { ActivityType, Status } from "@prisma/client";
 import { ActionType } from "@/types/types";
 
@@ -33,26 +33,15 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
+    const existingEvent = await db.event.findUnique({
+      where: { id },
+    });
+    if (!existingEvent) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
     const body = await req.json();
-
-    // Convert incoming date to UTC
-    const utcDate = new Date(body.date);
-    const utcDateString = new Date(
-      Date.UTC(
-        utcDate.getUTCFullYear(),
-        utcDate.getUTCMonth(),
-        utcDate.getUTCDate(),
-        utcDate.getUTCHours(),
-        utcDate.getUTCMinutes()
-      )
-    ).toISOString();
-
-    const parsedBody = {
-      ...body,
-      date: utcDateString, // Use UTC-converted date
-    };
-
-    const parseResult = eventFormSchema.safeParse(parsedBody);
+    const parseResult = apiEventSchema.safeParse(body);
 
     if (!parseResult.success) {
       return NextResponse.json(
@@ -61,9 +50,22 @@ export async function PUT(
       );
     }
 
+    const { date, start_time, ...rest } = parseResult.data;
+
+    // Combine date and start_time into a UTC DateTime
+    const [year, month, day] = date.split("-").map(Number);
+    const [hours, minutes] = start_time.split(":").map(Number);
+    const utcDateString = new Date(
+      Date.UTC(year, month - 1, day, hours, minutes)
+    ).toISOString();
+
     const updated = await db.event.update({
       where: { id },
-      data: parseResult.data,
+      data: {
+        ...rest,
+        date: utcDateString, // Store as UTC DateTime
+        start_time, // Store time as string
+      },
     });
 
     await db.activityLog.create({

@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+"use client";
+import React, { useMemo, useEffect } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +12,10 @@ import { useClubStore } from "@/store/club-store";
 import { VenueWithEvents } from "@/store/venue-store";
 import { IMAGE_PLACEHOLDER } from "@/constants/ui";
 import Link from "next/link";
+import { EventWithVenue, useEventStore } from "@/store/event-store";
+import EventCard from "./EventsCard";
+import { MdEventBusy } from "react-icons/md";
+
 interface VenueDetailsProps {
   venue: VenueWithEvents;
   onClose: () => void;
@@ -22,6 +27,13 @@ const VenueDetailsSidebar = ({ venue, onClose }: VenueDetailsProps) => {
   const affiliatedClubs = venue.club_affiliates?.map(
     (aff) => clubMap[aff.clubId]
   );
+  const { events, isLoading, fetchUpcomingEventsByVenueId } = useEventStore();
+
+  useEffect(() => {
+    if (venue.id) {
+      fetchUpcomingEventsByVenueId(venue.id);
+    }
+  }, [venue.id, fetchUpcomingEventsByVenueId]);
 
   return (
     <Sidebar variant='floating' className='my-auto left-78 h-5/6 w-80 z-30'>
@@ -110,10 +122,25 @@ const VenueDetailsSidebar = ({ venue, onClose }: VenueDetailsProps) => {
 
           {/* Additional details placeholder */}
           <div>
-            <h3 className='text-sm font-medium text-gray-600'>More Info</h3>
+            <h3 className='text-sm font-medium text-gray-600'>
+              Upcoming Events
+            </h3>
             <p className='mt-1 text-gray-800 text-sm'>
               {/* Replace this with actual venue details */}
-              This is where you could show events, hours, etc.
+              {isLoading ? (
+                <div className='flex items-center justify-center mt-6 space-x-2 text-gray-500 border-2 border-solid border-gray-100 py-10'>
+                  <span>Loading events...</span>
+                </div>
+              ) : events.length === 0 ? (
+                <div className='flex items-center justify-center mt-6 space-x-2 text-gray-500 border-2 border-solid border-gray-100 py-10'>
+                  <MdEventBusy size={20} />
+                  <span>No upcoming events</span>
+                </div>
+              ) : (
+                events.map((e: EventWithVenue, index: number) => (
+                  <EventCard key={index} event={e} />
+                ))
+              )}
             </p>
           </div>
         </div>

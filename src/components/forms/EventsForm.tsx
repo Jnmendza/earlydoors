@@ -38,6 +38,9 @@ import { useVenueStore } from "@/store/venue-store";
 import SelectItemWithIcon from "../SelectItemWithIcon";
 import { toast } from "sonner";
 import { useEventStore } from "@/store/event-store";
+import { useGroupStore } from "@/store/group-store";
+import { hrs, mins } from "@/lib/dateUtils";
+import { Separator } from "../ui/separator";
 
 type EventsFormProps = {
   initialData?: EventFormData;
@@ -49,22 +52,24 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
   const { fetchClubs, clubs } = useClubStore();
   const { fetchVenues, venues } = useVenueStore();
   const { updateEvent, addEvent } = useEventStore();
+  const { groups, fetchGroups } = useGroupStore();
   const router = useRouter();
 
   useEffect(() => {
     fetchClubs();
     fetchVenues();
-  }, [fetchClubs, fetchVenues]);
+    fetchGroups();
+  }, [fetchClubs, fetchVenues, fetchGroups]);
 
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: initialData ?? {
       name: "",
       description: "",
-      start_time: "",
       date: undefined,
       venue_id: "",
       club_id: "",
+      supporters_group_id: "",
       has_garden: false,
       has_big_screen: false,
       has_outdoor_screens: false,
@@ -72,11 +77,32 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
     },
   });
 
+  // Compares new data with initial data
+  const {
+    formState: { isDirty },
+  } = form;
+
+  // Split initial date into date, hour, and minute for preselection
+  const initialDate = initialData?.date
+    ? new Date(initialData.date)
+    : undefined;
+  const initialHour = initialDate
+    ? initialDate.getHours().toString().padStart(2, "0")
+    : hrs[0];
+  const initialMinute = initialDate
+    ? initialDate.getMinutes().toString().padStart(2, "0")
+    : mins[0];
+
   const onSubmit = async (values: EventFormData) => {
     setIsLoading(true);
     const cleanValues = {
       ...values,
-      date: values.date.toISOString(),
+      date: values.date
+        ? format(new Date(values.date), "yyyy-MM-dd")
+        : undefined, // Extract date only (e.g., "2025-06-30")
+      start_time: values.date
+        ? format(new Date(values.date), "HH:mm")
+        : undefined, // Extract time only (e.g., "15:30")
     };
 
     const promise = async () => {
@@ -115,7 +141,6 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
           form.reset({
             name: "",
             description: "",
-            start_time: "",
             date: undefined,
             venue_id: "",
             club_id: "",
@@ -149,91 +174,168 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
         )}
         className='space-y-6 w-2/3'
       >
-        <div className='flex justify-between space-x-4'>
-          <FormField
-            control={form.control}
-            name='date'
-            render={({ field }) => (
-              <FormItem className='flex flex-col w-full'>
-                <FormLabel>
-                  <RequiredLabel label='Date' />
-                </FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground rounded-none"
-                        )}
-                      >
-                        {field.value ? (
-                          format(new Date(field.value), "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className='w-auto p-0' align='start'>
+        <FormField
+          control={form.control}
+          name='date'
+          render={({ field }) => (
+            <FormItem className='w-full'>
+              <FormLabel>
+                <RequiredLabel label='Date and Time' />
+              </FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full pl-3 text-left font-normal",
+                        !field.value && "text-muted-foreground rounded-none"
+                      )}
+                    >
+                      {field.value ? (
+                        format(new Date(field.value), "PPP HH:mm")
+                      ) : (
+                        <span>Pick a date and time</span>
+                      )}
+                      <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className='w-auto p-0' align='start'>
+                  <div className='p-3 flex'>
                     <Calendar
                       mode='single'
                       className='bg-white border-2 border-gray'
                       selected={field.value ? new Date(field.value) : undefined}
-                      onSelect={field.onChange}
-                      disabled={
-                        (date) =>
-                          date < new Date(new Date().setHours(0, 0, 0, 0)) || // ✅ block past dates
-                          date >
-                            new Date(
-                              new Date().setMonth(new Date().getMonth() + 8)
-                            ) // ⛔️ 8 months into the future
+                      onSelect={(selectedDate) => {
+                        const currentDate = field.value
+                          ? new Date(field.value)
+                          : new Date();
+                        const newDate = selectedDate || currentDate;
+                        newDate.setHours(
+                          Number(initialHour),
+                          Number(initialMinute)
+                        );
+                        field.onChange(newDate);
+                      }}
+                      disabled={(date) =>
+                        date < new Date(new Date().setHours(0, 0, 0, 0)) ||
+                        date >
+                          new Date(
+                            new Date().setMonth(new Date().getMonth() + 8)
+                          )
                       }
                       initialFocus
                     />
-                  </PopoverContent>
-                </Popover>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+                    <div className='flex flex-col bg-white space-x-2 mt-2 py-2 border-t-2 border-r-2 border-b-2 border-gray'>
+                      <FormLabel className='p-2 mx-auto'>
+                        Select a time
+                      </FormLabel>
+                      <Separator orientation='horizontal' />
+                      <div className='flex flex-col space-y-4 mt-4 p-4'>
+                        <div className='flex flex-col w-full'>
+                          <FormLabel className='ml-2 mb-2'>Hour</FormLabel>
+                          <Select
+                            onValueChange={(hour) => {
+                              const currentDate = field.value
+                                ? new Date(field.value)
+                                : new Date();
+                              currentDate.setHours(Number(hour));
+                              field.onChange(currentDate);
+                            }}
+                            defaultValue={initialHour}
+                          >
+                            <SelectTrigger className='w-full rounded-none bg-white'>
+                              <SelectValue placeholder='Hour' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {hrs.map((hour) => (
+                                <SelectItem key={hour} value={hour}>
+                                  {hour}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className='flex flex-col w-full bg-white'>
+                          <FormLabel className='ml-2 mb-2'>Mins</FormLabel>
+                          <Select
+                            onValueChange={(minute) => {
+                              const currentDate = field.value
+                                ? new Date(field.value)
+                                : new Date();
+                              currentDate.setMinutes(Number(minute));
+                              field.onChange(currentDate);
+                            }}
+                            defaultValue={initialMinute}
+                          >
+                            <SelectTrigger className='w-full rounded-none bg-white'>
+                              <SelectValue placeholder='Minute' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mins.map((minute) => (
+                                <SelectItem key={minute} value={minute}>
+                                  {minute}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className='flex justify-between space-x-4'>
           <FormField
             control={form.control}
-            name='start_time'
+            name='name'
             render={({ field }) => (
               <FormItem className='w-full'>
                 <FormLabel>
-                  <RequiredLabel label='Start Time (HH:mm)' />
+                  <RequiredLabel label='Event Name' />
                 </FormLabel>
                 <FormControl className='rounded-none'>
-                  <Input placeholder='eg. 15:30' {...field} />
+                  <Input placeholder='name' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name='supporters_group_id'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel>Host Group</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl className='w-full rounded-none'>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select a group for your event' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {groups.map(({ id, name, group_logo_url }, index) => (
+                      <SelectItemWithIcon
+                        key={index}
+                        id={id}
+                        logoUrl={group_logo_url ?? ""}
+                        value={name}
+                      />
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
         </div>
-
-        <FormField
-          control={form.control}
-          name='name'
-          render={({ field }) => (
-            <FormItem className='w-full'>
-              <FormLabel>
-                <RequiredLabel label='Event Name' />
-              </FormLabel>
-              <FormControl className='rounded-none'>
-                <Input placeholder='name' {...field} />
-              </FormControl>
-              <FormDescription>Name your upcoming event</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         {/* Description */}
         <FormField
           control={form.control}
@@ -276,9 +378,9 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
                     {clubs.map(({ id, logo_url, name }, index) => (
                       <SelectItemWithIcon
                         key={index}
-                        clubId={id}
-                        clubLogoUrl={logo_url ?? ""}
-                        clubName={name}
+                        id={id}
+                        logoUrl={logo_url ?? ""}
+                        value={name}
                       />
                     ))}
                   </SelectContent>
@@ -394,9 +496,9 @@ const EventsForm = ({ initialData, eventId }: EventsFormProps) => {
         </div>
         {eventId ? (
           <Button
-            className='rounded-none cursor-pointer'
+            className='rounded-none cursor-pointer bg-edorange'
             type='submit'
-            disabled={isLoading}
+            disabled={isLoading || !isDirty}
           >
             {isLoading ? "Updating..." : "Update"}
           </Button>
