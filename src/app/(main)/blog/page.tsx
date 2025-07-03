@@ -10,6 +10,7 @@ import { getCategories } from "@/data/categories";
 const BlogPage = () => {
   const [currentTab, setCurrentTab] = useState<string>("All");
   const [postData, setPostData] = useState<BlogCardPost[] | null>(null);
+  console.log("POST DATA::", postData);
   const [categories, setCategories] = useState<string[]>([]);
   const filteredCategories = ["All", ...categories];
   const filteredPosts =

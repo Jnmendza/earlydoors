@@ -1,7 +1,7 @@
 import { Badge } from "../ui/badge";
 import { formatDate } from "@/lib/dateUtils";
 import { urlFor } from "@/lib/sanity";
-import Image from 'next/image'
+import Image from "next/image";
 import Link from "next/link";
 
 export interface BlogCardProps {
@@ -29,22 +29,24 @@ const BlogCard = ({
   subTitle,
   author,
   mainImage,
-  slug
+  slug,
 }: BlogCardProps) => {
   return (
-    <Link className='max-w-sm border border-edorange p-4  flex flex-col gap-4 hover:cursor-pointer hover:scale-[1.02]' href={`/blog/${slug}`}>
-
+    <Link
+      className='max-w-sm border border-edorange p-4  flex flex-col gap-4 hover:cursor-pointer hover:scale-[1.02]'
+      href={`/blog/${slug}`}
+    >
       {/* Image Container with Badge */}
       <div className='relative w-full h-48  overflow-hidden'>
         {/* Image - fills container but maintains aspect ratio */}
-        <Image 
-          src={urlFor(mainImage).url()} 
-          alt={mainImage.alt} 
+        <Image
+          src={urlFor(mainImage).url()}
+          alt={mainImage.alt}
           fill
-          className="object-cover"  // Changed from object-fill to cover
-          sizes="(max-width: 768px) 100vw, 50vw"  // Optional: for performance
+          className='object-cover' // Changed from object-fill to cover
+          sizes='(max-width: 768px) 100vw, 50vw' // Optional: for performance
         />
-        
+
         {/* Badge positioned absolutely in top-left corner */}
         <div className='absolute top-2 left-2 z-10'>
           <Badge className='text-ednavy bg-edcream'>{badge}</Badge>
@@ -59,19 +61,20 @@ const BlogCard = ({
       </div>
 
       {/* Title + Description */}
-      <h3 className='text-2xl font-bold text-ednavy leading-tight'>{title}</h3>
+      <h3 className='text-2xl font-bold text-ednavy leading-tight'>
+        {title.length > 63 ? title.slice(0, 60) + "..." : title}
+      </h3>
       <p className='text-ednavy text-sm'>{subTitle}</p>
 
       {/* Author */}
       <div className='flex items-center gap-3 mt-4'>
-  
         <div className='relative w-8 h-8 rounded-full overflow-hidden'>
-          <Image 
-            src={urlFor(author.image).url()} 
+          <Image
+            src={urlFor(author.image).url()}
             alt={author.name}
-            fill  
-            className='object-cover'  
-            sizes='30px'  
+            fill
+            className='object-cover'
+            sizes='30px'
           />
         </div>
         <span className='text-md font-bold text-ednavy'>{author.name}</span>
