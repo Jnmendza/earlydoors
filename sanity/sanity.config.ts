@@ -5,9 +5,9 @@ import {schemaTypes} from './schemaTypes'
 
 export default defineConfig({
   name: 'default',
-  title: 'tactical-hub-blog',
+  title: 'earlydoors',
 
-  projectId: 'hl7szevx',
+  projectId: 'a8p8a3a1',
   dataset: 'production',
 
   plugins: [structureTool(), visionTool()],
