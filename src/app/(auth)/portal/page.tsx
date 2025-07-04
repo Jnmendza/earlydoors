@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,8 @@ import { SignInButton } from "@/components/SignInButton";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
+import { createClientForBrowser } from "@/utils/supabase/client";
+import { AuthError } from "@supabase/supabase-js";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -29,6 +31,9 @@ const formSchema = z.object({
 });
 
 const PortalLogin = () => {
+  const supabase = createClientForBrowser();
+  const [err, setErr] = useState<AuthError | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,7 +56,23 @@ const PortalLogin = () => {
   }, [pathname]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Form submitted:", values);
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.username,
+        password: values.password,
+      });
+
+      if (error) {
+        setErr(error);
+      } else {
+        window.location.href = "/portal";
+      }
+    } catch (error) {
+      setErr(error as AuthError);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -100,10 +121,12 @@ const PortalLogin = () => {
             <Button
               className='w-full rounded-none cursor-pointer'
               type='submit'
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? "Logging In" : "Login"}
             </Button>
           </form>
+          {err && <p>{err.message}</p>}
         </Form>
         <div className='flex items-center justify-center w-1/3 mx-auto'>
           <Separator className='bg-edorange' />

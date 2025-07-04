@@ -35,10 +35,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Debug logs (keep these temporarily)
-  console.error("MIDDLEWARE USER ROLE:", user?.user_metadata?.role);
-  console.error("REQUEST PATH:", request.nextUrl.pathname);
-
   // Add to your existing middleware
   if (
     request.nextUrl.pathname === "/portal" &&
